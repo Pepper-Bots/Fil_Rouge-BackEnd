@@ -1,7 +1,7 @@
 package com.hrizzon2.demotest.controller;
 
 import com.hrizzon2.demotest.dao.EtatDossierDao;
-import com.hrizzon2.demotest.model.EtatDossier;
+import com.hrizzon2.demotest.model.StatutDossier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +22,9 @@ public class EtatDossierController {
     }
 
     @GetMapping("/etatdossier/{id}")
-    public ResponseEntity<EtatDossier> getEtatDossier(@PathVariable int id) {
+    public ResponseEntity<StatutDossier> getEtatDossier(@PathVariable int id) {
 
-        Optional<EtatDossier> optionalEtatDossier = etatDossierDao.findById(id);
+        Optional<StatutDossier> optionalEtatDossier = etatDossierDao.findById(id);
 
         if (optionalEtatDossier.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -33,22 +33,22 @@ public class EtatDossierController {
     }
 
     @GetMapping("/etatdossiers")
-    public List<EtatDossier> getAll() {
+    public List<StatutDossier> getAll() {
 
         return etatDossierDao.findAll();
     }
 
     @PostMapping("/etatdossier")
-    public ResponseEntity<EtatDossier> save(@RequestBody EtatDossier etatDossier) {
-        etatDossierDao.save(etatDossier);
+    public ResponseEntity<StatutDossier> save(@RequestBody StatutDossier statutDossier) {
+        etatDossierDao.save(statutDossier);
 
-        return new ResponseEntity<>(etatDossier, HttpStatus.CREATED);
+        return new ResponseEntity<>(statutDossier, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/etatdossier/{id}")
-    public ResponseEntity<EtatDossier> delete(@PathVariable int id) {
+    public ResponseEntity<StatutDossier> delete(@PathVariable int id) {
 
-        Optional<EtatDossier> optionalEtatDossier = etatDossierDao.findById(id);
+        Optional<StatutDossier> optionalEtatDossier = etatDossierDao.findById(id);
 
         if (optionalEtatDossier.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -59,19 +59,19 @@ public class EtatDossierController {
     }
 
     @PutMapping("/etatdossier/{id}")
-    public ResponseEntity<EtatDossier> update(
+    public ResponseEntity<StatutDossier> update(
             @PathVariable int id,
-            @RequestBody EtatDossier etatDossier) {
+            @RequestBody StatutDossier statutDossier) {
 
-        Optional<EtatDossier> optionalEtatDossier = etatDossierDao.findById(id);
+        Optional<StatutDossier> optionalEtatDossier = etatDossierDao.findById(id);
 
         if (optionalEtatDossier.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        etatDossier.setId(id);
+        statutDossier.setId(id);
 
-        etatDossierDao.save(etatDossier);
+        etatDossierDao.save(statutDossier);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

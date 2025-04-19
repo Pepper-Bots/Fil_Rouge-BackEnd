@@ -1,14 +1,13 @@
 package com.hrizzon2.demotest.model;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.hrizzon2.demotest.view.AffichageDossier;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.validator.constraints.Length;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -17,43 +16,31 @@ public class Dossier {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Integer id;
+    protected Long id;
 
-    // TODO - Insérer Clé étrangère IdStagiaire
-    // TODO - Insérer Clé étrangère IdFormation
-    
+    // ENUM : COMPLET / INCOMPLET / VALIDE / EN ATTENTE
+    @Enumerated(EnumType.STRING)
+    private StatutDossier statut = StatutDossier.EN_ATTENTE_DE_VALIDATION;
 
-    @Column(length = 20, nullable = false, unique = true)
-    @Length(max = 20, min = 3)
-    @NotBlank
-    @JsonView(AffichageDossier.class)
-    protected String nomStagiaire;
+    @OneToMany(mappedBy = "dossier", cascade = CascadeType.ALL) // TODO -> à vérifier
+    private List<Document> documents;
 
-    @Column(length = 20, nullable = false, unique = true)
-    @Length(max = 20, min = 3)
-    @NotBlank
-    @JsonView(AffichageDossier.class)
-    protected String prenomStagiaire;
+    // Date de dernière mise à jour automatique (optionnel)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime lastUpdated;
 
-    @Column(nullable = false)
-    @JsonView(AffichageDossier.class)
-    protected String nomFormation;
-
+    // Lien vers le stagiaire concerné
+    // Un dossier ne peut pas être créé sans stagiaire
+    @NotNull
     @ManyToOne
-    @JoinColumn(nullable = false)
-    protected EtatDossier etatDossier;
+    @JoinColumn(name = "stagiaire_id", nullable = false)
+    private Stagiaire stagiaire;
 
-    @Column(nullable = false)
-    Instant dateDeCreation;
-
-    @Column(nullable = false)
-    Instant dateDeModification;
-
-//    @Enumerated(EnumType.STRING)
-//    @Column(columnDefinition =
-//            "ENUM('COMPLET', 'INCOMPLET', 'VALIDE', 'EN COURS DE VALIDATION')")
-//    private Status status;
-
-    // Insérer statut -> COMPLET / INCOMPLET / VALIDE / EN ATTENTE DE VALIDATION => Enum ?
-
+    @PrePersist
+    @PreUpdate
+    public void updateTimeStamp() {
+        this.lastUpdated = LocalDateTime.now();
+        // Dernière mise à jour du dossier
+        // TODO : @Annotations ??
+    }
 }
