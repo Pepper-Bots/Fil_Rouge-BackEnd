@@ -13,7 +13,7 @@ public class Inscription {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Enumerated(EnumType.STRING)
     private StatutInscription statut;

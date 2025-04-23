@@ -11,7 +11,7 @@ public class Notification {
 
     @Id
     @GeneratedValue
-    private long id;
+    private Integer id;
 
     @Enumerated(EnumType.STRING)
     private TypeNotification type;

@@ -15,7 +15,6 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // TODO -> ?
     protected Integer id;
 
     @Column(nullable = false)

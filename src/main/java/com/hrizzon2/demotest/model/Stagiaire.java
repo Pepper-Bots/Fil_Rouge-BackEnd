@@ -1,6 +1,9 @@
 package com.hrizzon2.demotest.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,9 +16,6 @@ import java.util.List;
 @DiscriminatorValue("STAGIAIRE")
 public class Stagiaire extends User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
 
     @Column(unique = true, nullable = false)
     private Date dateNaissance;

@@ -6,8 +6,7 @@
 #        (4, 'A_VALIDER');
 
 -- Insertion de 20 dossiers d'exemple
-INSERT INTO fil_rouge.dossier (id, date_de_creation, date_de_modification, nom_stagiaire,
-                               prenom_stagiaire,
+INSERT INTO fil_rouge.dossier (id, date_de_creation, date_de_modification, nom_stagiaire, prenom_stagiaire,
                                nom_formation)
 VALUES (1, '2025-01-15', '2025-01-20', 'Dupont', 'Martin', 'Dossier stage marketing'),
        (2, '2025-01-18', '2025-01-25', 'Dubois', 'Julie', 'Dossier stage comptabilité'),
@@ -92,3 +91,9 @@ VALUES (24, 16, 'RAPPEL', 'Votre dossier d’inscription est incomplet. Merci de
        (26, 18, 'RAPPEL', 'Votre dossier d’inscription est incomplet. Merci de fournir les documents manquants.'),
        (27, 19, 'RAPPEL', 'Votre dossier d’inscription est incomplet. Merci de fournir les documents manquants.'),
        (28, 20, 'RAPPEL', 'Votre dossier d’inscription est incomplet. Merci de fournir les documents manquants.');
+
+INSERT INTO statut_document (id, nom)
+VALUES (1, ENVOYE),
+       (2, VALIDE),
+       (3, REFUSE),
+       (4, MANQUANT);
