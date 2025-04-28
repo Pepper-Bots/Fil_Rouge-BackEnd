@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface DossierDao extends JpaRepository<Dossier, Long> {
+public interface DossierDao extends JpaRepository<Dossier, Integer> {
 
-    Optional<Dossier> findDossierByStagiaire(String stagiaire);
+    Optional<Dossier> findById(int id);
 }

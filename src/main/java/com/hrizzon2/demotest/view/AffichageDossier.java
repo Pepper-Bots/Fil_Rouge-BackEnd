@@ -1,6 +1,15 @@
 package com.hrizzon2.demotest.view;
 
 public class AffichageDossier {
+
+    public interface Dossier {
+    }
+
+    public interface Stagiaire {
+    }
+
+    public interface Formation {
+    }
 }
 
 // faire un heritage ici

@@ -1,13 +1,15 @@
 package com.hrizzon2.demotest.controller;
 
-import com.hrizzon2.demotest.dao.DossierDao;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.hrizzon2.demotest.model.Admin;
 import com.hrizzon2.demotest.model.Dossier;
 import com.hrizzon2.demotest.model.StatutDossier;
 import com.hrizzon2.demotest.security.AppUserDetails;
-import com.hrizzon2.demotest.security.ISecurityUtils;
 import com.hrizzon2.demotest.security.IsAdmin;
 import com.hrizzon2.demotest.security.IsStagiaire;
+import com.hrizzon2.demotest.service.DossierService;
+import com.hrizzon2.demotest.view.AffichageDossier;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,37 +24,44 @@ import java.util.Optional;
 /// / Afficher un dossier (choisi dans la liste)
 @CrossOrigin // Permet les requêtes Cross-Origin (utile pour le frontend séparé du backend)
 @RestController // Indique que cette classe est un contrôleur REST
+@RequestMapping("/api/dossiers") // TODO nécessaire ? qu'est ce ça implique ?
 public class DossierController {
 
-    // Dépendances injectées : DAO pour gérer les produits et un utilitaire de sécurité
-    protected DossierDao dossierDao;
-    protected ISecurityUtils securityUtils;
+    private final DossierService dossierService;
 
     // Constructeur avec injection de dépendances via @Autowired
-    @Autowired
-    public DossierController(DossierDao dossierDao, ISecurityUtils securityUtils) {
-        this.dossierDao = dossierDao;
-        this.securityUtils = securityUtils;
+    @Autowired // TODO chatpgt pas de @Autowired ?
+    public DossierController(DossierService dossierService) {
+        this.dossierService = dossierService;
     }
+
 
     // Endpoint GET pour récupérer un produit par son id
     // Accessible uniquement aux clients grâce à l’annotation personnalisée @IsStagiaire
     @GetMapping("/dossier/{id}")
     @IsStagiaire
-    public ResponseEntity<Dossier> get(@PathVariable int id) {
-        Optional<Dossier> optionalDossier = dossierDao.findById((long) id);
-
-        // Si aucun produit trouvé, on retourne un code 404.
-        if (optionalDossier.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        // Sinon, on retourne le produit avec un code 200 OK
-        return new ResponseEntity<>(optionalDossier.get(), HttpStatus.OK);
+    @JsonView(AffichageDossier.Dossier.class)
+    public ResponseEntity<List<Dossier>> getAll() {
+        List<Dossier> dossiers = dossierService.getAll();
+        return new ResponseEntity<>(dossiers, HttpStatus.OK);
     }
 
     // Endpoint GET pour récupérer tous les produits
     // Accessible aux clients
+    @GetMapping("/dossier/{id}")
+    @IsStagiaire
+    @JsonView(AffichageDossier.Dossier.class)
+    public ResponseEntity<Dossier> getById(@PathVariable int id) {
+        try {
+            Dossier dossier = dossierService.getById(id);
+            // Sinon, on retourne le produit avec un code 200 OK
+            return new ResponseEntity<>(dossier, HttpStatus.OK);
+        } catch (EntityNotFoundException ex) {
+            // Si aucun produit trouvé, on retourne un code 404.
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
     @GetMapping("/dossiers")
     @IsStagiaire
     public List<Dossier> getAll() {
@@ -97,7 +106,7 @@ public class DossierController {
             @PathVariable int id,
             @AuthenticationPrincipal AppUserDetails userDetails) {
 
-        Optional<Dossier> optionalDossier = dossierDao.findById((long) id);
+        Optional<Dossier> optionalDossier = dossierDao.findById(id);
 
         // Si le produit n'existe pas, on retourne une erreur 404.
         if (optionalDossier.isEmpty()) {
@@ -115,7 +124,7 @@ public class DossierController {
         }
 
         // Suppression du produit
-        dossierDao.deleteById((long) id);
+        dossierDao.deleteById(id);
 
         // Retourne un code 204 (No Content)
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -130,7 +139,7 @@ public class DossierController {
             @RequestBody @Valid Dossier dossier,
             @AuthenticationPrincipal AppUserDetails userDetails) {
 
-        Optional<Dossier> optionalDossier = dossierDao.findById((long) id);
+        Optional<Dossier> optionalDossier = dossierDao.findById(id);
 
         // Si le produit à modifier n'existe pas, on retourne une erreur 404.
         if (optionalDossier.isEmpty()) {
@@ -149,7 +158,7 @@ public class DossierController {
 
         // Préserve le créateur original
         dossier.setCreateur(optionalDossier.get().getCreateur());
-        
+
         // On définit l'id du produit à mettre à jour
         dossier.setId(id);
 
