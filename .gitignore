@@ -33,3 +33,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+/src/main/java/com/hrizzon/demo2/
+/src/test/java/com/hrizzon/demo2/
