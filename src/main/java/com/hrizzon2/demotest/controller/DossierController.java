@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+// DossierController minimal → simple appel au Service ⇒ Facile à lire et à maintenir
+// + simple, + clair / uniquement API
+
 /// / Afficher les dossiers (liste)
 /// / Afficher un dossier (choisi dans la liste)
 @CrossOrigin // Permet les requêtes Cross-Origin (utile pour le frontend séparé du backend)

@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+// Ici, toute la logique métier propre : getById, save, update, delete...
+// Gestion centralisée des erreurs EntityNotFoundException & autorisations.
+
 @Service
 public class DossierService {
 
