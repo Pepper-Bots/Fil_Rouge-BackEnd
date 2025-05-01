@@ -1,4 +1,5 @@
 package com.hrizzon2.demotest.controller;
+// Contient les endpoints REST
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.hrizzon2.demotest.model.Dossier;

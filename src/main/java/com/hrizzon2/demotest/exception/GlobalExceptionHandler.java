@@ -1,4 +1,5 @@
 package com.hrizzon2.demotest.exception;
+// Gestion personnalisée des erreurs
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;

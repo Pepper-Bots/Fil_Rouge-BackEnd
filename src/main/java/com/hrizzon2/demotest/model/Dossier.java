@@ -1,4 +1,5 @@
 package com.hrizzon2.demotest.model;
+// Entités JPA
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonView;

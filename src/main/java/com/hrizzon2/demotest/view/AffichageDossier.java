@@ -1,4 +1,5 @@
 package com.hrizzon2.demotest.view;
+// (peu utile avec Angular car pas de Thymeleaf)
 
 public class AffichageDossier {
 

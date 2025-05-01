@@ -1,9 +1,6 @@
 package com.hrizzon2.demotest.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,4 +29,9 @@ public class Stagiaire extends User {
 
     @OneToMany(mappedBy = "stagiaire")
     private List<Dossier> dossiers;
+
+    @ManyToOne
+    private Inscription inscription;
+
+
 }

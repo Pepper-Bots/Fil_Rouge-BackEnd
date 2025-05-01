@@ -1,4 +1,5 @@
 package com.hrizzon2.demotest.service;
+// Logique métier
 
 import com.hrizzon2.demotest.dao.DossierDao;
 import com.hrizzon2.demotest.model.Admin;

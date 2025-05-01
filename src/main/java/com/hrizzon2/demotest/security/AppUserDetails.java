@@ -1,4 +1,5 @@
 package com.hrizzon2.demotest.security;
+// Sécurité Spring Security
 
 import com.hrizzon2.demotest.model.Admin;
 import com.hrizzon2.demotest.model.Stagiaire;
