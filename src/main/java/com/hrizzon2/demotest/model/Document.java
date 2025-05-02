@@ -1,5 +1,6 @@
 package com.hrizzon2.demotest.model;
 
+import com.hrizzon2.demotest.model.enums.TypeDocument;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,7 +19,7 @@ public class Document {
     @Enumerated(EnumType.STRING)
     private TypeDocument type;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING) // TODO ça n'est plus un enum
     private StatutDocument statut;
 
     @ManyToOne

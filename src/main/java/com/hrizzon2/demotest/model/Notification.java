@@ -1,5 +1,6 @@
 package com.hrizzon2.demotest.model;
 
+import com.hrizzon2.demotest.model.enums.TypeNotification;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

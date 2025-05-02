@@ -1,6 +1,8 @@
 package com.hrizzon2.demotest.model;
 
 
+import com.hrizzon2.demotest.model.enums.NiveauDroit;
+import com.hrizzon2.demotest.model.enums.TypeAdmin;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
