@@ -12,6 +12,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Implémentation personnalisée de UserDetails pour Spring Security,
+ * qui encapsule un utilisateur de type Stagiaire ou Admin.
+ */
 @Getter
 public class AppUserDetails implements UserDetails {
 
@@ -24,17 +28,14 @@ public class AppUserDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
-        boolean IsStagiaire = user instanceof Stagiaire;
-
-        if (IsStagiaire) {
+        if (user instanceof Stagiaire) {
             return List.of(new SimpleGrantedAuthority("ROLE_STAGIAIRE"));
+        } else if (user instanceof Admin) {
+            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"));
         } else {
-            Admin admin = (Admin) user;
+            return List.of(); // Aucun rôle si le type est inconnu
         }
-        ;
-        return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"));
     }
-
 
     @Override
     public String getPassword() {
@@ -44,5 +45,25 @@ public class AppUserDetails implements UserDetails {
     @Override
     public String getUsername() {
         return user.getEmail();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true; // à adapter si besoin
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true; // idem
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true; // idem
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true; // tu peux ajouter un champ dans User si besoin
     }
 }

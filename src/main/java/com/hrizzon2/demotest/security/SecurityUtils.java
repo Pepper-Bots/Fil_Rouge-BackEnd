@@ -1,5 +1,7 @@
 package com.hrizzon2.demotest.security;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,8 @@ public class SecurityUtils implements ISecurityUtils {
 
     @Override
     public String generateToken(AppUserDetails userDetails) {
+
+        System.out.println(jwtSecret);
 
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
