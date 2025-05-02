@@ -1,12 +1,10 @@
 package com.hrizzon2.demotest.controller;
 
-import com.hrizzon2.demotest.dao.StagiaireDao;
-import com.hrizzon2.demotest.model.Inscription;
+import com.hrizzon2.demotest.model.Formation;
 import com.hrizzon2.demotest.model.Stagiaire;
-import com.hrizzon2.demotest.service.InscriptionService;
+import com.hrizzon2.demotest.service.FormationService;
+import com.hrizzon2.demotest.service.StagiaireService;
 import jakarta.validation.Valid;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,73 +18,68 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class StagiaireController {
 
-    protected final StagiaireDao stagiaireDao;
-    protected final InscriptionService inscriptionService; // Injection du service Inscription
-
-    @Setter
-    @Getter
-    private Inscription inscription;
+    private final StagiaireService stagiaireService;
+    private final FormationService formationService;
 
     @Autowired
-    public StagiaireController(StagiaireDao stagiaireDao, InscriptionService inscriptionService) {
-        this.stagiaireDao = stagiaireDao;
-        this.inscriptionService = inscriptionService;
-    }
-
-    @GetMapping("/stagiaire/{id}")
-    public ResponseEntity<Stagiaire> get(@PathVariable int id) {
-        Optional<Stagiaire> optionalStagiaire = stagiaireDao.findById(id);
-
-        if (optionalStagiaire.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(optionalStagiaire.get(), HttpStatus.OK);
+    public StagiaireController(StagiaireService stagiaireService, FormationService formationService) {
+        this.stagiaireService = stagiaireService;
+        this.formationService = formationService;
     }
 
     @GetMapping("/stagiaires")
-    public List<Stagiaire> getAll() {
-        return (List<Stagiaire>) stagiaireDao.findAll();
+    public ResponseEntity<List<Stagiaire>> getAllStagiaires() {
+        return ResponseEntity.ok(stagiaireService.findAll());
+    }
+
+    @GetMapping("/stagiaire/{id}")
+    public ResponseEntity<Stagiaire> getStagiaireById(@PathVariable int id) {
+        return stagiaireService.findById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping("/stagiaire")
-    public ResponseEntity<Stagiaire> save(@RequestBody @Valid Stagiaire stagiaire) {
-        if (stagiaire.getInscription() == null) {
-            // Créer une nouvelle inscription via le service
-            Inscription inscriptionNeuf = new Inscription();
-            inscriptionNeuf.setDateCreation(java.time.LocalDate.now());  // Exemple : date de création actuelle
-            inscriptionNeuf.setStatut(com.hrizzon2.demotest.model.enums.StatutInscription.EN_ATTENTE); // Exemple de statut
-            inscriptionService.saveInscription(inscriptionNeuf); // Utilisation du service pour la persistance
-            stagiaire.setInscription(inscriptionNeuf);
+    public ResponseEntity<Stagiaire> createStagiaire(@RequestBody @Valid Stagiaire stagiaire,
+                                                     @RequestParam(required = false) Integer formationId) {
+        // Si formationId est fourni, on associe le stagiaire à cette formation
+        if (formationId != null) {
+            Optional<Formation> formationOpt = formationService.findById(formationId);
+            if (formationOpt.isEmpty()) {
+                return ResponseEntity.badRequest().build();
+            }
+            stagiaire = stagiaireService.inscrireStagiaire(stagiaire, formationOpt.get());
+        } else {
+            stagiaire = stagiaireService.save(stagiaire);
         }
 
-        stagiaire.setId(null);  // Pour forcer une création
-        stagiaireDao.save(stagiaire);
         return new ResponseEntity<>(stagiaire, HttpStatus.CREATED);
     }
 
     @PutMapping("/stagiaire/{id}")
-    public ResponseEntity<Stagiaire> update(@PathVariable int id, @RequestBody @Valid Stagiaire stagiaire) {
-        Optional<Stagiaire> optionalStagiaire = stagiaireDao.findById(id);
+    public ResponseEntity<Stagiaire> updateStagiaire(@PathVariable int id, @RequestBody @Valid Stagiaire updatedStagiaire) {
+        Optional<Stagiaire> optionalStagiaire = stagiaireService.findById(id);
         if (optionalStagiaire.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
 
         Stagiaire existing = optionalStagiaire.get();
-        existing.setNom(stagiaire.getNom());
-        existing.setPrenom(stagiaire.getPrenom());
-        existing.setInscription(stagiaire.getInscription());
+        existing.setNom(updatedStagiaire.getNom());
+        existing.setPrenom(updatedStagiaire.getPrenom());
+        existing.setEmail(updatedStagiaire.getEmail());
+        existing.setInscription(updatedStagiaire.getInscription()); // ou gestion plus fine
 
-        stagiaireDao.save(existing);
-        return new ResponseEntity<>(existing, HttpStatus.OK);
+        stagiaireService.save(existing);
+        return ResponseEntity.ok(existing);
     }
 
     @DeleteMapping("/stagiaire/{id}")
-    public ResponseEntity<Void> delete(@PathVariable int id) {
-        if (!stagiaireDao.existsById(id)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<Void> deleteStagiaire(@PathVariable int id) {
+        if (!stagiaireService.existsById(id)) {
+            return ResponseEntity.notFound().build();
         }
 
-        stagiaireDao.deleteById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        stagiaireService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }
