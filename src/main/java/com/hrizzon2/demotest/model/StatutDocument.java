@@ -15,8 +15,4 @@ public class StatutDocument {
 
     @Column(nullable = false)
     protected String nom;
-
 }
-
-// => Table StatutDocument à la place d'un ENUM
-//  ENVOYE, VALIDE, REFUSE, MANQUANT

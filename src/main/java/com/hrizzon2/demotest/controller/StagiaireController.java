@@ -3,6 +3,7 @@ package com.hrizzon2.demotest.controller;
 import com.hrizzon2.demotest.dao.StagiaireDao;
 import com.hrizzon2.demotest.model.Inscription;
 import com.hrizzon2.demotest.model.Stagiaire;
+import com.hrizzon2.demotest.service.InscriptionService;
 import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,14 +21,16 @@ import java.util.Optional;
 public class StagiaireController {
 
     protected final StagiaireDao stagiaireDao;
+    protected final InscriptionService inscriptionService; // Injection du service Inscription
+
     @Setter
     @Getter
     private Inscription inscription;
 
     @Autowired
-    public StagiaireController(StagiaireDao stagiaireDao, Inscription inscription) {
+    public StagiaireController(StagiaireDao stagiaireDao, InscriptionService inscriptionService) {
         this.stagiaireDao = stagiaireDao;
-        this.inscription = inscription;
+        this.inscriptionService = inscriptionService;
     }
 
     @GetMapping("/stagiaire/{id}")
@@ -48,24 +51,18 @@ public class StagiaireController {
     @PostMapping("/stagiaire")
     public ResponseEntity<Stagiaire> save(@RequestBody @Valid Stagiaire stagiaire) {
         if (stagiaire.getInscription() == null) {
+            // Créer une nouvelle inscription via le service
             Inscription inscriptionNeuf = new Inscription();
-            inscriptionNeuf.setId(1); // TODO attention : à remplacer plus tard par une logique réelle
+            inscriptionNeuf.setDateCreation(java.time.LocalDate.now());  // Exemple : date de création actuelle
+            inscriptionNeuf.setStatut(com.hrizzon2.demotest.model.enums.StatutInscription.EN_ATTENTE); // Exemple de statut
+            inscriptionService.saveInscription(inscriptionNeuf); // Utilisation du service pour la persistance
             stagiaire.setInscription(inscriptionNeuf);
         }
 
-        stagiaire.setId(null);  // pour forcer une création
+        stagiaire.setId(null);  // Pour forcer une création
         stagiaireDao.save(stagiaire);
         return new ResponseEntity<>(stagiaire, HttpStatus.CREATED);
     }
-
-// Exemple de méthode fictive utilisée pour tester (désactivée)
-
-    // public Stagiaire get() {
-    //     Stagiaire stagiaire = new Stagiaire();
-    //     stagiaire.setNom("Dupont");
-    //     stagiaire.setPrenom("John");
-    //     return stagiaire;
-    // }
 
     @PutMapping("/stagiaire/{id}")
     public ResponseEntity<Stagiaire> update(@PathVariable int id, @RequestBody @Valid Stagiaire stagiaire) {
@@ -77,7 +74,7 @@ public class StagiaireController {
         Stagiaire existing = optionalStagiaire.get();
         existing.setNom(stagiaire.getNom());
         existing.setPrenom(stagiaire.getPrenom());
-        existing.setInscription(stagiaire.getInscription()); // ou juste son ID
+        existing.setInscription(stagiaire.getInscription());
 
         stagiaireDao.save(existing);
         return new ResponseEntity<>(existing, HttpStatus.OK);
@@ -92,5 +89,4 @@ public class StagiaireController {
         stagiaireDao.deleteById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
 }

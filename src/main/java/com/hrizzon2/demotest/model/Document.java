@@ -19,8 +19,10 @@ public class Document {
     @Enumerated(EnumType.STRING)
     private TypeDocument type;
 
-    @Enumerated(EnumType.STRING) // TODO ça n'est plus un enum
+    @ManyToOne
+    @JoinColumn(name = "statut_id", nullable = false)
     private StatutDocument statut;
+
 
     @ManyToOne
     @JoinColumn(name = "dossier_id")
