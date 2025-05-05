@@ -6,8 +6,18 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+/**
+ * DAO pour la gestion des entités Stagiaire.
+ * Fournit des méthodes CRUD et une méthode de recherche par email.
+ */
 @Repository
 public interface StagiaireDao extends JpaRepository<Stagiaire, Integer> {
 
+    /**
+     * Recherche un stagiaire par son email.
+     *
+     * @param email Email du stagiaire
+     * @return Optional contenant le stagiaire s’il existe
+     */
     Optional<Stagiaire> findByEmail(String email);
 }

@@ -31,22 +31,14 @@ public class Dossier {
     protected Integer id;
 
     /**
-     * Nom du dossier (ex: nom du stagiaire).
-     */
-    @Column(nullable = false)
-    @JsonView(AffichageDossier.Dossier.class)
-    public String getNomStagiaire() {
-        return (stagiaire != null) ? stagiaire.getNom() : null;
-    }
-
-    /**
      * Code unique d'identification du dossier.
      */
     @Column(length = 10, nullable = false, unique = true)
     @Length(max = 10, min = 2)
     @NotBlank
-    @JsonView(AffichageDossier.class)
+    @JsonView(AffichageDossier.Dossier.class)
     protected String codeDossier;
+    // TODO Si je récupère l'ID est ce que CodeDossier est nécessaire ?
 
     /**
      * Statut global du dossier.
@@ -56,18 +48,14 @@ public class Dossier {
     @JoinColumn(nullable = false)
     @JsonView(AffichageDossier.Dossier.class)
     protected StatutDossier statutDossier;
-    // TODO -> le statut du dossier dépend du statut du document => si tous les documents (Liste complète) sont fournis + validés -> dossier validé
 
-    // TODO => Liste Document + statutDocument ??
     /**
      * Liste des documents associés au dossier.
      */
-    @OneToMany(mappedBy = "dossier", cascade = CascadeType.ALL, orphanRemoval = true) // TODO -> orphanRemoval = true ?
+    @OneToMany(mappedBy = "dossier", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Document> documents;
-    // TODO -> associer à TypeDocument (ENUM)
 
     // Gestion du status du document
-    // TODO -> comment le faire passer d'un statut à un autre ?
     /**
      * Statut des documents dans le dossier.
      */
@@ -76,6 +64,10 @@ public class Dossier {
     @JoinColumn(name = "statut_document_id", nullable = false)
     private StatutDocument statutDocument;
 
+    @Column(name = "date_de_creation")
+    @NotNull
+    @JsonView(AffichageDossier.Dossier.class)
+    protected LocalDateTime dateCreation;
 
     /**
      * Date et heure de la dernière mise à jour du dossier.
@@ -103,6 +95,16 @@ public class Dossier {
     // Un dossier ne peut pas être créé sans stagiaire
 
     /**
+     * Nom du dossier (ex: nom du stagiaire).
+     */
+    @Column(nullable = false)
+    @JsonView(AffichageDossier.Stagiaire.class)
+    public String getNomStagiaire() {
+        return (stagiaire != null) ? stagiaire.getNom() : null;
+    }
+    // TODO getNomStagiaire à utiliser
+
+    /**
      * Lien vers la formation concernée.
      */
     @NotNull
@@ -110,15 +112,10 @@ public class Dossier {
     @JoinColumn(name = "formation_id", nullable = false)
     private Formation formation;
 
-
-    // TODO créer une table de jointure pour formation + document ?
-//    @ManyToMany
-//    // table de jointure
-//    @JoinTable(
-//            name = "etiquette_product",
-//            inverseJoinColumns = @JoinColumn(name = "etiquette_id")
-//    )
-//    protected List<Etiquette> etiquettes = new ArrayList<>();
+    @JsonView(AffichageDossier.Formation.class)
+    public String getTitreFormation() {
+        return (formation != null) ? formation.getTitre() : null;
+    }
 
     /**
      * Administrateur créateur du dossier.
@@ -129,3 +126,10 @@ public class Dossier {
     private Admin createur;
 }
 
+// TODO -> orphanRemoval = true ?
+// TODO -> le statut du dossier dépend du statut du document => si tous les documents (Liste complète) sont fournis + validés -> dossier validé
+
+// TODO => Liste Document + statutDocument ??
+// TODO créer une table de jointure pour formation + document ?
+// TODO -> associer à TypeDocument (ENUM)
+// TODO -> comment le faire passer d'un statut à un autre ?

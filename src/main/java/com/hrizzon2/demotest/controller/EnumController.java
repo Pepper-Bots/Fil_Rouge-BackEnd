@@ -4,7 +4,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.lang.reflect.Method;
@@ -22,7 +21,6 @@ import java.util.Map;
  * du type enum spécifié.
  */
 @RestController
-@RequestMapping("/api/enum")
 public class EnumController {
 
     /**

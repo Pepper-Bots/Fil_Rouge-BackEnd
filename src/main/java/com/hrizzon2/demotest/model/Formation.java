@@ -21,6 +21,10 @@ public class Formation {
     @JsonView(AffichageDossier.Formation.class)
     protected String titre;
 
+    @JsonView(AffichageDossier.Formation.class)
+    protected String description;
+
+
     @OneToMany(mappedBy = "formation")
     private List<Inscription> inscriptions;
 

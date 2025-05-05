@@ -1,13 +1,9 @@
 -- Insertion des valeurs possibles pour Etat_Dossier
-# INSERT INTO fil_rouge.etat_dossier (id, status)
-# VALUES (1, 'COMPLET'),
-#        (2, 'INCOMPLET'),
-#        (3, 'VALIDE'),
-#        (4, 'A_VALIDER');
+
 
 -- Insertion de 20 dossiers d'exemple
-INSERT INTO fil_rouge.dossier (id, date_de_creation, date_de_modification, nom_stagiaire, prenom_stagiaire,
-                               nom_formation)
+INSERT INTO dossier (id, date_de_creation, last_updated, nom_stagiaire, prenom_stagiaire,
+                     titre_formation)
 VALUES (1, '2025-01-15', '2025-01-20', 'Dupont', 'Martin', 'Dossier stage marketing'),
        (2, '2025-01-18', '2025-01-25', 'Dubois', 'Julie', 'Dossier stage comptabilité'),
        (3, '2025-01-20', '2025-02-01', 'Martin', 'Sophie', 'Dossier stage développement web'),

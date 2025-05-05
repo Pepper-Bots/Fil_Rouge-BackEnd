@@ -25,7 +25,7 @@ import java.util.List;
 /// / Afficher un dossier (choisi dans la liste)
 @CrossOrigin // Permet les requêtes Cross-Origin (utile pour le frontend séparé du backend)
 @RestController // Indique que cette classe est un contrôleur REST
-@RequestMapping("/api/dossiers") // TODO nécessaire ? qu'est ce ça implique ?
+//@RequestMapping("/api/dossiers") // TODO nécessaire ? qu'est ce ça implique ?
 public class DossierController {
 
     private final DossierService dossierService;
@@ -40,7 +40,7 @@ public class DossierController {
 
     // Endpoint GET pour récupérer un produit par son id
     // Accessible uniquement aux clients grâce à l’annotation personnalisée @IsStagiaire
-    @GetMapping("/dossier/{id}")
+    @GetMapping("/dossiers")
     @IsStagiaire
     @JsonView(AffichageDossier.Dossier.class)
     public ResponseEntity<List<Dossier>> getAll() {

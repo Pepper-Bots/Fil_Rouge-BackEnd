@@ -9,5 +9,5 @@ import java.util.Optional;
 @Repository
 public interface DocumentDao extends JpaRepository<Document, Integer> {
 
-    Optional<Document> findDocumentByNama(String name);
+    Optional<Document> findDocumentByName(String name);
 }

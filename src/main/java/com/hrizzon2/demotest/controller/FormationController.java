@@ -12,7 +12,6 @@ import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
-@RequestMapping("/api")
 public class FormationController {
 
     private final FormationService formationService;
@@ -48,7 +47,7 @@ public class FormationController {
         }
 
         Formation existing = optionalFormation.get();
-        existing.setNom(updatedFormation.getNom());
+        existing.setTitre(updatedFormation.getTitre());
         existing.setDescription(updatedFormation.getDescription());
 
         return ResponseEntity.ok(formationService.save(existing));
