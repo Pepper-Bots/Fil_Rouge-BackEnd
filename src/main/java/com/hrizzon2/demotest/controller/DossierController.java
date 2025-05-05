@@ -25,7 +25,7 @@ import java.util.List;
 /// / Afficher un dossier (choisi dans la liste)
 @CrossOrigin // Permet les requêtes Cross-Origin (utile pour le frontend séparé du backend)
 @RestController // Indique que cette classe est un contrôleur REST
-//@RequestMapping("/api/dossiers") // TODO nécessaire ? qu'est ce ça implique ?
+@RequestMapping("/dossiers") // Toutes les routes commenceront par /dossiers
 public class DossierController {
 
     private final DossierService dossierService;
@@ -34,10 +34,14 @@ public class DossierController {
     @Autowired
     // TODO chatpgt pas de @Autowired ?
     public DossierController(DossierService dossierService) {
+
         this.dossierService = dossierService;
     }
 
-
+    /**
+     * GET /dossiers
+     * Retourne tous les dossiers visibles par un stagiaire.
+     */
     // Endpoint GET pour récupérer un produit par son id
     // Accessible uniquement aux clients grâce à l’annotation personnalisée @IsStagiaire
     @GetMapping("/dossiers")
@@ -48,6 +52,10 @@ public class DossierController {
         return new ResponseEntity<>(dossiers, HttpStatus.OK);
     }
 
+    /**
+     * GET /dossiers/{id}
+     * Retourne un dossier spécifique.
+     */
     // Endpoint GET pour récupérer tous les dossiers
     // Accessible aux stagiaires
     @GetMapping("/dossier/{id}")
@@ -63,6 +71,7 @@ public class DossierController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
 
     // Endpoint POST pour créer un nouveau dossier
     // Accessible uniquement aux admins
@@ -94,6 +103,10 @@ public class DossierController {
 //        return new ResponseEntity<>(dossier, HttpStatus.CREATED);
 //    }
 
+    /**
+     * POST /dossiers
+     * Crée un nouveau dossier (admin uniquement).
+     */
     @PostMapping
     @IsAdmin
     @JsonView(AffichageDossier.Dossier.class)
@@ -103,6 +116,10 @@ public class DossierController {
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
+    /**
+     * PUT /dossiers/{id}
+     * Met à jour un dossier (admin uniquement).
+     */
     @PutMapping("/dossier/{id}")
     @IsAdmin
     @JsonView(AffichageDossier.Dossier.class)
@@ -120,6 +137,11 @@ public class DossierController {
     }
 
     // TODO Pourquoi <Void> ?
+
+    /**
+     * DELETE /dossiers/{id}
+     * Supprime un dossier (admin uniquement).
+     */
     // Endpoint DELETE pour supprimer un dossier
     // Accessible uniquement aux stagiaires
     @DeleteMapping("/dossier/{id}")

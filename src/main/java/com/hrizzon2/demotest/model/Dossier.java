@@ -49,12 +49,6 @@ public class Dossier {
     @JsonView(AffichageDossier.Dossier.class)
     protected StatutDossier statutDossier;
 
-    /**
-     * Liste des documents associés au dossier.
-     */
-    @OneToMany(mappedBy = "dossier", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Document> documents;
-
     // Gestion du status du document
     /**
      * Statut des documents dans le dossier.
@@ -64,7 +58,14 @@ public class Dossier {
     @JoinColumn(name = "statut_document_id", nullable = false)
     private StatutDocument statutDocument;
 
-    @Column(name = "date_de_creation")
+    /**
+     * Liste des documents associés au dossier.
+     */
+    @OneToMany(mappedBy = "dossier", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Document> documents;
+
+
+    @Column(name = "date_de_creation", nullable = false)
     @NotNull
     @JsonView(AffichageDossier.Dossier.class)
     protected LocalDateTime dateCreation;
@@ -95,27 +96,12 @@ public class Dossier {
     // Un dossier ne peut pas être créé sans stagiaire
 
     /**
-     * Nom du dossier (ex: nom du stagiaire).
-     */
-    @Column(nullable = false)
-    @JsonView(AffichageDossier.Stagiaire.class)
-    public String getNomStagiaire() {
-        return (stagiaire != null) ? stagiaire.getNom() : null;
-    }
-    // TODO getNomStagiaire à utiliser
-
-    /**
      * Lien vers la formation concernée.
      */
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "formation_id", nullable = false)
     private Formation formation;
-
-    @JsonView(AffichageDossier.Formation.class)
-    public String getTitreFormation() {
-        return (formation != null) ? formation.getTitre() : null;
-    }
 
     /**
      * Administrateur créateur du dossier.
@@ -124,6 +110,29 @@ public class Dossier {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "createur_id", nullable = false)
     private Admin createur;
+
+
+    // === GETTERS DÉRIVÉS POUR AFFICHAGE SIMPLIFIÉ ===
+
+    /**
+     * Nom et prénom du dossier (ex: nom du stagiaire).
+     */
+    @JsonView(AffichageDossier.Stagiaire.class)
+    public String getNomPrenomStagiaire() {
+        return (stagiaire != null)
+                ? stagiaire.getPrenom() + " " + stagiaire.getName()
+                : null;
+    }
+
+    @JsonView(AffichageDossier.Formation.class)
+    public String getTitreFormation() {
+        return (formation != null) ? formation.getTitre() : null;
+    }
+
+    @JsonView(AffichageDossier.Admin.class)
+    public String getNomCreateur() {
+        return (createur != null) ? createur.getName() : null;
+    }
 }
 
 // TODO -> orphanRemoval = true ?

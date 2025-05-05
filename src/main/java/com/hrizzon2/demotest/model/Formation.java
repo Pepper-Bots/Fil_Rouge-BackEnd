@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -24,6 +25,8 @@ public class Formation {
     @JsonView(AffichageDossier.Formation.class)
     protected String description;
 
+    private LocalDate dateDebut;
+    private LocalDate dateFin;
 
     @OneToMany(mappedBy = "formation")
     private List<Inscription> inscriptions;

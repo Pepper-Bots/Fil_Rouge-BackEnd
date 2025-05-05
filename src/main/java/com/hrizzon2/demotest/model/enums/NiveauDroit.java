@@ -2,5 +2,5 @@ package com.hrizzon2.demotest.model.enums;
 
 public enum NiveauDroit {
 
-    BASIQUE, INTERMEDIAIRE, AVANCE, TOTAL
+    BASIQUE, MODERATEUR, ADMIN, SUPER_ADMIN
 }

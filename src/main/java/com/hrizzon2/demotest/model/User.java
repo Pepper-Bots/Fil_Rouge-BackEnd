@@ -18,7 +18,7 @@ public class User {
     protected Integer id;
 
     @Column(nullable = false)
-    protected String nom;
+    protected String name;
 
     @Column(nullable = false)
     protected String prenom;

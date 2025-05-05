@@ -92,7 +92,7 @@ public class StagiaireController {
         }
 
         Stagiaire existing = optionalStagiaire.get();
-        existing.setNom(updatedStagiaire.getNom());
+        existing.setName(updatedStagiaire.getName());
         existing.setPrenom(updatedStagiaire.getPrenom());
         existing.setEmail(updatedStagiaire.getEmail());
 
