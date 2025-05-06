@@ -2,7 +2,9 @@ package com.hrizzon2.demotest.controller;
 // Contient les endpoints REST
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.hrizzon2.demotest.dao.FormationDao;
 import com.hrizzon2.demotest.model.Dossier;
+import com.hrizzon2.demotest.model.Formation;
 import com.hrizzon2.demotest.security.AppUserDetails;
 import com.hrizzon2.demotest.security.IsAdmin;
 import com.hrizzon2.demotest.security.IsStagiaire;
@@ -29,13 +31,13 @@ import java.util.List;
 public class DossierController {
 
     private final DossierService dossierService;
+    private final FormationDao formationDao;
 
     // Constructeur avec injection de dépendances via @Autowired
     @Autowired
-    // TODO chatpgt pas de @Autowired ?
-    public DossierController(DossierService dossierService) {
-
+    public DossierController(DossierService dossierService, FormationDao formationDao) {
         this.dossierService = dossierService;
+        this.formationDao = formationDao;
     }
 
     /**
@@ -112,6 +114,16 @@ public class DossierController {
     @JsonView(AffichageDossier.Dossier.class)
     public ResponseEntity<Dossier> create(@Valid @RequestBody Dossier dossier,
                                           @AuthenticationPrincipal AppUserDetails userDetails) {
+
+        // Vérifie si l'ID de formation existe
+        if (dossier.getFormation() == null || dossier.getFormation().getId() == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // ou autre message d'erreur approprié
+        }
+
+        Formation formation = formationDao.findById(dossier.getFormation().getId())
+                .orElseThrow(() -> new RuntimeException("Formation non trouvée avec l'id : " + dossier.getFormation().getId()));
+        dossier.setFormation(formation); // On associe la formation persistée
+
         Dossier created = dossierService.create(dossier, userDetails);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }

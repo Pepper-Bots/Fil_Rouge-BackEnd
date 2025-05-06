@@ -92,8 +92,8 @@ public class StagiaireController {
         }
 
         Stagiaire existing = optionalStagiaire.get();
-        existing.setName(updatedStagiaire.getName());
-        existing.setPrenom(updatedStagiaire.getPrenom());
+        existing.setLastName(updatedStagiaire.getLastName());
+        existing.setFirstName(updatedStagiaire.getFirstName());
         existing.setEmail(updatedStagiaire.getEmail());
 
         stagiaireService.save(existing);

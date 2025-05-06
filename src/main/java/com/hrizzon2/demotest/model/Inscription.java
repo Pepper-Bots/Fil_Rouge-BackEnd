@@ -29,6 +29,7 @@ public class Inscription {
     private Stagiaire stagiaire;
 
     @ManyToOne
+    @JoinColumn(name = "formation_id")
     private Formation formation;
 
     @OneToOne(cascade = CascadeType.ALL)

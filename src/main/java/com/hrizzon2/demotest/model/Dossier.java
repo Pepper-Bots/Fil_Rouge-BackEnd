@@ -120,7 +120,7 @@ public class Dossier {
     @JsonView(AffichageDossier.Stagiaire.class)
     public String getNomPrenomStagiaire() {
         return (stagiaire != null)
-                ? stagiaire.getPrenom() + " " + stagiaire.getName()
+                ? stagiaire.getFirstName() + " " + stagiaire.getLastName()
                 : null;
     }
 
@@ -131,7 +131,7 @@ public class Dossier {
 
     @JsonView(AffichageDossier.Admin.class)
     public String getNomCreateur() {
-        return (createur != null) ? createur.getName() : null;
+        return (createur != null) ? createur.getLastName() : null;
     }
 }
 

@@ -1,30 +1,5 @@
--- Insertion de 20 dossiers d'exemple
-# INSERT INTO dossier (id, createur_id, formation_id, stagiaire_id, date_de_creation, last_updated, nom_stagiaire,
-#                      prenom_stagiaire,
-#                      titre_formation)
-# VALUES (1, '2025-01-15', '2025-01-20', 'Dupont', 'Martin', 'Dossier stage marketing'),
-#        (2, '2025-01-18', '2025-01-25', 'Dubois', 'Julie', 'Dossier stage comptabilité'),
-#        (3, '2025-01-20', '2025-02-01', 'Martin', 'Sophie', 'Dossier stage développement web'),
-#        (4, '2025-01-22', '2025-01-30', 'Bernard', 'Thomas', 'Dossier stage ressources humaines'),
-#        (5, '2025-02-01', '2025-02-05', 'Petit', 'Lucas', 'Dossier stage commercial'),
-#        (6, '2025-02-03', '2025-02-10', 'Robert', 'Emma', 'Dossier stage communication'),
-#        (7, '2025-02-05', '2025-02-15', 'Richard', 'Hugo', 'Dossier stage design'),
-#        (8, '2025-02-07', '2025-02-12', 'Moreau', 'Léa', 'Dossier stage logistique'),
-#        (9, '2025-02-10', '2025-02-18', 'Simon', 'Clara', 'Dossier stage data science'),
-#        (10, '2025-02-12', '2025-02-20', 'Laurent', 'Nathan', 'Dossier stage juridique'),
-#        (11, '2025-02-15', '2025-02-25', 'Leroy', 'Camille', 'Dossier stage finance'),
-#        (12, '2025-02-18', '2025-02-28', 'Michel', 'Inès', 'Dossier stage qualité'),
-#        (13, '2025-03-01', '2025-03-05', 'Lefebvre', 'Théo', 'Dossier stage informatique'),
-#        (14, '2025-03-03', '2025-03-10', 'Garcia', 'Chloé', 'Dossier stage achats'),
-#        (15, '2025-03-05', '2025-03-15', 'David', 'Antoine', 'Dossier stage production'),
-#        (16, '2025-03-07', '2025-03-12', 'Bertrand', 'Manon', 'Dossier stage audit'),
-#        (17, '2025-03-10', '2025-03-18', 'Morel', 'Quentin', 'Dossier stage supply chain'),
-#        (18, '2025-03-12', '2025-03-20', 'Fournier', 'Lucie', 'Dossier stage administration'),
-#        (19, '2025-03-15', '2025-03-25', 'Girard', 'Maxime', 'Dossier stage export'),
-#        (20, '2025-03-18', '2025-03-28', 'Vincent', 'Océane', 'Dossier stage recherche');
-
 -- Étape 1 : insérer les utilisateurs de base dans la table USER
-INSERT INTO user (id, name, prenom, email, password, user_type)
+INSERT INTO user (id, lastName, firstName, email, password, user_type)
 VALUES (1, 'Alice', 'Dupont', 'alice@example.com', 'password1', 'ADMINISTRATEUR'),
        (2, 'Bruno', 'Durand', 'bruno@example.com', 'password2', 'ADMINISTRATEUR'),
        (3, 'Cécile', 'Martin', 'cecile@example.com', 'password3', 'ADMINISTRATEUR'),
@@ -38,7 +13,6 @@ VALUES (1, 'RESPONSABLE_ETABLISSEMENT', 'SUPER_ADMIN'),
        (4, 'ASSISTANT_ADMINISTRATIF', 'BASIQUE');
 
 -- Insertion de 20 dossiers dans la table dossier
-
 INSERT INTO dossier (id, code_dossier, statut_dossier_id, statut_document_id,
                      date_de_creation, last_updated, stagiaire_id, formation_id, createur_id)
 VALUES (1, 'DSR001', 2, 1, '2025-01-05 09:00:00', '2025-01-07 14:00:00', 1, 1, 1),   -- Java avancé

@@ -18,19 +18,15 @@ public class User {
     protected Integer id;
 
     @Column(nullable = false)
-    protected String name;
+    protected String lastName;
 
     @Column(nullable = false)
-    protected String prenom;
+    protected String firstName;
 
     @Column(nullable = false)
     protected String email;
 
     @Column(nullable = false)
     protected String password;
-
-//    @Enumerated(EnumType.STRING)
-//    @Column(nullable = false)
-//    protected Role role;
-
+    
 }
