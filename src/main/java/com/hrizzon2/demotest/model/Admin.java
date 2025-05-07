@@ -16,6 +16,7 @@ import lombok.Setter;
 @DiscriminatorValue("ADMINISTRATEUR")
 public class Admin extends User {
 
+
     @Enumerated(EnumType.STRING)
     private TypeAdmin typeAdmin;
 

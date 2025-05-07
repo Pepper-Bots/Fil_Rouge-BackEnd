@@ -1,9 +1,10 @@
 -- Étape 1 : insérer les utilisateurs de base dans la table USER
-INSERT INTO user (id, lastName, firstName, email, password, user_type)
-VALUES (1, 'Alice', 'Dupont', 'alice@example.com', 'password1', 'ADMINISTRATEUR'),
-       (2, 'Bruno', 'Durand', 'bruno@example.com', 'password2', 'ADMINISTRATEUR'),
-       (3, 'Cécile', 'Martin', 'cecile@example.com', 'password3', 'ADMINISTRATEUR'),
-       (4, 'David', 'Bernard', 'david@example.com', 'password4', 'ADMINISTRATEUR');
+INSERT INTO user (last_name, first_name, email, password, user_type)
+VALUES ('Alice', 'Dupont', 'alice@example.com', 'password1', 'ADMINISTRATEUR'),
+       ('Bruno', 'Durand', 'bruno@example.com', 'password2', 'ADMINISTRATEUR'),
+       ('Cécile', 'Martin', 'cecile@example.com', 'password3', 'ADMINISTRATEUR'),
+       ('David', 'Bernard', 'david@example.com', 'password4', 'ADMINISTRATEUR'),
+       ('Dupont', 'Romain', 'romain_dupont@live.fr', 'root', 'STAGIAIRE');
 
 -- Étape 2 : insérer dans ADMIN (en réutilisant les IDs ci-dessus)
 INSERT INTO admin (id, type_admin, niveau_droit)
@@ -11,6 +12,10 @@ VALUES (1, 'RESPONSABLE_ETABLISSEMENT', 'SUPER_ADMIN'),
        (2, 'RESPONSABLE_FORMATION', 'ADMIN'),
        (3, 'ASSISTANT_VIE_SCOLAIRE', 'MODERATEUR'),
        (4, 'ASSISTANT_ADMINISTRATIF', 'BASIQUE');
+
+INSERT INTO stagiaire (id, date_naissance, numero_de_telephone, adresse)
+VALUES (1, '1990-03-01', '0660606060', '12 rue des Rosses');
+
 
 -- Insertion de 20 dossiers dans la table dossier
 INSERT INTO dossier (id, code_dossier, statut_dossier_id, statut_document_id,
@@ -55,71 +60,63 @@ VALUES (1, 'Développement Web Front-End', 'Apprendre HTML, CSS, JavaScript et R
        (10, 'Initiation à la cybersécurité', 'Panorama des menaces et bonnes pratiques en entreprise.', '2025-06-05',
         '2025-08-05');
 
--- Notifications pour les Admins
-INSERT INTO notification (id, user_id, type, contenu)
-VALUES (1, 101, 'INFORMATION',
+-- Création des modèles de message
+INSERT INTO notification_template (id, type, message)
+VALUES (1, 'INFORMATION',
         'Un nouveau document a été envoyé par un stagiaire. Veuillez vérifier sa validité et sa lisibilité.'),
-       (2, 102, 'INFORMATION',
-        'Un nouveau document a été envoyé par un stagiaire. Veuillez vérifier sa validité et sa lisibilité.'),
-       (3, 103, 'INFORMATION',
-        'Un nouveau document a été envoyé par un stagiaire. Veuillez vérifier sa validité et sa lisibilité.'),
-       (4, 104, 'INFORMATION',
-        'Un nouveau document a été envoyé par un stagiaire. Veuillez vérifier sa validité et sa lisibilité.'),
-       (5, 105, 'INFORMATION',
-        'Un nouveau document a été envoyé par un stagiaire. Veuillez vérifier sa validité et sa lisibilité.'),
-       (6, 106, 'INFORMATION',
-        'Un nouveau document a été envoyé par un stagiaire. Veuillez vérifier sa validité et sa lisibilité.'),
-       (7, 107, 'INFORMATION',
-        'Un nouveau document a été envoyé par un stagiaire. Veuillez vérifier sa validité et sa lisibilité.'),
-       (8, 108, 'INFORMATION',
-        'Un nouveau document a été envoyé par un stagiaire. Veuillez vérifier sa validité et sa lisibilité.');
+       (2, 'WARNING_ABSENCE',
+        'Vous avez atteint un seuil critique de retards ou d’absences. Veuillez justifier votre situation rapidement.'),
+       (3, 'WARNING_DOCUMENT',
+        'Un ou plusieurs documents envoyés ont été refusés. Merci de les corriger et les renvoyer au plus vite.'),
+       (4, 'RAPPEL', 'Votre dossier d’inscription est incomplet. Merci de fournir les documents manquants.');
 
--- Stagiaires 1 à 10 : avertissement retards/absences
-INSERT INTO notification (id, user_id, type, contenu)
-VALUES (9, 1, 'WARNING',
-        'Vous avez atteint un seuil critique de retards ou d’absences. Veuillez justifier votre situation rapidement.'),
-       (10, 2, 'WARNING',
-        'Vous avez atteint un seuil critique de retards ou d’absences. Veuillez justifier votre situation rapidement.'),
-       (11, 3, 'WARNING',
-        'Vous avez atteint un seuil critique de retards ou d’absences. Veuillez justifier votre situation rapidement.'),
-       (12, 4, 'WARNING',
-        'Vous avez atteint un seuil critique de retards ou d’absences. Veuillez justifier votre situation rapidement.'),
-       (13, 5, 'WARNING',
-        'Vous avez atteint un seuil critique de retards ou d’absences. Veuillez justifier votre situation rapidement.'),
-       (14, 6, 'WARNING',
-        'Vous avez atteint un seuil critique de retards ou d’absences. Veuillez justifier votre situation rapidement.'),
-       (15, 7, 'WARNING',
-        'Vous avez atteint un seuil critique de retards ou d’absences. Veuillez justifier votre situation rapidement.'),
-       (16, 8, 'WARNING',
-        'Vous avez atteint un seuil critique de retards ou d’absences. Veuillez justifier votre situation rapidement.'),
-       (17, 9, 'WARNING',
-        'Vous avez atteint un seuil critique de retards ou d’absences. Veuillez justifier votre situation rapidement.'),
-       (18, 10, 'WARNING',
-        'Vous avez atteint un seuil critique de retards ou d’absences. Veuillez justifier votre situation rapidement.');
+-- NOTIFICATIONS
+-- Admins : INFORMATION
+INSERT INTO notification (id, template_id, destinataire_id)
+VALUES (1, 1, 101),
+       (2, 1, 102),
+       (3, 1, 103),
+       (4, 1, 104),
+       (5, 1, 105),
+       (6, 1, 106),
+       (7, 1, 107),
+       (8, 1, 108);
+
+-- Stagiaires 1 à 10 : retards / absences
+INSERT INTO notification (id, template_id, destinataire_id)
+VALUES (9, 2, 1),
+       (10, 2, 2),
+       (11, 2, 3),
+       (12, 2, 4),
+       (13, 2, 5),
+       (14, 2, 6),
+       (15, 2, 7),
+       (16, 2, 8),
+       (17, 2, 9),
+       (18, 2, 10);
 
 -- Stagiaires 11 à 15 : documents refusés
-INSERT INTO notification (id, user_id, type, contenu)
-VALUES (19, 11, 'WARNING',
-        'Un ou plusieurs documents envoyés ont été refusés. Merci de les corriger et les renvoyer au plus vite.'),
-       (20, 12, 'WARNING',
-        'Un ou plusieurs documents envoyés ont été refusés. Merci de les corriger et les renvoyer au plus vite.'),
-       (21, 13, 'WARNING',
-        'Un ou plusieurs documents envoyés ont été refusés. Merci de les corriger et les renvoyer au plus vite.'),
-       (22, 14, 'WARNING',
-        'Un ou plusieurs documents envoyés ont été refusés. Merci de les corriger et les renvoyer au plus vite.'),
-       (23, 15, 'WARNING',
-        'Un ou plusieurs documents envoyés ont été refusés. Merci de les corriger et les renvoyer au plus vite.');
+INSERT INTO notification (id, template_id, destinataire_id)
+VALUES (19, 3, 11),
+       (20, 3, 12),
+       (21, 3, 13),
+       (22, 3, 14),
+       (23, 3, 15);
 
 -- Stagiaires 16 à 20 : dossier incomplet
-INSERT INTO notification (id, user_id, type, contenu)
-VALUES (24, 16, 'RAPPEL', 'Votre dossier d’inscription est incomplet. Merci de fournir les documents manquants.'),
-       (25, 17, 'RAPPEL', 'Votre dossier d’inscription est incomplet. Merci de fournir les documents manquants.'),
-       (26, 18, 'RAPPEL', 'Votre dossier d’inscription est incomplet. Merci de fournir les documents manquants.'),
-       (27, 19, 'RAPPEL', 'Votre dossier d’inscription est incomplet. Merci de fournir les documents manquants.'),
-       (28, 20, 'RAPPEL', 'Votre dossier d’inscription est incomplet. Merci de fournir les documents manquants.');
+INSERT INTO notification (id, template_id, destinataire_id)
+VALUES (24, 4, 16),
+       (25, 4, 17),
+       (26, 4, 18),
+       (27, 4, 19),
+       (28, 4, 20);
 
 INSERT INTO statut_document (id, nom)
 VALUES (1, ENVOYE),
        (2, VALIDE),
        (3, REFUSE),
        (4, MANQUANT);
+
+SELECT *
+FROM user
+WHERE id = 1;

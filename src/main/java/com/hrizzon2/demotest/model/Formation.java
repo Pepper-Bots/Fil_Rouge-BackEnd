@@ -31,4 +31,6 @@ public class Formation {
     @OneToMany(mappedBy = "formation")
     private List<Inscription> inscriptions;
 
+    @OneToMany(mappedBy = "dossier")
+    private List<Dossier> dossiers;
 }
