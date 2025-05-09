@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
+@SuppressWarnings("unused")
 public class Notification {
 
     @Id

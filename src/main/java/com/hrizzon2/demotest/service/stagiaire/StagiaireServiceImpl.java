@@ -1,5 +1,4 @@
-//Va servir à gérer la logique complexe liée aux stagiaires
-package com.hrizzon2.demotest.service;
+package com.hrizzon2.demotest.service.stagiaire;
 
 import com.hrizzon2.demotest.dao.InscriptionDao;
 import com.hrizzon2.demotest.dao.StagiaireDao;
@@ -15,69 +14,51 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-/**
- * Service pour la gestion métier des stagiaires.
- * Fournit les opérations complexes au-delà du CRUD simple.
- */
 @Service
-public class StagiaireService {
+public class StagiaireServiceImpl implements StagiaireService {
 
     private final StagiaireDao stagiaireDao;
     private final InscriptionDao inscriptionDao;
 
     @Autowired
-    public StagiaireService(StagiaireDao stagiaireDao, InscriptionDao inscriptionDao) {
+    public StagiaireServiceImpl(StagiaireDao stagiaireDao, InscriptionDao inscriptionDao) {
         this.stagiaireDao = stagiaireDao;
         this.inscriptionDao = inscriptionDao;
     }
 
-    /**
-     * Récupère tous les stagiaires.
-     */
+    @Override
     public List<Stagiaire> findAll() {
         return stagiaireDao.findAll();
     }
 
-    /**
-     * Cherche un stagiaire par ID.
-     */
+    @Override
     public Optional<Stagiaire> findById(Integer id) {
         return stagiaireDao.findById(id);
     }
 
-    /**
-     * Enregistre un stagiaire en base.
-     */
+    @Override
     public Stagiaire save(Stagiaire stagiaire) {
         return stagiaireDao.save(stagiaire);
     }
 
-    /**
-     * Supprime un stagiaire par ID.
-     */
+    @Override
     public void deleteById(Integer id) {
         stagiaireDao.deleteById(id);
     }
 
-    /**
-     * Vérifie si un stagiaire existe par ID.
-     */
+    @Override
     public boolean existsById(Integer id) {
         return stagiaireDao.existsById(id);
     }
 
-    /**
-     * Vérifie si un stagiaire existe par email.
-     */
+    @Override
     public boolean existsByEmail(String email) {
         return stagiaireDao.findAll()
                 .stream()
                 .anyMatch(s -> s.getEmail() != null && s.getEmail().equalsIgnoreCase(email));
     }
 
-    /**
-     * Récupère les stagiaires par statut d’inscription.
-     */
+    @Override
     public List<Stagiaire> findByStatutInscription(StatutInscription statut) {
         return stagiaireDao.findAll()
                 .stream()
@@ -85,9 +66,7 @@ public class StagiaireService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Récupère les stagiaires inscrits entre deux dates.
-     */
+    @Override
     public List<Stagiaire> findInscritsEntre(LocalDate debut, LocalDate fin) {
         return stagiaireDao.findAll()
                 .stream()
@@ -98,15 +77,13 @@ public class StagiaireService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Inscrit un stagiaire à une formation.
-     */
+    @Override
     public Inscription inscrireStagiaire(Stagiaire stagiaire, Formation formation) {
         Inscription inscription = new Inscription();
         inscription.setStagiaire(stagiaire);
         inscription.setFormation(formation);
         inscription.setDateCreation(LocalDate.now());
-        inscription.setStatut(StatutInscription.EN_ATTENTE); // à adapter
+        inscription.setStatut(StatutInscription.EN_ATTENTE);
 
         return inscriptionDao.save(inscription);
     }

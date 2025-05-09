@@ -31,7 +31,7 @@ public class Stagiaire extends User {
      * Numéro de téléphone du stagiaire.
      */
     @Column(nullable = false)
-    private Number numeroDeTelephone;
+    private Number phone;
 
     /**
      * Adresse du stagiaire.

@@ -10,6 +10,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Entity
+@SuppressWarnings("unused")
 public class Inscription {
 
     // Cf Etat de CDA_Demo_Test

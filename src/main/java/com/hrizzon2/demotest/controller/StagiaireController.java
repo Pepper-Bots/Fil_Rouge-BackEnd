@@ -2,16 +2,20 @@ package com.hrizzon2.demotest.controller;
 
 import com.hrizzon2.demotest.model.Formation;
 import com.hrizzon2.demotest.model.Stagiaire;
+import com.hrizzon2.demotest.model.enums.StatutInscription;
 import com.hrizzon2.demotest.service.FormationService;
-import com.hrizzon2.demotest.service.StagiaireService;
+import com.hrizzon2.demotest.service.stagiaire.StagiaireService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+
+// le controller s'occupe exclusivement de la réception des requêtes HTTP
 
 /**
  * Contrôleur REST pour la gestion des stagiaires.
@@ -31,10 +35,37 @@ public class StagiaireController {
     }
 
     /**
+     * Récupère les stagiaires par leur statut
+     *
+     * @param statut statut du stagiaire
+     * @return Stagiaire selon son statut
+     */
+    @GetMapping("/stagiaires/statut")
+    public ResponseEntity<List<Stagiaire>> getStagiairesByStatut(@RequestParam StatutInscription statut) {
+        return ResponseEntity.ok(stagiaireService.findByStatutInscription(statut));
+    }
+
+    /**
+     * Récupère stagiaires par période d'inscription
+     *
+     * @param debut
+     * @param fin
+     * @return
+     */
+    @GetMapping("/stagiaires/inscrits")
+    public ResponseEntity<List<Stagiaire>> getStagiairesInscritsEntre(
+            @RequestParam LocalDate debut,
+            @RequestParam LocalDate fin) {
+        return ResponseEntity.ok(stagiaireService.findInscritsEntre(debut, fin));
+    }
+
+    /**
      * Récupère tous les stagiaires.
      *
      * @return Liste de tous les stagiaires
      */
+    // S'assurer que ton endpoint /stagiaires dans StagiaireController est accessible
+    // et retourne une liste d'objets Stagiaire au format JSON.
     @GetMapping("/stagiaires")
     public ResponseEntity<List<Stagiaire>> getAllStagiaires() {
         return ResponseEntity.ok(stagiaireService.findAll());

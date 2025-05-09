@@ -6,6 +6,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+// Repository qui parle à la base de données
+
 /**
  * DAO pour la gestion des entités Stagiaire.
  * Fournit des méthodes CRUD et une méthode de recherche par email.

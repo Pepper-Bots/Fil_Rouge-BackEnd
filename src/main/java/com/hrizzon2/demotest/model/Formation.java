@@ -12,6 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@SuppressWarnings("unused")
 public class Formation {
 
     @Id
