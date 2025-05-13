@@ -14,7 +14,27 @@ VALUES (1, 'RESPONSABLE_ETABLISSEMENT', 'SUPER_ADMIN'),
        (4, 'ASSISTANT_ADMINISTRATIF', 'BASIQUE');
 
 INSERT INTO stagiaire (id, date_naissance, phone_number, adresse)
-VALUES (1, '1990-03-01', '0660606060', '12 rue des Rosses');
+VALUES (5, '1990-03-01', '0660606060', '12 rue des Rosses'),
+       (6, '1985-07-14', '0678451223', '8 avenue des Lilas'),
+       (7, '1992-11-22', '0654239876', '34 boulevard Victor Hugo'),
+       (8, '1980-06-30', '0612789543', '21 rue des Vignes'),
+       (9, '1978-04-19', '0634561287', '5 impasse des Fleurs'),
+       (10, '1991-01-08', '0645129384', '17 rue des Jardins'),
+       (11, '1983-09-12', '0625897412', '98 rue de la République'),
+       (12, '1994-10-02', '0678932154', '66 avenue des Champs'),
+       (13, '1987-05-06', '0612347895', '43 rue Jean Jaurès'),
+       (14, '1995-12-29', '0698123475', '7 place du Marché'),
+       (15, '1986-03-17', '0665432187', '28 rue des Cerisiers'),
+       (16, '1982-08-24', '0654891234', '13 allée des Marronniers'),
+       (17, '1993-02-11', '0689741235', '10 rue Voltaire'),
+       (18, '1981-06-05', '0623789120', '3 rue Lamartine'),
+       (19, '1990-09-23', '0678123490', '4 place de la Mairie'),
+       (20, '1988-07-30', '0698342150', '55 avenue de Paris'),
+       (21, '1984-11-09', '0655012374', '72 rue des Prés'),
+       (22, '1996-04-04', '0689234578', '16 rue Pasteur'),
+       (23, '1999-01-01', '0678123999', '91 boulevard Saint-Michel'),
+       (24, '1989-12-12', '0634567890', '2 avenue du Général Leclerc')
+       (25, '1992-05-03', '0708090103', '28, rue des Bleuets');
 
 -- Insertion de 10 formations dans la table formation (PLACER CECI AVANT L'INSERTION DES DOSSIERS)
 INSERT INTO formation (id, titre, description, date_debut, date_fin)
