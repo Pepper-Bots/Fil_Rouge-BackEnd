@@ -25,7 +25,8 @@ import java.util.List;
 
 /// / Afficher les dossiers (liste)
 /// / Afficher un dossier (choisi dans la liste)
-@CrossOrigin // Permet les requêtes Cross-Origin (utile pour le frontend séparé du backend)
+@CrossOrigin(origins = "${app.cors.origins}", maxAge = 3600)
+// Permet les requêtes Cross-Origin (utile pour le frontend séparé du backend)
 @RestController // Indique que cette classe est un contrôleur REST
 @RequestMapping("/dossiers") // Toutes les routes commenceront par /dossiers
 public class DossierController {
@@ -234,5 +235,7 @@ public class DossierController {
 //        // Retourne le produit modifié avec un statut 204 (No Content)
 //        return new ResponseEntity<>(dossier, HttpStatus.NO_CONTENT);
 //    }
+
+
 
 
