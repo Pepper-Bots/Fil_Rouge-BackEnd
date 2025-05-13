@@ -1,6 +1,7 @@
 package com.hrizzon2.demotest.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -17,6 +18,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -44,6 +46,10 @@ public class SecurityConfig {
         this.userDetailsService = userDetailsService;
         this.jwtFilter = jwtFilter;
     }
+
+    @Value("${app.cors.origins}")
+    private String corsOrigins;
+
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
@@ -79,10 +85,10 @@ public class SecurityConfig {
 
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(List.of("*")); // ou origine précise si tu veux plus de sécurité
+        corsConfiguration.setAllowedOrigins(Arrays.asList(corsOrigins.split(","))); // Utilise la propriété
         corsConfiguration.setAllowedMethods(List.of("GET", "POST", "DELETE", "PUT", "PATCH"));
         corsConfiguration.setAllowedHeaders(List.of("*"));
-
+        corsConfiguration.setAllowCredentials(true);  // Important pour les sessions et l'authentification basée sur les cookies
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfiguration);
         return source;

@@ -9,7 +9,6 @@ import com.hrizzon2.demotest.security.AppUserDetails;
 import com.hrizzon2.demotest.security.ISecurityUtils;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.hibernate.query.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -53,10 +52,23 @@ public class DossierService {
 
     /**
      * Récupère les dossiers avec pagination.
+     * Note: Cette méthode nécessite que DossierDao implémente ou hérite d'une interface
+     * avec la méthode findAll(Pageable) retournant un org.springframework.data.domain.Page
      */
     @Transactional
-    public Page<Dossier> findDossiersPaginated(Pageable pageable) {
-        return dossierDao.findAll(pageable);
+    public List<Dossier> findDossiersPaginated(Pageable pageable) {
+        // Si la pagination n'est pas directement supportée par votre DAO,
+        // on peut implémenter une pagination manuelle ou retourner la liste complète
+        List<Dossier> allDossiers = dossierDao.findAll();
+
+        // Pagination manuelle basique (non optimale pour les grands volumes de données)
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), allDossiers.size());
+
+        if (start >= allDossiers.size()) {
+            return java.util.Collections.emptyList();
+        }
+        return allDossiers.subList(start, end);
     }
 
     /**
@@ -80,6 +92,7 @@ public class DossierService {
      */
     @Transactional
     public Dossier create(Dossier dossier, AppUserDetails userDetails) {
+
         // Définit l'admin créateur
         dossier.setCreateur((Admin) userDetails.getUser());
 
@@ -89,6 +102,7 @@ public class DossierService {
             statut.setId(1);
             dossier.setStatutDossier(statut);
         }
+
         // Force la création d'un nouveau dossier
         dossier.setId(null);
 
@@ -150,7 +164,8 @@ public class DossierService {
     private boolean isAuthorized(Dossier dossier, AppUserDetails userDetails) {
         String role = securityUtils.getRole(userDetails);
         return role.equals("ROLE_ADMIN") ||
-                dossier.getCreateur().getId().equals(userDetails.getUser().getId());
+                (dossier.getCreateur() != null &&
+                        dossier.getCreateur().getId().equals(userDetails.getUser().getId()));
     }
 
 }

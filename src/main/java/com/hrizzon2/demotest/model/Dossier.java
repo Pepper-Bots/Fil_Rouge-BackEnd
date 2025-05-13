@@ -78,13 +78,39 @@ public class Dossier {
     private LocalDateTime lastUpdated;
 
     /**
+     * Date et heure de modification du dossier.
+     */
+    @Column(name = "date_modification")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime dateModification;
+
+    /**
      * Met à jour automatiquement la date de dernière modification.
      */
     @PrePersist
     @PreUpdate
     public void updateTimeStamp() {
         this.lastUpdated = LocalDateTime.now();
+        this.dateModification = LocalDateTime.now(); // Synchroniser les deux champs
     }
+
+//    /**
+//     * Récupère la date de modification du dossier.
+//     *
+//     * @return La date de modification
+//     */
+//    public LocalDateTime getDateModification() {
+//        return dateModification;
+//    }
+//
+//    /**
+//     * Définit la date de modification du dossier.
+//     *
+//     * @param dateModification La nouvelle date de modification
+//     */
+//    public void setDateModification(LocalDateTime dateModification) {
+//        this.dateModification = dateModification;
+//    }
 
     /**
      * Lien vers le stagiaire concerné.
@@ -98,6 +124,7 @@ public class Dossier {
     /**
      * Lien vers la formation concernée.
      */
+    @Getter
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "formation_id", nullable = false)
@@ -133,6 +160,7 @@ public class Dossier {
     public String getNomCreateur() {
         return (createur != null) ? createur.getLastName() : null;
     }
+
 }
 
 // TODO -> orphanRemoval = true ?

@@ -16,7 +16,7 @@ public class StagiaireMapper {
         dto.setLastName(stagiaire.getLastName());
         dto.setFirstName(stagiaire.getFirstName());
         dto.setEmail(stagiaire.getEmail());
-        dto.setPhone(stagiaire.getPhone());
+        dto.setPhone(stagiaire.getPhone_number());
         return dto;
     }
 
@@ -27,7 +27,7 @@ public class StagiaireMapper {
         stagiaire.setLastName(dto.getLastName());
         stagiaire.setFirstName(dto.getFirstName());
         stagiaire.setEmail(dto.getEmail());
-        stagiaire.setPhone(dto.getPhone());
+        stagiaire.setPhone_number(dto.getPhone());
         return stagiaire;
     }
 

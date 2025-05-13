@@ -13,11 +13,30 @@ VALUES (1, 'RESPONSABLE_ETABLISSEMENT', 'SUPER_ADMIN'),
        (3, 'ASSISTANT_VIE_SCOLAIRE', 'MODERATEUR'),
        (4, 'ASSISTANT_ADMINISTRATIF', 'BASIQUE');
 
-INSERT INTO stagiaire (id, date_naissance, numero_de_telephone, adresse)
+INSERT INTO stagiaire (id, date_naissance, phone_number, adresse)
 VALUES (1, '1990-03-01', '0660606060', '12 rue des Rosses');
 
+-- Insertion de 10 formations dans la table formation (PLACER CECI AVANT L'INSERTION DES DOSSIERS)
+INSERT INTO formation (id, titre, description, date_debut, date_fin)
+VALUES (1, 'Développement Web Front-End', 'Apprendre HTML, CSS, JavaScript et React.', '2025-06-01', '2025-08-30'),
+       (2, 'Développement Web Back-End', 'Apprentissage de Node.js, Express et bases de données.', '2025-07-01',
+        '2025-09-30'),
+       (3, 'Full Stack Web', 'Formation complète front-end et back-end avec projets pratiques.', '2025-06-15',
+        '2025-10-15'),
+       (4, 'Sécurité Réseaux', 'Introduction à la sécurité des réseaux informatiques.', '2025-05-20', '2025-07-20'),
+       (5, 'Pentesting - Tests d\'intrusion', 'Découverte des techniques d\'intrusion et d\'audit.', '2025-06-10',
+        '2025-09-10'),
+       (6, 'Développement Web avec Java Spring', 'Conception d\'applications web sécurisées avec Spring Boot.',
+        '2025-07-05', '2025-10-05'),
+       (7, 'Cyberdéfense et SOC', 'Mise en place d\'un centre opérationnel de sécurité.', '2025-08-01', '2025-10-31'),
+       (8, 'Développement Web avec PHP et Laravel', 'Projet web avec PHP, MySQL et le framework Laravel.', '2025-05-01',
+        '2025-07-31'),
+       (9, 'Sécurité des Applications Web', 'Protection des applis web contre les vulnérabilités courantes.',
+        '2025-07-10', '2025-09-20'),
+       (10, 'Initiation à la cybersécurité', 'Panorama des menaces et bonnes pratiques en entreprise.', '2025-06-05',
+        '2025-08-05');
 
--- Insertion de 20 dossiers dans la table dossier
+-- Insertion de 20 dossiers dans la table dossier (APRÈS L'INSERTION DES FORMATIONS)
 INSERT INTO dossier (id, code_dossier, statut_dossier_id, statut_document_id,
                      date_de_creation, last_updated, stagiaire_id, formation_id, createur_id)
 VALUES (1, 'DSR001', 2, 1, '2025-01-05 09:00:00', '2025-01-07 14:00:00', 1, 1, 1),   -- Java avancé
@@ -39,26 +58,8 @@ VALUES (1, 'DSR001', 2, 1, '2025-01-05 09:00:00', '2025-01-07 14:00:00', 1, 1, 1
        (17, 'DSR017', 2, 1, '2025-03-20 11:30:00', '2025-03-22 12:50:00', 17, 5, 1), -- Cybersécurité
        (18, 'DSR018', 3, 2, '2025-03-25 15:10:00', '2025-03-26 17:25:00', 18, 6, 2), -- DevOps
        (19, 'DSR019', 1, 3, '2025-04-01 09:30:00', '2025-04-02 10:40:00', 19, 1, 3), -- Java avancé
-       (20, 'DSR020', 2, 1, '2025-04-05 13:00:00', '2025-04-06 15:10:00', 20, 2, 4);-- Développement Web
-
-INSERT INTO formation (id, titre, description, date_debut, date_fin)
-VALUES (1, 'Développement Web Front-End', 'Apprendre HTML, CSS, JavaScript et React.', '2025-06-01', '2025-08-30'),
-       (2, 'Développement Web Back-End', 'Apprentissage de Node.js, Express et bases de données.', '2025-07-01',
-        '2025-09-30'),
-       (3, 'Full Stack Web', 'Formation complète front-end et back-end avec projets pratiques.', '2025-06-15',
-        '2025-10-15'),
-       (4, 'Sécurité Réseaux', 'Introduction à la sécurité des réseaux informatiques.', '2025-05-20', '2025-07-20'),
-       (5, 'Pentesting - Tests d\'intrusion', 'Découverte des techniques d\'intrusion et d\'audit.', '2025-06-10',
-        '2025-09-10'),
-       (6, 'Développement Web avec Java Spring', 'Conception d\'applications web sécurisées avec Spring Boot.',
-        '2025-07-05', '2025-10-05'),
-       (7, 'Cyberdéfense et SOC', 'Mise en place d\'un centre opérationnel de sécurité.', '2025-08-01', '2025-10-31'),
-       (8, 'Développement Web avec PHP et Laravel', 'Projet web avec PHP, MySQL et le framework Laravel.', '2025-05-01',
-        '2025-07-31'),
-       (9, 'Sécurité des Applications Web', 'Protection des applis web contre les vulnérabilités courantes.',
-        '2025-07-10', '2025-09-20'),
-       (10, 'Initiation à la cybersécurité', 'Panorama des menaces et bonnes pratiques en entreprise.', '2025-06-05',
-        '2025-08-05');
+       (20, 'DSR020', 2, 1, '2025-04-05 13:00:00', '2025-04-06 15:10:00', 20, 2, 4);
+-- Développement Web
 
 -- Création des modèles de message
 INSERT INTO notification_template (id, type, message)
@@ -112,10 +113,10 @@ VALUES (24, 4, 16),
        (28, 4, 20);
 
 INSERT INTO statut_document (id, nom)
-VALUES (1, ENVOYE),
-       (2, VALIDE),
-       (3, REFUSE),
-       (4, MANQUANT);
+VALUES (1, 'ENVOYE'), -- Correction : guillemets simples
+       (2, 'VALIDE'), -- Correction : guillemets simples
+       (3, 'REFUSE'), -- Correction : guillemets simples
+       (4, 'MANQUANT'); -- Correction : guillemets simples
 
 SELECT *
 FROM user

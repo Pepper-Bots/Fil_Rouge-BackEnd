@@ -11,4 +11,6 @@ import java.util.Optional;
 public interface DossierDao extends JpaRepository<Dossier, Integer> {
 
     Optional<Dossier> findById(int id);
+
+    Optional<Dossier> findByCodeDossier(String codeDossier);
 }
