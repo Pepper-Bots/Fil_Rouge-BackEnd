@@ -2,8 +2,12 @@ package com.hrizzon2.demotest.dao;
 
 import com.hrizzon2.demotest.model.Stagiaire;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 // Repository qui parle à la base de données
@@ -22,4 +26,12 @@ public interface StagiaireDao extends JpaRepository<Stagiaire, Integer> {
      * @return Optional contenant le stagiaire s’il existe
      */
     Optional<Stagiaire> findByEmail(String email);
+
+    List<Stagiaire> findByVilleId(Long villeId);
+
+    @Query("SELECT s FROM Stagiaire s WHERE s.dateInscription BETWEEN :dateDebut AND :dateFin")
+    List<Stagiaire> findBetweenDates(@Param("dateDebut") LocalDate dateDebut, @Param("dateFin") LocalDate dateFin);
+
+    @Query("SELECT s FROM Stagiaire s JOIN s.dossiers d WHERE d.statut = :statut")
+    List<Stagiaire> findByDossierStatut(@Param("statut") String statut);
 }

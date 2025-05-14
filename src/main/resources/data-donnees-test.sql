@@ -4,7 +4,26 @@ VALUES ('Alice', 'Dupont', 'alice@example.com', 'password1', 'ADMINISTRATEUR'),
        ('Bruno', 'Durand', 'bruno@example.com', 'password2', 'ADMINISTRATEUR'),
        ('Cécile', 'Martin', 'cecile@example.com', 'password3', 'ADMINISTRATEUR'),
        ('David', 'Bernard', 'david@example.com', 'password4', 'ADMINISTRATEUR'),
-       ('Dupont', 'Romain', 'romain_dupont@live.fr', 'root', 'STAGIAIRE');
+       ('Dupont', 'Romain', 'romain_dupont@live.fr', 'root', 'STAGIAIRE'),
+       ('Martin', 'Julie', 'julie.martin@example.com', 'pwdjulie', 'STAGIAIRE'),
+       ('Legrand', 'Paul', 'paul.legrand@example.com', 'pwdpaul', 'STAGIAIRE'),
+       ('Durand', 'Sophie', 'sophie.durand@example.com', 'pwdsophie', 'STAGIAIRE'),
+       ('Petit', 'Lucas', 'lucas.petit@example.com', 'pwdlucas', 'STAGIAIRE'),
+       ('Moreau', 'Camille', 'camille.moreau@example.com', 'pwdcamille', 'STAGIAIRE'),
+       ('Fournier', 'Léo', 'leo.fournier@example.com', 'pwdleo', 'STAGIAIRE'),
+       ('Garnier', 'Emma', 'emma.garnier@example.com', 'pwdemma', 'STAGIAIRE'),
+       ('Henry', 'Maxime', 'maxime.henry@example.com', 'pwdmaxime', 'STAGIAIRE'),
+       ('Roux', 'Manon', 'manon.roux@example.com', 'pwdmanon', 'STAGIAIRE'),
+       ('Guerin', 'Tom', 'tom.guerin@example.com', 'pwdtom', 'STAGIAIRE'),
+       ('Schmitt', 'Chloé', 'chloe.schmitt@example.com', 'pwdchloe', 'STAGIAIRE'),
+       ('Robert', 'Nathan', 'nathan.robert@example.com', 'pwdnathan', 'STAGIAIRE'),
+       ('Lemoine', 'Élise', 'elise.lemoine@example.com', 'pwdelise', 'STAGIAIRE'),
+       ('Blanc', 'Axel', 'axel.blanc@example.com', 'pwdaxel', 'STAGIAIRE'),
+       ('Chevalier', 'Laura', 'laura.chevalier@example.com', 'pwdlaura', 'STAGIAIRE'),
+       ('Faure', 'Noah', 'noah.faure@example.com', 'pwdnoah', 'STAGIAIRE'),
+       ('André', 'Sarah', 'sarah.andre@example.com', 'pwdsarah', 'STAGIAIRE'),
+       ('Renaud', 'Julien', 'julien.renaud@example.com', 'pwdjulien', 'STAGIAIRE'),
+       ('Collet', 'Anaïs', 'anais.collet@example.com', 'pwdanais', 'STAGIAIRE');
 
 -- Étape 2 : insérer dans ADMIN (en réutilisant les IDs ci-dessus)
 INSERT INTO admin (id, type_admin, niveau_droit)
@@ -33,7 +52,7 @@ VALUES (5, '1990-03-01', '0660606060', '12 rue des Rosses'),
        (21, '1984-11-09', '0655012374', '72 rue des Prés'),
        (22, '1996-04-04', '0689234578', '16 rue Pasteur'),
        (23, '1999-01-01', '0678123999', '91 boulevard Saint-Michel'),
-       (24, '1989-12-12', '0634567890', '2 avenue du Général Leclerc')
+       (24, '1989-12-12', '0634567890', '2 avenue du Général Leclerc'),
        (25, '1992-05-03', '0708090103', '28, rue des Bleuets');
 
 -- Insertion de 10 formations dans la table formation (PLACER CECI AVANT L'INSERTION DES DOSSIERS)
@@ -138,6 +157,4 @@ VALUES (1, 'ENVOYE'), -- Correction : guillemets simples
        (3, 'REFUSE'), -- Correction : guillemets simples
        (4, 'MANQUANT'); -- Correction : guillemets simples
 
-SELECT *
-FROM user
-WHERE id = 1;
+

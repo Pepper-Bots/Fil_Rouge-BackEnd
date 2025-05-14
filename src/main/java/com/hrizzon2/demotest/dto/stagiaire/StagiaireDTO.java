@@ -5,6 +5,8 @@ package com.hrizzon2.demotest.dto.stagiaire;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class StagiaireDTO {
@@ -14,6 +16,9 @@ public class StagiaireDTO {
     private String firstName;
     private String email;
     private Number phone;
+    private Long villeId;
+    private String villeNom;
+    private List<Long> dossiersIds;
 
 }
 

@@ -6,9 +6,11 @@ import lombok.Getter;
 public enum StatutInscription {
 
     EN_ATTENTE("En attente"),
-    ACCEPTE("Accepté"),
-    REFUSE("Refusé"),
-    ANNULE("Annulé");
+    VALIDEE("Validée"),
+    REFUSEE("Refusée"),
+    ANNULEE("Annulée"),
+    TERMINEE("Terminée"),
+    EN_COURS("En cours");
 
     private final String label;
 
@@ -17,3 +19,4 @@ public enum StatutInscription {
     }
 
 }
+

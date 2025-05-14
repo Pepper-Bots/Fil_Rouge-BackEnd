@@ -1,5 +1,6 @@
 package com.hrizzon2.demotest.service.stagiaire;
 
+import com.hrizzon2.demotest.dto.stagiaire.StagiaireDTO;
 import com.hrizzon2.demotest.model.Formation;
 import com.hrizzon2.demotest.model.Inscription;
 import com.hrizzon2.demotest.model.Stagiaire;
@@ -10,11 +11,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface StagiaireService {
+
     List<Stagiaire> findAll();
 
     Optional<Stagiaire> findById(Integer id);
 
-    Stagiaire save(Stagiaire stagiaire);
+    StagiaireDTO save(Stagiaire stagiaireDTO);
 
     void deleteById(Integer id);
 
@@ -27,4 +29,5 @@ public interface StagiaireService {
     List<Stagiaire> findInscritsEntre(LocalDate debut, LocalDate fin);
 
     Inscription inscrireStagiaire(Stagiaire stagiaire, Formation formation);
+
 }

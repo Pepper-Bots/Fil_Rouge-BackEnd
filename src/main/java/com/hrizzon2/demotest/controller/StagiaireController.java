@@ -1,5 +1,8 @@
 package com.hrizzon2.demotest.controller;
 
+import com.hrizzon2.demotest.dto.stagiaire.StagiaireCreateDTO;
+import com.hrizzon2.demotest.dto.stagiaire.StagiaireDTO;
+import com.hrizzon2.demotest.mapper.StagiaireMapper;
 import com.hrizzon2.demotest.model.Formation;
 import com.hrizzon2.demotest.model.Stagiaire;
 import com.hrizzon2.demotest.model.enums.StatutInscription;
@@ -87,15 +90,16 @@ public class StagiaireController {
     /**
      * Crée un nouveau stagiaire, avec ou sans inscription à une formation.
      *
-     * @param stagiaire   Données du stagiaire
-     * @param formationId ID de la formation (optionnel)
+     * @param stagiaireCreateDTO Données du stagiaire
+     * @param formationId        ID de la formation (optionnel)
      * @return Stagiaire créé
      */
     @PostMapping("/stagiaire")
-    public ResponseEntity<Stagiaire> createStagiaire(@RequestBody @Valid Stagiaire stagiaire,
-                                                     @RequestParam(required = false) Integer formationId) {
+    public ResponseEntity<StagiaireDTO> createStagiaire(@RequestBody @Valid StagiaireCreateDTO stagiaireCreateDTO,
+                                                        @RequestParam(required = false) Integer formationId) {
 
-        stagiaireService.save(stagiaire);
+        Stagiaire stagiaire = StagiaireMapper.fromCreateDTO(stagiaireCreateDTO);  // Conversion du DTO vers l'entité
+        StagiaireDTO stagiaireDTO = stagiaireService.save(stagiaire);  // Sauvegarde via le service
 
         // Si formationId est fourni, on associe le stagiaire à cette formation
         if (formationId != null) {
@@ -105,7 +109,7 @@ public class StagiaireController {
             }
             stagiaireService.inscrireStagiaire(stagiaire, formationOpt.get());
         }
-        return new ResponseEntity<>(stagiaire, HttpStatus.CREATED);
+        return new ResponseEntity<>(stagiaireDTO, HttpStatus.CREATED);
     }
 
     /**

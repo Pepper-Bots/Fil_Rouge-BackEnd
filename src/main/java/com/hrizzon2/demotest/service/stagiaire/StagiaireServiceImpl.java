@@ -2,10 +2,13 @@ package com.hrizzon2.demotest.service.stagiaire;
 
 import com.hrizzon2.demotest.dao.InscriptionDao;
 import com.hrizzon2.demotest.dao.StagiaireDao;
+import com.hrizzon2.demotest.dto.stagiaire.StagiaireDTO;
+import com.hrizzon2.demotest.mapper.StagiaireMapper;
 import com.hrizzon2.demotest.model.Formation;
 import com.hrizzon2.demotest.model.Inscription;
 import com.hrizzon2.demotest.model.Stagiaire;
 import com.hrizzon2.demotest.model.enums.StatutInscription;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,11 +22,13 @@ public class StagiaireServiceImpl implements StagiaireService {
 
     private final StagiaireDao stagiaireDao;
     private final InscriptionDao inscriptionDao;
+    private final StagiaireMapper stagiaireMapper;
 
     @Autowired
-    public StagiaireServiceImpl(StagiaireDao stagiaireDao, InscriptionDao inscriptionDao) {
+    public StagiaireServiceImpl(StagiaireDao stagiaireDao, InscriptionDao inscriptionDao, StagiaireMapper stagiaireMapper) {
         this.stagiaireDao = stagiaireDao;
         this.inscriptionDao = inscriptionDao;
+        this.stagiaireMapper = stagiaireMapper;
     }
 
     @Override
@@ -37,8 +42,17 @@ public class StagiaireServiceImpl implements StagiaireService {
     }
 
     @Override
-    public Stagiaire save(Stagiaire stagiaire) {
-        return stagiaireDao.save(stagiaire);
+    @Transactional
+    public StagiaireDTO save(Stagiaire stagiaireDTO) {
+        // Conversion du DTO en entité Stagiaire
+        Stagiaire stagiaire = StagiaireMapper.toEntity(stagiaireDTO);
+
+        // Sauvegarde de l'entité dans la base de données
+        stagiaire = stagiaireDao.save(stagiaire);
+
+        // Conversion de l'entité Stagiaire en DTO et retour
+        return StagiaireMapper.toDTO(stagiaire);
+
     }
 
     @Override

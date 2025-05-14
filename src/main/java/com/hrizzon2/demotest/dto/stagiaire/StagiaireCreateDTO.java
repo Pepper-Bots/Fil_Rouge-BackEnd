@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class StagiaireCreateDTO {
@@ -21,4 +23,8 @@ public class StagiaireCreateDTO {
 
     @Pattern(regexp = "^(\\+33|0)[1-9](\\d{2}){4}$")
     private Number phone;
+
+    private Long villeId;
+
+    private List<Long> dossiersIds;
 }

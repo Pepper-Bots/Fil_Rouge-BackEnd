@@ -1,9 +1,6 @@
 package com.hrizzon2.demotest.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,9 +8,22 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Représente un stagiaire, qui hérite de la classe User.
- * Contient des informations personnelles spécifiques ainsi que les relations
- * avec les événements, dossiers et inscriptions.
+ * Représente un stagiaire dans le système.
+ *
+ * <p>Cette classe hérite de {@link User} et contient des informations
+ * personnelles supplémentaires spécifiques aux stagiaires, telles que
+ * la date de naissance, le numéro de téléphone et l'adresse.</p>
+ *
+ * <p>Elle établit également des relations avec d'autres entités comme
+ * {@link Evenement}, {@link Dossier} et {@link Inscription}.</p>
+ *
+ * <p>La valeur de discrimination dans la base de données est {@code STAGIAIRE},
+ * utilisée dans la stratégie d’héritage JOINED.</p>
+ *
+ * @see User
+ * @see Evenement
+ * @see Dossier
+ * @see Inscription
  */
 @Getter
 @Setter
@@ -23,30 +33,37 @@ public class Stagiaire extends User {
 
     /**
      * Date de naissance du stagiaire.
+     * Ce champ est obligatoire.
      */
+    @Temporal(jakarta.persistence.TemporalType.DATE)
     @Column(nullable = false)
     private Date dateNaissance;
 
     /**
      * Numéro de téléphone du stagiaire.
+     * Ce champ est obligatoire.
      */
     @Column(nullable = false)
     private Number phone_number;
 
     /**
-     * Adresse du stagiaire.
+     * Adresse postale du stagiaire.
+     * Ce champ est obligatoire.
      */
     @Column(nullable = false)
     private String adresse;
 
+    @Column(nullable = false)
+    private String ville;
+
     /**
-     * Liste des événements liés à ce stagiaire.
+     * Liste des événements associés à ce stagiaire.
      */
     @OneToMany(mappedBy = "stagiaire")
     private List<Evenement> evenements;
 
     /**
-     * Liste des dossiers liés à ce stagiaire.
+     * Liste des dossiers associés à ce stagiaire.
      */
     @OneToMany(mappedBy = "stagiaire")
     private List<Dossier> dossiers;
