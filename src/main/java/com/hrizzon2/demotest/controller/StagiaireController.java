@@ -30,11 +30,13 @@ public class StagiaireController {
 
     private final StagiaireService stagiaireService;
     private final FormationService formationService;
+    private final StagiaireMapper stagiaireMapper;
 
     @Autowired
-    public StagiaireController(StagiaireService stagiaireService, FormationService formationService) {
+    public StagiaireController(StagiaireService stagiaireService, FormationService formationService, StagiaireMapper stagiaireMapper) {
         this.stagiaireService = stagiaireService;
         this.formationService = formationService;
+        this.stagiaireMapper = stagiaireMapper;
     }
 
     /**
@@ -98,8 +100,8 @@ public class StagiaireController {
     public ResponseEntity<StagiaireDTO> createStagiaire(@RequestBody @Valid StagiaireCreateDTO stagiaireCreateDTO,
                                                         @RequestParam(required = false) Integer formationId) {
 
-        Stagiaire stagiaire = StagiaireMapper.fromCreateDTO(stagiaireCreateDTO);  // Conversion du DTO vers l'entité
-        StagiaireDTO stagiaireDTO = stagiaireService.save(stagiaire);  // Sauvegarde via le service
+        Stagiaire stagiaire = stagiaireMapper.fromCreateDTO(stagiaireCreateDTO);  // Conversion du DTO vers l'entité
+        StagiaireDTO savedStagiaireDTO = stagiaireService.save(stagiaire);  // Sauvegarde via le service
 
         // Si formationId est fourni, on associe le stagiaire à cette formation
         if (formationId != null) {
@@ -109,7 +111,7 @@ public class StagiaireController {
             }
             stagiaireService.inscrireStagiaire(stagiaire, formationOpt.get());
         }
-        return new ResponseEntity<>(stagiaireDTO, HttpStatus.CREATED);
+        return new ResponseEntity<>(savedStagiaireDTO, HttpStatus.CREATED);
     }
 
     /**

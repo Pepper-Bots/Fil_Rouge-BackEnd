@@ -15,7 +15,7 @@ public class StatutDossier {
     protected Integer id;
 
     @Column(nullable = false)
-    protected String nom;
+    protected String nomStatut;
 
 }
 

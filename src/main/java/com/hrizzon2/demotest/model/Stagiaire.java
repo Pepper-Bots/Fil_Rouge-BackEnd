@@ -53,8 +53,9 @@ public class Stagiaire extends User {
     @Column(nullable = false)
     private String adresse;
 
-    @Column(nullable = false)
-    private String ville;
+    @ManyToOne
+    @JoinColumn(name = "ville_id", nullable = false)
+    private Ville ville;
 
     /**
      * Liste des événements associés à ce stagiaire.
@@ -72,7 +73,7 @@ public class Stagiaire extends User {
      * Liste des inscriptions effectuées par ce stagiaire.
      */
     @OneToMany(mappedBy = "stagiaire")
-    private List<Inscription> inscriptions;
+    private List<Inscription> dateInscription;
 
 
 }

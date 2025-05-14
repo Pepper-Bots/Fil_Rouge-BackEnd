@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class StagiaireServiceImpl implements StagiaireService {
@@ -43,16 +42,18 @@ public class StagiaireServiceImpl implements StagiaireService {
 
     @Override
     @Transactional
-    public StagiaireDTO save(Stagiaire stagiaireDTO) {
-        // Conversion du DTO en entité Stagiaire
-        Stagiaire stagiaire = StagiaireMapper.toEntity(stagiaireDTO);
+    public StagiaireDTO save(Stagiaire stagiaire) { // La signature de la méthode doit correspondre à l'interface
+        // Conversion de l'entité Stagiaire en DTO (si nécessaire avant de sauvegarder)
+        StagiaireDTO stagiaireDTO = stagiaireMapper.toDTO(stagiaire);
+
+        // Conversion du DTO en entité Stagiaire pour la sauvegarde
+        Stagiaire stagiaireEntity = stagiaireMapper.fromDTO(stagiaireDTO); // Utilise l'instance injectée
 
         // Sauvegarde de l'entité dans la base de données
-        stagiaire = stagiaireDao.save(stagiaire);
+        Stagiaire savedStagiaire = stagiaireDao.save(stagiaireEntity);
 
-        // Conversion de l'entité Stagiaire en DTO et retour
-        return StagiaireMapper.toDTO(stagiaire);
-
+        // Conversion de l'entité Stagiaire sauvegardée en DTO et retour
+        return stagiaireMapper.toDTO(savedStagiaire); // Utilise l'instance injectée
     }
 
     @Override
@@ -76,19 +77,19 @@ public class StagiaireServiceImpl implements StagiaireService {
     public List<Stagiaire> findByStatutInscription(StatutInscription statut) {
         return stagiaireDao.findAll()
                 .stream()
-                .filter(s -> s.getInscriptions().stream().anyMatch(i -> i.getStatut().equals(statut)))
-                .collect(Collectors.toList());
+                .filter(s -> s.getDateInscription().stream().anyMatch(i -> i.getStatut().equals(statut)))
+                .toList();
     }
 
     @Override
     public List<Stagiaire> findInscritsEntre(LocalDate debut, LocalDate fin) {
         return stagiaireDao.findAll()
                 .stream()
-                .filter(s -> s.getInscriptions().stream().anyMatch(i ->
-                        i.getDateCreation() != null &&
-                                !i.getDateCreation().isBefore(debut) &&
-                                !i.getDateCreation().isAfter(fin)))
-                .collect(Collectors.toList());
+                .filter(s -> s.getDateInscription().stream().anyMatch(i ->
+                        i.getDateInscription() != null &&
+                                !i.getDateInscription().isBefore(debut) &&
+                                !i.getDateInscription().isAfter(fin)))
+                .toList();
     }
 
     @Override
@@ -96,7 +97,7 @@ public class StagiaireServiceImpl implements StagiaireService {
         Inscription inscription = new Inscription();
         inscription.setStagiaire(stagiaire);
         inscription.setFormation(formation);
-        inscription.setDateCreation(LocalDate.now());
+        inscription.setDateInscription(LocalDate.now());
         inscription.setStatut(StatutInscription.EN_ATTENTE);
 
         return inscriptionDao.save(inscription);

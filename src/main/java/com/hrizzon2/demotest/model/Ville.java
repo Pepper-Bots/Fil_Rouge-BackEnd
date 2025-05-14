@@ -1,9 +1,13 @@
 package com.hrizzon2.demotest.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "ville")
 public class Ville {
@@ -14,7 +18,8 @@ public class Ville {
 
     private String codePostal;
 
-    private String nomVille;
+    @Column(unique = false)
+    private String nomville;
 
     private String villeStagiaire;
 
@@ -24,4 +29,6 @@ public class Ville {
 
     @OneToMany(mappedBy = "ville")
     private List<Stagiaire> stagiaires;
+
+
 }

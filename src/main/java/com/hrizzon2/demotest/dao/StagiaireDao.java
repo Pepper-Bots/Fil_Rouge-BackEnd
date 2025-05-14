@@ -27,11 +27,12 @@ public interface StagiaireDao extends JpaRepository<Stagiaire, Integer> {
      */
     Optional<Stagiaire> findByEmail(String email);
 
-    List<Stagiaire> findByVilleId(Long villeId);
+    @Query("SELECT s FROM Stagiaire s JOIN s.ville v WHERE v.idVille = :idVille")
+    List<Stagiaire> findByidVille(@Param("idVille") Integer idVille);
 
-    @Query("SELECT s FROM Stagiaire s WHERE s.dateInscription BETWEEN :dateDebut AND :dateFin")
+    @Query("SELECT s FROM Stagiaire s JOIN s.dateInscription i WHERE i.dateInscription BETWEEN :dateDebut AND :dateFin")
     List<Stagiaire> findBetweenDates(@Param("dateDebut") LocalDate dateDebut, @Param("dateFin") LocalDate dateFin);
 
-    @Query("SELECT s FROM Stagiaire s JOIN s.dossiers d WHERE d.statut = :statut")
+    @Query("SELECT s FROM Stagiaire s JOIN s.dossiers d JOIN d.statutDossier sd WHERE sd.nomStatut = :statut")
     List<Stagiaire> findByDossierStatut(@Param("statut") String statut);
 }

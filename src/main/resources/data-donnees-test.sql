@@ -32,28 +32,30 @@ VALUES (1, 'RESPONSABLE_ETABLISSEMENT', 'SUPER_ADMIN'),
        (3, 'ASSISTANT_VIE_SCOLAIRE', 'MODERATEUR'),
        (4, 'ASSISTANT_ADMINISTRATIF', 'BASIQUE');
 
-INSERT INTO stagiaire (id, date_naissance, phone_number, adresse)
-VALUES (5, '1990-03-01', '0660606060', '12 rue des Rosses'),
-       (6, '1985-07-14', '0678451223', '8 avenue des Lilas'),
-       (7, '1992-11-22', '0654239876', '34 boulevard Victor Hugo'),
-       (8, '1980-06-30', '0612789543', '21 rue des Vignes'),
-       (9, '1978-04-19', '0634561287', '5 impasse des Fleurs'),
-       (10, '1991-01-08', '0645129384', '17 rue des Jardins'),
-       (11, '1983-09-12', '0625897412', '98 rue de la République'),
-       (12, '1994-10-02', '0678932154', '66 avenue des Champs'),
-       (13, '1987-05-06', '0612347895', '43 rue Jean Jaurès'),
-       (14, '1995-12-29', '0698123475', '7 place du Marché'),
-       (15, '1986-03-17', '0665432187', '28 rue des Cerisiers'),
-       (16, '1982-08-24', '0654891234', '13 allée des Marronniers'),
-       (17, '1993-02-11', '0689741235', '10 rue Voltaire'),
-       (18, '1981-06-05', '0623789120', '3 rue Lamartine'),
-       (19, '1990-09-23', '0678123490', '4 place de la Mairie'),
-       (20, '1988-07-30', '0698342150', '55 avenue de Paris'),
-       (21, '1984-11-09', '0655012374', '72 rue des Prés'),
-       (22, '1996-04-04', '0689234578', '16 rue Pasteur'),
-       (23, '1999-01-01', '0678123999', '91 boulevard Saint-Michel'),
-       (24, '1989-12-12', '0634567890', '2 avenue du Général Leclerc'),
-       (25, '1992-05-03', '0708090103', '28, rue des Bleuets');
+-- Insertion dans la table stagiaire en utilisant ville_id
+INSERT INTO stagiaire (id, date_naissance, phone_number, adresse, ville_id)
+VALUES (5, '1990-03-01', '0660606060', '12 rue des Rosses', 1),             -- Lyon (id_ville=1)
+       (6, '1985-07-14', '0678451223', '8 avenue des Lilas', 2),            -- Villeurbanne (id_ville=2)
+       (7, '1992-11-22', '0654239876', '34 boulevard Victor Hugo', 3),      -- Bron (id_ville=3)
+       (8, '1980-06-30', '0612789543', '21 rue des Vignes', 4),             -- Vénissieux (id_ville=4)
+       (9, '1978-04-19', '0634561287', '5 impasse des Fleurs', 5),          -- Caluire-et-Cuire (id_ville=5)
+       (10, '1991-01-08', '0645129384', '17 rue des Jardins', 6),           -- Saint-Priest (id_ville=6)
+       (11, '1983-09-12', '0625897412', '98 rue de la République', 7),      -- Écully (id_ville=7)
+       (12, '1994-10-02', '0678932154', '66 avenue des Champs', 8),         -- Oullins (id_ville=8)
+       (13, '1987-05-06', '0612347895', '43 rue Jean Jaurès', 9),           -- Tassin-la-Demi-Lune (id_ville=9)
+       (14, '1995-12-29', '0698123475', '7 place du Marché', 10),           -- Meyzieu (id_ville=10)
+       (15, '1986-03-17', '0665432187', '28 rue des Cerisiers', 11),        -- Rillieux-la-Pape (id_ville=11)
+       (16, '1982-08-24', '0654891234', '13 allée des Marronniers', 12),    -- Vaulx-en-Velin (id_ville=12)
+       (17, '1993-02-11', '0689741235', '10 rue Voltaire', 13),             -- Décines-Charpieu (id_ville=13)
+       (18, '1981-06-05', '0623789120', '3 rue Lamartine', 14),             -- Sainte-Foy-lès-Lyon (id_ville=14)
+       (19, '1990-09-23', '0678123490', '4 place de la Mairie', 15),        -- Givors (id_ville=15)
+       (20, '1988-07-30', '0698342150', '55 avenue de Paris', 16),          -- Pierre-Bénite (id_ville=16)
+       (21, '1984-11-09', '0655012374', '72 rue des Prés', 17),             -- Chassieu (id_ville=17)
+       (22, '1996-04-04', '0689234578', '16 rue Pasteur', 18),              -- Corbas (id_ville=18)
+       (23, '1999-01-01', '0678123999', '91 boulevard Saint-Michel', 19),   -- Grigny (id_ville=19)
+       (24, '1989-12-12', '0634567890', '2 avenue du Général Leclerc', 20), -- Saint-Fons (id_ville=20)
+       (25, '1992-05-03', '0708090103', '28, rue des Bleuets', 21);
+-- La Mulatière (id_ville=21)
 
 -- Insertion de 10 formations dans la table formation (PLACER CECI AVANT L'INSERTION DES DOSSIERS)
 INSERT INTO formation (id, titre, description, date_debut, date_fin)
@@ -155,6 +157,49 @@ INSERT INTO statut_document (id, nom)
 VALUES (1, 'ENVOYE'), -- Correction : guillemets simples
        (2, 'VALIDE'), -- Correction : guillemets simples
        (3, 'REFUSE'), -- Correction : guillemets simples
-       (4, 'MANQUANT'); -- Correction : guillemets simples
+       (4, 'MANQUANT');
+-- Correction : guillemets simples
 
-
+-- Insertion des villes avec des IDs spécifiques (pour l'exemple)
+INSERT INTO ville (id_ville, nomville)
+VALUES (1, 'Lyon');
+INSERT INTO ville (id_ville, nomville)
+VALUES (2, 'Villeurbanne');
+INSERT INTO ville (id_ville, nomville)
+VALUES (3, 'Bron');
+INSERT INTO ville (id_ville, nomville)
+VALUES (4, 'Vénissieux');
+INSERT INTO ville (id_ville, nomville)
+VALUES (5, 'Caluire-et-Cuire');
+INSERT INTO ville (id_ville, nomville)
+VALUES (6, 'Saint-Priest');
+INSERT INTO ville (id_ville, nomville)
+VALUES (7, 'Écully');
+INSERT INTO ville (id_ville, nomville)
+VALUES (8, 'Oullins');
+INSERT INTO ville (id_ville, nomville)
+VALUES (9, 'Tassin-la-Demi-Lune');
+INSERT INTO ville (id_ville, nomville)
+VALUES (10, 'Meyzieu');
+INSERT INTO ville (id_ville, nomville)
+VALUES (11, 'Rillieux-la-Pape');
+INSERT INTO ville (id_ville, nomville)
+VALUES (12, 'Vaulx-en-Velin');
+INSERT INTO ville (id_ville, nomville)
+VALUES (13, 'Décines-Charpieu');
+INSERT INTO ville (id_ville, nomville)
+VALUES (14, 'Sainte-Foy-lès-Lyon');
+INSERT INTO ville (id_ville, nomville)
+VALUES (15, 'Givors');
+INSERT INTO ville (id_ville, nomville)
+VALUES (16, 'Pierre-Bénite');
+INSERT INTO ville (id_ville, nomville)
+VALUES (17, 'Chassieu');
+INSERT INTO ville (id_ville, nomville)
+VALUES (18, 'Corbas');
+INSERT INTO ville (id_ville, nomville)
+VALUES (19, 'Grigny');
+INSERT INTO ville (id_ville, nomville)
+VALUES (20, 'Saint-Fons');
+INSERT INTO ville (id_ville, nomville)
+VALUES (21, 'La Mulatière');

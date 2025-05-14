@@ -19,7 +19,7 @@ public class Inscription {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private LocalDate dateCreation;
+    private LocalDate dateInscription;
     private LocalDate dateModification;
     private LocalDate dateValidation;
 
