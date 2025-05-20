@@ -25,7 +25,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "user_type")
+@DiscriminatorColumn(name = "nom_role", discriminatorType = DiscriminatorType.STRING)
 public class User {
 
 // VOIR GESTION DES DROITS AVEC UN BOOLEEN - PAGE 415 SLIDE SPRING
@@ -66,4 +66,6 @@ public class User {
     @Column(nullable = false)
     protected String password;
 
+    @Column(name = "nom_role", insertable = false, updatable = false)
+    protected String nomRole;
 }

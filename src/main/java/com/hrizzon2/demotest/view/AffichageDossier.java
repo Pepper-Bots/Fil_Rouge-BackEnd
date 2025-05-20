@@ -1,6 +1,8 @@
 package com.hrizzon2.demotest.view;
 // (peu utile avec Angular car pas de Thymeleaf)
 
+// TODO A demander si bonne pratique
+
 /**
  * Vues utilisées pour le filtrage JSON avec @JsonView.
  * Permet de contrôler quelles données sont exposées selon le contexte.
