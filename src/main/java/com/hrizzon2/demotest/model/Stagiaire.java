@@ -1,5 +1,7 @@
 package com.hrizzon2.demotest.model;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.hrizzon2.demotest.view.AffichageDossier;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,6 +33,16 @@ import java.util.List;
 @DiscriminatorValue("STAGIAIRE")
 public class Stagiaire extends User {
 
+
+    @Column(nullable = false)
+    private boolean active = false;  // ou enabled, mais ici tu as utilisé active
+
+    @Column(nullable = false)
+    private boolean premiereConnexion = true;
+
+    @JsonView(AffichageDossier.Stagiaire.class)
+    String numero;
+
     /**
      * Date de naissance du stagiaire.
      * Ce champ est obligatoire.
@@ -44,7 +56,7 @@ public class Stagiaire extends User {
      * Ce champ est obligatoire.
      */
     @Column(nullable = false)
-    private Number phone_number;
+    private String phoneNumber;
 
     /**
      * Adresse postale du stagiaire.
@@ -73,7 +85,7 @@ public class Stagiaire extends User {
      * Liste des inscriptions effectuées par ce stagiaire.
      */
     @OneToMany(mappedBy = "stagiaire")
-    private List<Inscription> dateInscription;
+    private List<Inscription> inscriptions;
 
 
 }

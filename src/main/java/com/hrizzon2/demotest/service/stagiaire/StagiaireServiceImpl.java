@@ -77,7 +77,7 @@ public class StagiaireServiceImpl implements StagiaireService {
     public List<Stagiaire> findByStatutInscription(StatutInscription statut) {
         return stagiaireDao.findAll()
                 .stream()
-                .filter(s -> s.getDateInscription().stream().anyMatch(i -> i.getStatut().equals(statut)))
+                .filter(s -> s.getInscriptions().stream().anyMatch(i -> i.getStatut().equals(statut)))
                 .toList();
     }
 
@@ -85,7 +85,7 @@ public class StagiaireServiceImpl implements StagiaireService {
     public List<Stagiaire> findInscritsEntre(LocalDate debut, LocalDate fin) {
         return stagiaireDao.findAll()
                 .stream()
-                .filter(s -> s.getDateInscription().stream().anyMatch(i ->
+                .filter(s -> s.getInscriptions().stream().anyMatch(i ->
                         i.getDateInscription() != null &&
                                 !i.getDateInscription().isBefore(debut) &&
                                 !i.getDateInscription().isAfter(fin)))

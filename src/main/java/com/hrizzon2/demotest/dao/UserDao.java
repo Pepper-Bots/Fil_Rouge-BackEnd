@@ -4,6 +4,8 @@ import com.hrizzon2.demotest.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface UserDao extends JpaRepository<User, Integer> {
 
@@ -11,5 +13,9 @@ public interface UserDao extends JpaRepository<User, Integer> {
     // Par exemple, trouver un utilisateur par son nom d'utilisateur (si c'est une propriété de User)
     // List<User> findByUsername(String username);
     // TODO créer une méthode findByAdmin pour les notifs
+
+    Optional<User> findByEmail(String email);
+
+    Optional<User> findByJetonVerificationEmail(String token);
 
 }

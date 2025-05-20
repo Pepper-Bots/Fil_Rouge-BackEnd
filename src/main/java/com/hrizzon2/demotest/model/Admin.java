@@ -44,5 +44,4 @@ public class Admin extends User {
     @Enumerated(EnumType.STRING)
     private NiveauDroit niveauDroit;
 
-    // TODO : Ajouter un champ "serviceRattachement" si nécessaire
 }

@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 /**
  * Représente un utilisateur générique dans le système.
  *
@@ -29,6 +31,12 @@ import lombok.Setter;
 public class User {
 
 // VOIR GESTION DES DROITS AVEC UN BOOLEEN - PAGE 415 SLIDE SPRING
+
+    public interface ValidInscription {
+    }
+
+    public interface ValidModification {
+    }
 
     /**
      * Identifiant unique de l'utilisateur.
@@ -56,7 +64,7 @@ public class User {
      * Adresse email de l'utilisateur.
      * Ce champ ne peut pas être nul.
      */
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     protected String email;
 
     /**
@@ -65,6 +73,11 @@ public class User {
      */
     @Column(nullable = false)
     protected String password;
+
+    @OneToMany(mappedBy = "destinataire", fetch = FetchType.LAZY)
+    protected List<Notification> notifications;
+
+    protected String jetonVerificationEmail;
 
     @Column(name = "nom_role", insertable = false, updatable = false)
     protected String nomRole;

@@ -35,7 +35,7 @@ public class StagiaireMapper {
         dto.setLastName(stagiaire.getLastName());
         dto.setFirstName(stagiaire.getFirstName());
         dto.setEmail(stagiaire.getEmail());
-        dto.setPhone(stagiaire.getPhone_number());
+        dto.setPhone(stagiaire.getPhoneNumber());
 
         if (stagiaire.getVille() != null) {
             dto.setVilleId(stagiaire.getVille().getIdVille());
@@ -67,7 +67,7 @@ public class StagiaireMapper {
         stagiaire.setLastName(dto.getLastName());
         stagiaire.setFirstName(dto.getFirstName());
         stagiaire.setEmail(dto.getEmail());
-        stagiaire.setPhone_number(dto.getPhone());
+        stagiaire.setPhoneNumber(dto.getPhone());
 
         // Ville et dossiers à mapper dans le service (en allant chercher les entités depuis la base)
 
@@ -82,7 +82,7 @@ public class StagiaireMapper {
         stagiaire.setLastName(dto.getLastName());
         stagiaire.setFirstName(dto.getFirstName());
         stagiaire.setEmail(dto.getEmail());
-        stagiaire.setPhone_number(dto.getPhone());
+        stagiaire.setPhoneNumber(dto.getPhone());
 
         return stagiaire;
     }
@@ -104,7 +104,7 @@ public class StagiaireMapper {
         stagiaire.setLastName(dto.getLastName());
         stagiaire.setFirstName(dto.getFirstName());
         stagiaire.setEmail(dto.getEmail());
-        stagiaire.setPhone_number(dto.getPhone());
+        stagiaire.setPhoneNumber(dto.getPhone());
 
         return stagiaire;
     }
