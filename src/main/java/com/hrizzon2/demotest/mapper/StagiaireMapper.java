@@ -67,7 +67,7 @@ public class StagiaireMapper {
         stagiaire.setLastName(dto.getLastName());
         stagiaire.setFirstName(dto.getFirstName());
         stagiaire.setEmail(dto.getEmail());
-        stagiaire.setPhoneNumber(dto.getPhone());
+        stagiaire.setPhoneNumber(dto.getPhone().toString());
 
         // Ville et dossiers à mapper dans le service (en allant chercher les entités depuis la base)
 

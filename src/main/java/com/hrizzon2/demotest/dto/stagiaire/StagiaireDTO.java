@@ -15,7 +15,7 @@ public class StagiaireDTO {
     private String lastName;
     private String firstName;
     private String email;
-    private Number phone;
+    private String phone;
     private Integer villeId;
     private String villeNom;
     private List<Integer> dossiersIds;
