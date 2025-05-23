@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.Properties;
 import java.util.TimeZone;
 
+// Annotation : pour signifier que le programme se base sur ce qui est écrit ici, pas ailleurs
 @SpringBootApplication
 public class DemotestApplication {
 
@@ -56,8 +57,8 @@ public class DemotestApplication {
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
     }
 
-    // On met la dépendance ici plutot que dans l'application sinon ça faite une dépendance récursive
-    @Bean
+    // On met la dépendance ici plutot que dans l'application sinon ça fait une dépendance récursive
+    @Bean // @Bean facilement remplaçables quand on fait des tests unitaires
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
         // a chaque fois que j'aurais besoin d'un objet password encoder -> je recupère un BCryptPasswordEncoder

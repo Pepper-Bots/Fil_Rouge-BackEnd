@@ -42,7 +42,10 @@ public class AppUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
+        System.out.println("Recherche stagiaire par email : " + email);
         Optional<Stagiaire> optionalStagiaire = stagiaireDao.findByEmail(email);
+        System.out.println("Résultat stagiaire : " + optionalStagiaire);
+
 
         if (optionalStagiaire.isPresent()) {
             return new AppUserDetails(optionalStagiaire.get());

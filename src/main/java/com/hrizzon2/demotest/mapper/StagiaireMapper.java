@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Component
 public class StagiaireMapper {
 
-    private StagiaireService stagiaireService; // Déclaration du service
+    private final StagiaireService stagiaireService; // Déclaration du service
 
     // Constructeur avec injection du service
     @Autowired

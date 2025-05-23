@@ -15,6 +15,7 @@ public class StagiaireDTO {
     private String lastName;
     private String firstName;
     private String email;
+    protected String password;
     private String phone;
     private Integer villeId;
     private String villeNom;

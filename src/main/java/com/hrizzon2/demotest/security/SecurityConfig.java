@@ -68,7 +68,7 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // Endpoints publics (ex: login, inscription)
-                        .requestMatchers("/auth/**", "/public/**").permitAll()
+                        .requestMatchers("/auth/**").permitAll()
 
                         // Endpoints accessibles uniquement aux stagiaires
                         .requestMatchers("/stagiaire/**").hasRole("STAGIAIRE")

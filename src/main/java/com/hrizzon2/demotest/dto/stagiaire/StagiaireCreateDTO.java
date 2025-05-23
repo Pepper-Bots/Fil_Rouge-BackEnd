@@ -21,8 +21,12 @@ public class StagiaireCreateDTO {
     @Email
     private String email;
 
+    
+    protected String password;
+
+
     @Pattern(regexp = "^(\\+33|0)[1-9](\\d{2}){4}$")
-    private Number phone;
+    private String phone;
 
     private Long villeId;
 

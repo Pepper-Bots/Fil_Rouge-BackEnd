@@ -25,6 +25,7 @@ public interface StagiaireDao extends JpaRepository<Stagiaire, Integer> {
      * @param email Email du stagiaire
      * @return Optional contenant le stagiaire s’il existe
      */
+    @Query("SELECT s FROM Stagiaire s WHERE s.email = :email")
     Optional<Stagiaire> findByEmail(String email);
 
     @Query("SELECT s FROM Stagiaire s JOIN s.ville v WHERE v.idVille = :idVille")
