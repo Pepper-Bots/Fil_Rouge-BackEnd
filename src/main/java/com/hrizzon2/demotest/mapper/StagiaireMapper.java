@@ -39,7 +39,7 @@ public class StagiaireMapper {
 
         if (stagiaire.getVille() != null) {
             dto.setVilleId(stagiaire.getVille().getIdVille());
-            dto.setVilleNom(stagiaire.getVille().getNomville());
+            dto.setVilleNom(stagiaire.getVille().getNomVille());
             // Que faire pour dto.setVilleId() ?
             // Si tu as besoin de l'ID de la ville dans ton DTO,
             // il faudra soit modifier la structure de ton entité Stagiaire

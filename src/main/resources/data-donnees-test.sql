@@ -1,29 +1,34 @@
 -- Étape 1 : insérer les utilisateurs de base dans la table USER
-INSERT INTO user (last_name, first_name, email, password, user_type)
-VALUES ('Alice', 'Dupont', 'alice@example.com', 'password1', 'ADMINISTRATEUR'),
-       ('Bruno', 'Durand', 'bruno@example.com', 'password2', 'ADMINISTRATEUR'),
-       ('Cécile', 'Martin', 'cecile@example.com', 'password3', 'ADMINISTRATEUR'),
-       ('David', 'Bernard', 'david@example.com', 'password4', 'ADMINISTRATEUR'),
-       ('Dupont', 'Romain', 'romain_dupont@live.fr', 'root', 'STAGIAIRE'),
-       ('Martin', 'Julie', 'julie.martin@example.com', 'pwdjulie', 'STAGIAIRE'),
-       ('Legrand', 'Paul', 'paul.legrand@example.com', 'pwdpaul', 'STAGIAIRE'),
-       ('Durand', 'Sophie', 'sophie.durand@example.com', 'pwdsophie', 'STAGIAIRE'),
-       ('Petit', 'Lucas', 'lucas.petit@example.com', 'pwdlucas', 'STAGIAIRE'),
-       ('Moreau', 'Camille', 'camille.moreau@example.com', 'pwdcamille', 'STAGIAIRE'),
-       ('Fournier', 'Léo', 'leo.fournier@example.com', 'pwdleo', 'STAGIAIRE'),
-       ('Garnier', 'Emma', 'emma.garnier@example.com', 'pwdemma', 'STAGIAIRE'),
-       ('Henry', 'Maxime', 'maxime.henry@example.com', 'pwdmaxime', 'STAGIAIRE'),
-       ('Roux', 'Manon', 'manon.roux@example.com', 'pwdmanon', 'STAGIAIRE'),
-       ('Guerin', 'Tom', 'tom.guerin@example.com', 'pwdtom', 'STAGIAIRE'),
-       ('Schmitt', 'Chloé', 'chloe.schmitt@example.com', 'pwdchloe', 'STAGIAIRE'),
-       ('Robert', 'Nathan', 'nathan.robert@example.com', 'pwdnathan', 'STAGIAIRE'),
-       ('Lemoine', 'Élise', 'elise.lemoine@example.com', 'pwdelise', 'STAGIAIRE'),
-       ('Blanc', 'Axel', 'axel.blanc@example.com', 'pwdaxel', 'STAGIAIRE'),
-       ('Chevalier', 'Laura', 'laura.chevalier@example.com', 'pwdlaura', 'STAGIAIRE'),
-       ('Faure', 'Noah', 'noah.faure@example.com', 'pwdnoah', 'STAGIAIRE'),
-       ('André', 'Sarah', 'sarah.andre@example.com', 'pwdsarah', 'STAGIAIRE'),
-       ('Renaud', 'Julien', 'julien.renaud@example.com', 'pwdjulien', 'STAGIAIRE'),
-       ('Collet', 'Anaïs', 'anais.collet@example.com', 'pwdanais', 'STAGIAIRE');
+INSERT INTO user (id, last_name, first_name, email, password, nom_role)
+VALUES (1, 'Alice', 'Dupont', 'alice@example.com', 'password1', 'ADMINISTRATEUR'),
+       (2, 'Bruno', 'Durand', 'bruno@example.com', 'password2', 'ADMINISTRATEUR'),
+       (3, 'Cécile', 'Martin', 'cecile@example.com', 'password3', 'ADMINISTRATEUR'),
+       (4, 'David', 'Bernard', 'david@example.com', 'password4', 'ADMINISTRATEUR'),
+       (5, 'Dupont', 'Romain', 'romain_dupont@live.fr', 'root', 'STAGIAIRE'),
+       (6, 'Martin', 'Julie', 'julie.martin@example.com', 'pwdjulie', 'STAGIAIRE'),
+       (7, 'Legrand', 'Paul', 'paul.legrand@example.com', 'pwdpaul', 'STAGIAIRE'),
+       (8, 'Durand', 'Sophie', 'sophie.durand@example.com', 'pwdsophie', 'STAGIAIRE'),
+       (9, 'Petit', 'Lucas', 'lucas.petit@example.com', 'pwdlucas', 'STAGIAIRE'),
+       (10, 'Moreau', 'Camille', 'camille.moreau@example.com', 'pwdcamille', 'STAGIAIRE'),
+       (11, 'Fournier', 'Léo', 'leo.fournier@example.com', 'pwdleo', 'STAGIAIRE'),
+       (12, 'Garnier', 'Emma', 'emma.garnier@example.com', 'pwdemma', 'STAGIAIRE'),
+       (13, 'Henry', 'Maxime', 'maxime.henry@example.com', 'pwdmaxime', 'STAGIAIRE'),
+       (14, 'Roux', 'Manon', 'manon.roux@example.com', 'pwdmanon', 'STAGIAIRE'),
+       (15, 'Guerin', 'Tom', 'tom.guerin@example.com', 'pwdtom', 'STAGIAIRE'),
+       (16, 'Schmitt', 'Chloé', 'chloe.schmitt@example.com', 'pwdchloe', 'STAGIAIRE'),
+       (17, 'Robert', 'Nathan', 'nathan.robert@example.com', 'pwdnathan', 'STAGIAIRE'),
+       (18, 'Lemoine', 'Élise', 'elise.lemoine@example.com', 'pwdelise', 'STAGIAIRE'),
+       (19, 'Blanc', 'Axel', 'axel.blanc@example.com', 'pwdaxel', 'STAGIAIRE'),
+       (20, 'Chevalier', 'Laura', 'laura.chevalier@example.com', 'pwdlaura', 'STAGIAIRE'),
+       (21, 'Faure', 'Noah', 'noah.faure@example.com', 'pwdnoah', 'STAGIAIRE'),
+       (22, 'André', 'Sarah', 'sarah.andre@example.com', 'pwdsarah', 'STAGIAIRE'),
+       (23, 'Renaud', 'Julien', 'julien.renaud@example.com', 'pwdjulien', 'STAGIAIRE'),
+       (24, 'Collet', 'Anaïs', 'anais.collet@example.com', 'pwdanais', 'STAGIAIRE'),
+       (25, 'Test1', 'User1', 'test1@example.com', 'pwd', 'STAGIAIRE'),
+       (26, 'Test2', 'User2', 'test2@example.com', 'pwd', 'STAGIAIRE'),
+       (27, 'Test3', 'User3', 'test3@example.com', 'pwd', 'STAGIAIRE'),
+       (28, 'Test4', 'User4', 'test4@example.com', 'pwd', 'STAGIAIRE'),
+       (29, 'Test5', 'User5', 'test5@example.com', 'pwd', 'STAGIAIRE');
 
 -- Étape 2 : insérer dans ADMIN (en réutilisant les IDs ci-dessus)
 INSERT INTO admin (id, type_admin, niveau_droit)
@@ -33,29 +38,33 @@ VALUES (1, 'RESPONSABLE_ETABLISSEMENT', 'SUPER_ADMIN'),
        (4, 'ASSISTANT_ADMINISTRATIF', 'BASIQUE');
 
 -- Insertion dans la table stagiaire en utilisant ville_id
-INSERT INTO stagiaire (id, date_naissance, phone_number, adresse, ville_id)
-VALUES (5, '1990-03-01', '0660606060', '12 rue des Rosses', 1),             -- Lyon (id_ville=1)
-       (6, '1985-07-14', '0678451223', '8 avenue des Lilas', 2),            -- Villeurbanne (id_ville=2)
-       (7, '1992-11-22', '0654239876', '34 boulevard Victor Hugo', 3),      -- Bron (id_ville=3)
-       (8, '1980-06-30', '0612789543', '21 rue des Vignes', 4),             -- Vénissieux (id_ville=4)
-       (9, '1978-04-19', '0634561287', '5 impasse des Fleurs', 5),          -- Caluire-et-Cuire (id_ville=5)
-       (10, '1991-01-08', '0645129384', '17 rue des Jardins', 6),           -- Saint-Priest (id_ville=6)
-       (11, '1983-09-12', '0625897412', '98 rue de la République', 7),      -- Écully (id_ville=7)
-       (12, '1994-10-02', '0678932154', '66 avenue des Champs', 8),         -- Oullins (id_ville=8)
-       (13, '1987-05-06', '0612347895', '43 rue Jean Jaurès', 9),           -- Tassin-la-Demi-Lune (id_ville=9)
-       (14, '1995-12-29', '0698123475', '7 place du Marché', 10),           -- Meyzieu (id_ville=10)
-       (15, '1986-03-17', '0665432187', '28 rue des Cerisiers', 11),        -- Rillieux-la-Pape (id_ville=11)
-       (16, '1982-08-24', '0654891234', '13 allée des Marronniers', 12),    -- Vaulx-en-Velin (id_ville=12)
-       (17, '1993-02-11', '0689741235', '10 rue Voltaire', 13),             -- Décines-Charpieu (id_ville=13)
-       (18, '1981-06-05', '0623789120', '3 rue Lamartine', 14),             -- Sainte-Foy-lès-Lyon (id_ville=14)
-       (19, '1990-09-23', '0678123490', '4 place de la Mairie', 15),        -- Givors (id_ville=15)
-       (20, '1988-07-30', '0698342150', '55 avenue de Paris', 16),          -- Pierre-Bénite (id_ville=16)
-       (21, '1984-11-09', '0655012374', '72 rue des Prés', 17),             -- Chassieu (id_ville=17)
-       (22, '1996-04-04', '0689234578', '16 rue Pasteur', 18),              -- Corbas (id_ville=18)
-       (23, '1999-01-01', '0678123999', '91 boulevard Saint-Michel', 19),   -- Grigny (id_ville=19)
-       (24, '1989-12-12', '0634567890', '2 avenue du Général Leclerc', 20), -- Saint-Fons (id_ville=20)
-       (25, '1992-05-03', '0708090103', '28, rue des Bleuets', 21);
--- La Mulatière (id_ville=21)
+INSERT INTO stagiaire (id, active, premiere_connexion, date_naissance, phone_number, adresse, ville_id)
+VALUES (5, false, true, '1990-03-01', '0660606060', '12 rue des Rosses', 1),
+       (6, false, true, '1985-07-14', '0678451223', '8 avenue des Lilas', 2),
+       (7, false, true, '1992-11-22', '0654239876', '34 boulevard Victor Hugo', 3),
+       (8, false, true, '1980-06-30', '0612789543', '21 rue des Vignes', 4),
+       (9, false, true, '1978-04-19', '0634561287', '5 impasse des Fleurs', 5),
+       (10, false, true, '1991-01-08', '0645129384', '17 rue des Jardins', 6),
+       (11, false, true, '1983-09-12', '0625897412', '98 rue de la République', 7),
+       (12, false, true, '1994-10-02', '0678932154', '66 avenue des Champs', 8),
+       (13, false, true, '1987-05-06', '0612347895', '43 rue Jean Jaurès', 9),
+       (14, false, true, '1995-12-29', '0698123475', '7 place du Marché', 10),
+       (15, false, true, '1986-03-17', '0665432187', '28 rue des Cerisiers', 11),
+       (16, false, true, '1988-07-30', '0698342150', '55 avenue de Paris', 1),
+       (17, false, true, '1984-11-09', '0655012374', '72 rue des Prés', 2),
+       (18, false, true, '1996-04-04', '0689234578', '16 rue Pasteur', 3),
+       (19, false, true, '1999-01-01', '0678123999', '91 boulevard Saint-Michel', 4),
+       (20, false, true, '1989-12-12', '0634567890', '2 avenue du Général Leclerc', 5),
+       (21, false, true, '1992-05-03', '0708090103', '28, rue des Bleuets', 6),
+       (22, false, true, '1982-08-24', '0654891234', '13 allée des Marronniers', 7),
+       (23, false, true, '1993-02-11', '0689741235', '10 rue Voltaire', 8),
+       (24, false, true, '1981-06-05', '0623789120', '3 rue Lamartine', 9),
+       (25, false, true, '1990-09-23', '0678123490', '4 place de la Mairie', 10),
+       (26, false, true, '1993-06-15', '0611122233', '15 rue Lafayette', 11),
+       (27, false, true, '1995-01-20', '0666677788', '1 avenue des Champs', 12), -- Paris (IDF)
+       (28, false, true, '1987-03-11', '0655566677', '24 rue Paradis', 13),      -- Marseille (PAC)
+       (29, false, true, '1990-11-30', '0644433322', '12 boulevard Haussmann', 12);
+-- Paris (IDF)
 
 -- Insertion de 10 formations dans la table formation (PLACER CECI AVANT L'INSERTION DES DOSSIERS)
 INSERT INTO formation (id, titre, description, date_debut, date_fin)
@@ -65,11 +74,11 @@ VALUES (1, 'Développement Web Front-End', 'Apprendre HTML, CSS, JavaScript et R
        (3, 'Full Stack Web', 'Formation complète front-end et back-end avec projets pratiques.', '2025-06-15',
         '2025-10-15'),
        (4, 'Sécurité Réseaux', 'Introduction à la sécurité des réseaux informatiques.', '2025-05-20', '2025-07-20'),
-       (5, 'Pentesting - Tests d\'intrusion', 'Découverte des techniques d\'intrusion et d\'audit.', '2025-06-10',
+       (5, 'Pentesting - Tests d''intrusion', 'Découverte des techniques d''intrusion et d''audit.', '2025-06-10',
         '2025-09-10'),
-       (6, 'Développement Web avec Java Spring', 'Conception d\'applications web sécurisées avec Spring Boot.',
+       (6, 'Développement Web avec Java Spring', 'Conception d''applications web sécurisées avec Spring Boot.',
         '2025-07-05', '2025-10-05'),
-       (7, 'Cyberdéfense et SOC', 'Mise en place d\'un centre opérationnel de sécurité.', '2025-08-01', '2025-10-31'),
+       (7, 'Cyberdéfense et SOC', 'Mise en place d''un centre opérationnel de sécurité.', '2025-08-01', '2025-10-31'),
        (8, 'Développement Web avec PHP et Laravel', 'Projet web avec PHP, MySQL et le framework Laravel.', '2025-05-01',
         '2025-07-31'),
        (9, 'Sécurité des Applications Web', 'Protection des applis web contre les vulnérabilités courantes.',
@@ -161,45 +170,29 @@ VALUES (1, 'ENVOYE'), -- Correction : guillemets simples
 -- Correction : guillemets simples
 
 -- Insertion des villes avec des IDs spécifiques (pour l'exemple)
-INSERT INTO ville (id_ville, nomville)
-VALUES (1, 'Lyon');
-INSERT INTO ville (id_ville, nomville)
-VALUES (2, 'Villeurbanne');
-INSERT INTO ville (id_ville, nomville)
-VALUES (3, 'Bron');
-INSERT INTO ville (id_ville, nomville)
-VALUES (4, 'Vénissieux');
-INSERT INTO ville (id_ville, nomville)
-VALUES (5, 'Caluire-et-Cuire');
-INSERT INTO ville (id_ville, nomville)
-VALUES (6, 'Saint-Priest');
-INSERT INTO ville (id_ville, nomville)
-VALUES (7, 'Écully');
-INSERT INTO ville (id_ville, nomville)
-VALUES (8, 'Oullins');
-INSERT INTO ville (id_ville, nomville)
-VALUES (9, 'Tassin-la-Demi-Lune');
-INSERT INTO ville (id_ville, nomville)
-VALUES (10, 'Meyzieu');
-INSERT INTO ville (id_ville, nomville)
-VALUES (11, 'Rillieux-la-Pape');
-INSERT INTO ville (id_ville, nomville)
-VALUES (12, 'Vaulx-en-Velin');
-INSERT INTO ville (id_ville, nomville)
-VALUES (13, 'Décines-Charpieu');
-INSERT INTO ville (id_ville, nomville)
-VALUES (14, 'Sainte-Foy-lès-Lyon');
-INSERT INTO ville (id_ville, nomville)
-VALUES (15, 'Givors');
-INSERT INTO ville (id_ville, nomville)
-VALUES (16, 'Pierre-Bénite');
-INSERT INTO ville (id_ville, nomville)
-VALUES (17, 'Chassieu');
-INSERT INTO ville (id_ville, nomville)
-VALUES (18, 'Corbas');
-INSERT INTO ville (id_ville, nomville)
-VALUES (19, 'Grigny');
-INSERT INTO ville (id_ville, nomville)
-VALUES (20, 'Saint-Fons');
-INSERT INTO ville (id_ville, nomville)
-VALUES (21, 'La Mulatière');
+INSERT INTO ville (id_ville, id_region, code_postal, nomVille)
+VALUES (1, 'ARA', '69001', 'Lyon'),
+       (2, 'ARA', '69100', 'Villeurbanne'),
+       (3, 'ARA', '69500', 'Bron'),
+       (4, 'ARA', '69600', 'Oullins'),
+       (5, 'ARA', '69300', 'Caluire-et-Cuire'),
+       (6, 'ARA', '69200', 'Vénissieux'),
+       (7, 'ARA', '69400', 'Villefranche-sur-Saône'),
+       (8, 'ARA', '38700', 'La Tronche'),
+       (9, 'ARA', '38100', 'Grenoble'),
+       (10, 'ARA', '73000', 'Chambéry'),
+       (11, 'ARA', '26000', 'Valence'),
+
+       -- Villes hors ARA
+       (12, 'IDF', '75000', 'Paris'), -- Île-de-France
+       (13, 'PAC', '13000', 'Marseille'); -- Provence-Alpes-Côte d'Azur
+
+
+INSERT INTO region (id_region, nom_region, nom_pays)
+VALUES ('ARA', 'Auvergne-Rhône-Alpes', 'France'),
+       ('IDF', 'Île-de-France', 'France'),
+       ('PAC', 'Provence-Alpes-Côte d\'Azur', 'France');
+
+
+
+

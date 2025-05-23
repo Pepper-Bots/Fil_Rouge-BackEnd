@@ -1,7 +1,5 @@
 package com.hrizzon2.demotest.model;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.hrizzon2.demotest.view.AffichageDossier;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,9 +37,6 @@ public class Stagiaire extends User {
 
     @Column(nullable = false)
     private boolean premiereConnexion = true;
-
-    @JsonView(AffichageDossier.Stagiaire.class)
-    String numero;
 
     /**
      * Date de naissance du stagiaire.

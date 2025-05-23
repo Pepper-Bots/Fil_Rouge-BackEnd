@@ -19,9 +19,7 @@ public class Ville {
     private String codePostal;
 
     @Column(unique = false)
-    private String nomville;
-
-    private String villeStagiaire;
+    private String nomVille;
 
     @ManyToOne
     @JoinColumn(name = "id_region")

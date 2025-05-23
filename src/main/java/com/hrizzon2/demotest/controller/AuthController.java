@@ -72,7 +72,7 @@ public class AuthController {
         }
 
         Stagiaire stagiaire = new Stagiaire();
-        stagiaire.setNumero(UUID.randomUUID().toString());
+        stagiaire.setId(Integer.valueOf(UUID.randomUUID().toString()));
         stagiaire.setEmail(user.getEmail());
         stagiaire.setPassword(passwordEncoder.encode(user.getPassword()));
         stagiaire.setActive(false); // NE PAS ACTIVER AVANT VALIDATION
