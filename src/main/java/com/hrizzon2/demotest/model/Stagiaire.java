@@ -33,9 +33,6 @@ public class Stagiaire extends User {
 
 
     @Column(nullable = false)
-    private boolean active = false;  // ou enabled, mais ici tu as utilisé active
-
-    @Column(nullable = false)
     private boolean premiereConnexion = true;
 
     /**

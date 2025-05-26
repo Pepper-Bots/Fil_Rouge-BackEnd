@@ -7,6 +7,7 @@ import com.hrizzon2.demotest.dto.ChangePasswordDto;
 import com.hrizzon2.demotest.dto.ValidationEmailDto;
 import com.hrizzon2.demotest.model.Stagiaire;
 import com.hrizzon2.demotest.model.User;
+import com.hrizzon2.demotest.model.Ville;
 import com.hrizzon2.demotest.security.AppUserDetails;
 import com.hrizzon2.demotest.security.ISecurityUtils;
 import com.hrizzon2.demotest.service.EmailService;
@@ -18,9 +19,11 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -61,7 +64,7 @@ public class AuthController {
     }
 
     @PostMapping("/inscription")
-    public ResponseEntity<?> inscription(@RequestBody @Valid User user) throws IOException {
+    public ResponseEntity<?> inscription(@RequestBody @Validated User user) throws IOException {
 
         // Vérifier si l'email existe déjà
         if (stagiaireDao.findByEmail(user.getEmail()).isPresent()) {
@@ -70,10 +73,16 @@ public class AuthController {
         }
 
         Stagiaire stagiaire = new Stagiaire();
-        stagiaire.setId(Integer.valueOf(UUID.randomUUID().toString()));
         stagiaire.setEmail(user.getEmail());
+        stagiaire.setFirstName("inconnu");
+        stagiaire.setLastName("inconnu");
+        stagiaire.setAdresse("inconnue");
+        stagiaire.setPhoneNumber("inconnu");
+        Ville paris = new Ville();
+        paris.setIdVille(1);
+        stagiaire.setVille(paris);
+        stagiaire.setDateNaissance(new Date());
         stagiaire.setPassword(passwordEncoder.encode(user.getPassword()));
-        stagiaire.setActive(false); // NE PAS ACTIVER AVANT VALIDATION
 
         String tokenValidationEmail = UUID.randomUUID().toString();
         stagiaire.setJetonVerificationEmail(tokenValidationEmail);
@@ -105,7 +114,6 @@ public class AuthController {
         if (stagiaireOpt.isPresent()) {
             Stagiaire stagiaire = stagiaireOpt.get();
             stagiaire.setJetonVerificationEmail(null);
-            stagiaire.setActive(true); // Active le compte
             stagiaireDao.save(stagiaire);
             // On peut retourner le flag premiereConnexion pour que le front affiche la page de changement de mdp
             return ResponseEntity.ok(Map.of(
@@ -141,12 +149,12 @@ public class AuthController {
     // Méthode de connexion de l'user
     @PostMapping("/connexion")
     public ResponseEntity<String> connexion(@RequestBody @Valid User user) {
-
-        Optional<Stagiaire> stagiaireOpt = stagiaireDao.findByEmail(user.getEmail());
-        if (stagiaireOpt.isPresent() && !stagiaireOpt.get().isActive()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body("Compte non activé. Merci de valider votre email.");
-        }
+//
+//        Optional<Stagiaire> stagiaireOpt = stagiaireDao.findByEmail(user.getEmail());
+//        if (stagiaireOpt.isPresent() && !stagiaireOpt.get().isActive()) {
+//            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+//                    .body("Compte non activé. Merci de valider votre email.");
+//        }
 
         try {
             AppUserDetails userDetails = (AppUserDetails) authenticationProvider
