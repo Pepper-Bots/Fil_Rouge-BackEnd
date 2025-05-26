@@ -35,3 +35,6 @@ public class Formation {
     @OneToMany(mappedBy = "formation")
     private List<Dossier> dossiers;
 }
+
+
+// TODO créer des listes de documents différentes selon les formations -> 3 max
