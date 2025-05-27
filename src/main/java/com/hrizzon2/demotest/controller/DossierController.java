@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.hrizzon2.demotest.dao.FormationDao;
 import com.hrizzon2.demotest.model.Dossier;
 import com.hrizzon2.demotest.model.Formation;
+import com.hrizzon2.demotest.model.Stagiaire;
 import com.hrizzon2.demotest.security.AppUserDetails;
 import com.hrizzon2.demotest.security.IsAdmin;
 import com.hrizzon2.demotest.security.IsStagiaire;
@@ -109,26 +110,62 @@ public class DossierController {
      * POST /dossiers
      * Crée un nouveau dossier (admin uniquement).
      */
-    @PostMapping
+    @PostMapping("/admin")
     @IsAdmin
     @JsonView(AffichageDossier.Dossier.class)
-    public ResponseEntity<Dossier> createDossier(@Valid @RequestBody Dossier dossier,
-                                                 @AuthenticationPrincipal AppUserDetails userDetails) {
+    public ResponseEntity<Dossier> createDossierAsAdmin(@Valid @RequestBody Dossier dossier,
+                                                        @AuthenticationPrincipal AppUserDetails userDetails) {
 
-        // Vérifie si l'ID de formation existe
+        // Vérifie la formation (comme avant)
         if (dossier.getFormation() == null || dossier.getFormation().getId() == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // ou autre message d'erreur approprié
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
-        // Récupère la formation complète à partir de l'ID
         Formation formation = formationDao.findById(dossier.getFormation().getId())
                 .orElseThrow(() -> new RuntimeException("Formation non trouvée avec l'id : " +
                         dossier.getFormation().getId()));
 
-        dossier.setFormation(formation); // On associe la formation persistée
+        // On vérifie aussi le stagiaire (important !)
+        if (dossier.getStagiaire() == null || dossier.getStagiaire().getId() == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
-        // Délègue la création au service
-        Dossier created = dossierService.create(dossier, userDetails);
+        // On peut récupérer l'entité stagiaire complète si besoin (sinon tu passes juste l'ID dans le service)
+        // Stagiaire stagiaire = stagiaireDao.findById(dossier.getStagiaire().getId()).orElseThrow(...);
+
+        Dossier created = dossierService.createWithRequiredDocuments(
+                dossier.getStagiaire(),
+                formation,
+                userDetails // C'est bien l'admin qui crée
+        );
+        return new ResponseEntity<>(created, HttpStatus.CREATED);
+    }
+
+    /**
+     * POST /dossiers
+     * Crée un nouveau dossier (stagiaire uniquement).
+     */
+    @PostMapping("/self")
+    @IsStagiaire
+    @JsonView(AffichageDossier.Dossier.class)
+    public ResponseEntity<Dossier> createDossierAsStagiaire(@Valid @RequestBody Dossier dossier,
+                                                            @AuthenticationPrincipal AppUserDetails userDetails) {
+
+        // Vérifie la formation
+        if (dossier.getFormation() == null || dossier.getFormation().getId() == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        Formation formation = formationDao.findById(dossier.getFormation().getId())
+                .orElseThrow(() -> new RuntimeException("Formation non trouvée avec l'id : " +
+                        dossier.getFormation().getId()));
+
+        // Le stagiaire courant est toujours l'utilisateur connecté
+        Stagiaire stagiaireCourant = (Stagiaire) userDetails.getUser();
+
+        Dossier created = dossierService.createWithRequiredDocuments(
+                stagiaireCourant,
+                formation,
+                userDetails // Ici, userDetails = stagiaire
+        );
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 

@@ -14,6 +14,8 @@ import org.hibernate.validator.constraints.Length;
 import java.time.LocalDateTime;
 import java.util.List;
 
+// plat cuisiné (dossier d'inscription final)
+
 /**
  * Entité représentant un dossier d'inscription lié à un stagiaire et une formation.
  */
@@ -38,7 +40,9 @@ public class Dossier {
     @NotBlank
     @JsonView(AffichageDossier.Dossier.class)
     protected String codeDossier;
-    // TODO Si je récupère l'ID est ce que CodeDossier est nécessaire ?
+    // TODO Optionnel si tu utilises l’id, mais tu peux le garder pour une logique métier ou un affichage utilisateur.
+
+    // validation du plat
 
     /**
      * Statut global du dossier.
@@ -49,14 +53,14 @@ public class Dossier {
     @JsonView(AffichageDossier.Dossier.class)
     protected StatutDossier statutDossier;
 
-    // Gestion du status du document
+    // Gestion du status du document - TODO pas nécessaire
     /**
      * Statut des documents dans le dossier.
      */
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "statut_document_id", nullable = false)
-    private StatutDocument statutDocument;
+//    @NotNull
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "statut_document_id", nullable = false)
+//    private StatutDocument statutDocument;
 
     /**
      * Liste des documents associés au dossier.
@@ -93,24 +97,6 @@ public class Dossier {
         this.lastUpdated = LocalDateTime.now();
         this.dateModification = LocalDateTime.now(); // Synchroniser les deux champs
     }
-
-//    /**
-//     * Récupère la date de modification du dossier.
-//     *
-//     * @return La date de modification
-//     */
-//    public LocalDateTime getDateModification() {
-//        return dateModification;
-//    }
-//
-//    /**
-//     * Définit la date de modification du dossier.
-//     *
-//     * @param dateModification La nouvelle date de modification
-//     */
-//    public void setDateModification(LocalDateTime dateModification) {
-//        this.dateModification = dateModification;
-//    }
 
     /**
      * Lien vers le stagiaire concerné.
@@ -160,6 +146,7 @@ public class Dossier {
     public String getNomCreateur() {
         return (createur != null) ? createur.getLastName() : null;
     }
+
 
 }
 

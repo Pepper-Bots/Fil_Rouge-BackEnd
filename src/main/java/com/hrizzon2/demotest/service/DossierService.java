@@ -2,17 +2,20 @@ package com.hrizzon2.demotest.service;
 // Logique métier
 
 import com.hrizzon2.demotest.dao.DossierDao;
-import com.hrizzon2.demotest.model.Admin;
-import com.hrizzon2.demotest.model.Dossier;
-import com.hrizzon2.demotest.model.StatutDossier;
+import com.hrizzon2.demotest.dao.ListeDocumentsObligatoiresDao;
+import com.hrizzon2.demotest.dao.StatutDocumentDao;
+import com.hrizzon2.demotest.dao.StatutDossierDao;
+import com.hrizzon2.demotest.model.*;
 import com.hrizzon2.demotest.security.AppUserDetails;
 import com.hrizzon2.demotest.security.ISecurityUtils;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,10 +29,17 @@ public class DossierService {
     // Dépendances injectées : DAO pour gérer les produits et un utilitaire de sécurité
     private final DossierDao dossierDao;
     private final ISecurityUtils securityUtils;
+    private final ListeDocumentsObligatoiresDao listeDocsDao;
+    private final StatutDocumentDao statutDocDao;
+    private final StatutDossierDao statutDossierDao;
 
-    public DossierService(DossierDao dossierDao, ISecurityUtils securityUtils) {
+    @Autowired
+    public DossierService(DossierDao dossierDao, ISecurityUtils securityUtils, ListeDocumentsObligatoiresDao listeDocsDao, StatutDocumentDao statutDocDao, StatutDossierDao statutDossierDao) {
         this.dossierDao = dossierDao;
         this.securityUtils = securityUtils;
+        this.listeDocsDao = listeDocsDao;
+        this.statutDocDao = statutDocDao;
+        this.statutDossierDao = statutDossierDao;
     }
 
     /**
@@ -91,26 +101,49 @@ public class DossierService {
      * Crée un nouveau dossier.
      */
     @Transactional
-    public Dossier create(Dossier dossier, AppUserDetails userDetails) {
+    public Dossier createWithRequiredDocuments(Stagiaire stagiaire, Formation formation, AppUserDetails userDetails) {
+        Dossier dossier = new Dossier();
 
-        // Définit l'admin créateur
-        dossier.setCreateur((Admin) userDetails.getUser());
-
-        // Définit le statut par défaut (en attente de validation)
-        if (dossier.getStatutDossier() == null) {
-            StatutDossier statut = new StatutDossier();
-            statut.setId(1);
-            dossier.setStatutDossier(statut);
+        // Créateur du dossier : admin (ou null si stagiaire, à adapter selon ton besoin)
+        if (userDetails != null && userDetails.getUser() instanceof Admin) {
+            dossier.setCreateur((Admin) userDetails.getUser());
         }
 
-        // Force la création d'un nouveau dossier
-        dossier.setId(null);
 
-        // Ajoute la date de création
-        dossier.setDateCreation(LocalDateTime.now());
+        dossier.setStagiaire(stagiaire);
+        dossier.setFormation(formation);
 
+        // Statut dossier par défaut (ex: "EN_ATTENTE" ou 1)
+        StatutDossier statutDossierDefaut = statutDossierDao.findByNomStatut("EN_ATTENTE");
+        dossier.setStatutDossier(statutDossierDefaut);
+
+        // Dates
+        LocalDateTime now = LocalDateTime.now();
+        dossier.setDateCreation(now);
+        dossier.setDateModification(now);
+        dossier.setLastUpdated(now);
+
+        // Génération automatique des documents obligatoires
+        List<ListeDocumentsObligatoires> requiredDocs = listeDocsDao.findByFormation(formation);
+
+        List<Document> documents = new ArrayList<>();
+        StatutDocument statutDocAFournir = statutDocDao.findByNom("À fournir");
+
+        for (ListeDocumentsObligatoires item : requiredDocs) {
+            Document doc = new Document();
+            doc.setType(item.getTypeDocument());
+            doc.setStatut(statutDocAFournir);
+            doc.setDossier(dossier);
+            // Tu peux aussi initialiser d'autres champs ici (name, date, etc.)
+            documents.add(doc);
+        }
+        dossier.setDocuments(documents);
+
+        // Sauvegarde du dossier (cascade pour documents)
         return dossierDao.save(dossier);
     }
+// => Le service fait le travail de savoir si c’est un Admin, et gère le champ créateur.
+    // Plus besoin de caster côté contrôleur.
 
     /**
      * Met à jour un dossier existant.

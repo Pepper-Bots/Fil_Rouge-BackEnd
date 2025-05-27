@@ -34,6 +34,9 @@ public class Formation {
 
     @OneToMany(mappedBy = "formation")
     private List<Dossier> dossiers;
+
+
+    // Ici recette -> besoin = inscription valide - dossier complet
 }
 
 

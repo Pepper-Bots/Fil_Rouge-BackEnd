@@ -37,6 +37,5 @@ public interface StagiaireDao extends JpaRepository<Stagiaire, Integer> {
     @Query("SELECT s FROM Stagiaire s JOIN s.dossiers d JOIN d.statutDossier sd WHERE sd.nomStatut = :statut")
     List<Stagiaire> findByDossierStatut(@Param("statut") String statut);
 
-    //    TODO à vérifier
-    Optional<Stagiaire> findByJetonVerificationEmail(String token);
+
 }

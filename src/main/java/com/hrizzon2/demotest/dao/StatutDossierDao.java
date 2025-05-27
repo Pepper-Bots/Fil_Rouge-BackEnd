@@ -6,4 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface StatutDossierDao extends JpaRepository<StatutDossier, Integer> {
+
+    StatutDossier findByNomStatut(String nomStatut);
+
 }

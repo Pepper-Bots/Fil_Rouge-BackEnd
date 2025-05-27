@@ -18,4 +18,7 @@ public interface UserDao extends JpaRepository<User, Integer> {
 
     Optional<User> findByJetonVerificationEmail(String token);
 
+    // Trouver un utilisateur via le token de reset (utile pour /reset-password)
+    Optional<User> findByResetPasswordToken(String resetPasswordToken);
+
 }

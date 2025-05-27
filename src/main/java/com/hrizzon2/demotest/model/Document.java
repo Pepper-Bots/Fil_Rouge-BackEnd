@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+// ingrédient apporté
+
 @Getter
 @Setter
 @Entity
@@ -27,4 +29,7 @@ public class Document {
     @ManyToOne
     @JoinColumn(name = "dossier_id")
     private Dossier dossier;
+
+    // TODO Optionnel mais conseillé :
+    //Ajoute une colonne pour la date d’upload ou le fichier (blob/url), à voir plus tard.
 }

@@ -2,12 +2,11 @@ package com.hrizzon2.demotest.service.stagiaire;
 
 import com.hrizzon2.demotest.dao.InscriptionDao;
 import com.hrizzon2.demotest.dao.StagiaireDao;
-import com.hrizzon2.demotest.dto.stagiaire.StagiaireDTO;
-import com.hrizzon2.demotest.mapper.StagiaireMapper;
 import com.hrizzon2.demotest.model.Formation;
 import com.hrizzon2.demotest.model.Inscription;
 import com.hrizzon2.demotest.model.Stagiaire;
 import com.hrizzon2.demotest.model.enums.StatutInscription;
+import com.hrizzon2.demotest.service.EmailService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,18 +15,25 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+// Classe concrète qui fait vraiment le travail
+// Cœur de la logique métier pour tout ce qui touche au Stagiaire.
+// -> utilise le Dao pour la persistence
+// -> utilise le Mapper pour la conversion entité/DTO
+// -> gère les cas métiers (ex: inscription du stagiaire à une formation, existence par email, etc.)
+
+// Très pratique pour factoriser tout le traitement (validation, mail d’activation, envoi du mot de passe initial, etc.).
+
 @Service
 public class StagiaireServiceImpl implements StagiaireService {
 
     private final StagiaireDao stagiaireDao;
     private final InscriptionDao inscriptionDao;
-    private final StagiaireMapper stagiaireMapper;
+    private final EmailService emailService = new EmailService();
 
     @Autowired
-    public StagiaireServiceImpl(StagiaireDao stagiaireDao, InscriptionDao inscriptionDao, StagiaireMapper stagiaireMapper) {
+    public StagiaireServiceImpl(StagiaireDao stagiaireDao, InscriptionDao inscriptionDao) {
         this.stagiaireDao = stagiaireDao;
         this.inscriptionDao = inscriptionDao;
-        this.stagiaireMapper = stagiaireMapper;
     }
 
     @Override
@@ -42,18 +48,23 @@ public class StagiaireServiceImpl implements StagiaireService {
 
     @Override
     @Transactional
-    public StagiaireDTO save(Stagiaire stagiaire) { // La signature de la méthode doit correspondre à l'interface
-        // Conversion de l'entité Stagiaire en DTO (si nécessaire avant de sauvegarder)
-        StagiaireDTO stagiaireDTO = stagiaireMapper.toDTO(stagiaire);
+    public Stagiaire save(Stagiaire stagiaire) { // La signature de la méthode doit correspondre à l'interface
 
-        // Conversion du DTO en entité Stagiaire pour la sauvegarde
-        Stagiaire stagiaireEntity = stagiaireMapper.fromDTO(stagiaireDTO); // Utilise l'instance injectée
+        // 1. Initialisation éventuelle des champs
+        stagiaire.setPremiereConnexion(true); // ou false selon ton workflow
 
-        // Sauvegarde de l'entité dans la base de données
-        Stagiaire savedStagiaire = stagiaireDao.save(stagiaireEntity);
+        // 2. Génération d'un token d'activation (exemple UUID)
+        String activationToken = java.util.UUID.randomUUID().toString();
+        stagiaire.setActivationToken(activationToken); // Ajoute ce champ dans ton entité si besoin
 
-        // Conversion de l'entité Stagiaire sauvegardée en DTO et retour
-        return stagiaireMapper.toDTO(savedStagiaire); // Utilise l'instance injectée
+        // 3. Sauvegarde de l'entité stagiaire dans la base de données
+        Stagiaire savedStagiaire = stagiaireDao.save(stagiaire);
+
+        // 4. Envoi du mail d'activation
+        emailService.sendEmailValidationToken(savedStagiaire.getEmail(), activationToken);
+
+        // 5. Retourne l'entité sauvegardée
+        return savedStagiaire;
     }
 
     @Override

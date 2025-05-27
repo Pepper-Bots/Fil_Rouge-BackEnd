@@ -30,6 +30,21 @@ import java.util.List;
 @DiscriminatorColumn(name = "nom_role", discriminatorType = DiscriminatorType.STRING)
 public class User {
 
+    @Column(name = "enabled")
+    private boolean enabled = false;
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+
+    public void setActive(boolean b) {
+    }
+
 // VOIR GESTION DES DROITS AVEC UN BOOLEEN - PAGE 415 SLIDE SPRING
 
     public interface ValidInscription {
@@ -81,4 +96,7 @@ public class User {
 
     @Column(name = "nom_role", insertable = false, updatable = false)
     protected String nomRole;
+
+    @Column(name = "reset_password_token")
+    private String resetPasswordToken;
 }

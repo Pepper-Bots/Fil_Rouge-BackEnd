@@ -5,6 +5,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+// Entité qui relie Formation à Type de document pour créer une liste attendue de docs
+
+// Ici liste d'ingrédients
+
 @Getter
 @Setter
 @Entity

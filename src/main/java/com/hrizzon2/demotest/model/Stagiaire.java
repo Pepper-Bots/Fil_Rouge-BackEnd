@@ -79,5 +79,8 @@ public class Stagiaire extends User {
     @OneToMany(mappedBy = "stagiaire")
     private List<Inscription> inscriptions;
 
+    @Column
+    private String activationToken;
+
 
 }

@@ -47,23 +47,23 @@ public class AppUserDetails implements UserDetails {
         return user.getEmail();
     }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true; // à adapter si besoin
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true; // idem
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true; // idem
-    }
+//    @Override
+//    public boolean isAccountNonExpired() {
+//        return true; // à adapter si besoin
+//    }
+//
+//    @Override
+//    public boolean isAccountNonLocked() {
+//        return true; // idem
+//    }
+//
+//    @Override
+//    public boolean isCredentialsNonExpired() {
+//        return true; // idem
+//    }
 
     @Override
     public boolean isEnabled() {
-        return true; // tu peux ajouter un champ dans User si besoin
+        return user.isEnabled(); // tu peux ajouter un champ dans User si besoin
     }
 }

@@ -1,6 +1,5 @@
 package com.hrizzon2.demotest.service.stagiaire;
 
-import com.hrizzon2.demotest.dto.stagiaire.StagiaireDTO;
 import com.hrizzon2.demotest.model.Formation;
 import com.hrizzon2.demotest.model.Inscription;
 import com.hrizzon2.demotest.model.Stagiaire;
@@ -10,19 +9,24 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+// Interface qui définit le contrat :
+// Permet d'injecter le service par interface (+ souple pour les tests/mocks)
+// permet de séparer la déclaration (ce qui est attendu) de l'implémentation (comment on fait )
+
 public interface StagiaireService {
 
-    List<Stagiaire> findAll();
+    Stagiaire save(Stagiaire stagiaire);
 
     Optional<Stagiaire> findById(Integer id);
 
-    StagiaireDTO save(Stagiaire stagiaireDTO);
+    List<Stagiaire> findAll();
 
     void deleteById(Integer id);
 
     boolean existsById(Integer id);
 
     boolean existsByEmail(String email);
+
 
     List<Stagiaire> findByStatutInscription(StatutInscription statut);
 

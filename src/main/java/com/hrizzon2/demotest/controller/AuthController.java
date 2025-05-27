@@ -1,16 +1,15 @@
 package com.hrizzon2.demotest.controller;
 
 
-import com.hrizzon2.demotest.dao.StagiaireDao;
-import com.hrizzon2.demotest.dao.UserDao;
 import com.hrizzon2.demotest.dto.ChangePasswordDto;
 import com.hrizzon2.demotest.dto.ValidationEmailDto;
 import com.hrizzon2.demotest.model.Stagiaire;
 import com.hrizzon2.demotest.model.User;
-import com.hrizzon2.demotest.model.Ville;
 import com.hrizzon2.demotest.security.AppUserDetails;
 import com.hrizzon2.demotest.security.ISecurityUtils;
+import com.hrizzon2.demotest.security.IsAdmin;
 import com.hrizzon2.demotest.service.EmailService;
+import com.hrizzon2.demotest.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,7 +22,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -46,55 +44,75 @@ import java.util.UUID;
 @RequestMapping("/auth")
 public class AuthController {
 
-    protected UserDao userDao;
-    protected StagiaireDao stagiaireDao;
+    protected UserService userService;
     protected PasswordEncoder passwordEncoder;
     protected AuthenticationProvider authenticationProvider;
     protected ISecurityUtils securityUtils;
     protected EmailService emailService;
 
     @Autowired
-    public AuthController(UserDao userDao, StagiaireDao stagiaireDao, PasswordEncoder passwordEncoder, AuthenticationProvider authenticationProvider, ISecurityUtils securityUtils, EmailService emailService) {
-        this.userDao = userDao;
-        this.stagiaireDao = stagiaireDao;
+    public AuthController(EmailService emailService, UserService userService, PasswordEncoder passwordEncoder, AuthenticationProvider authenticationProvider, ISecurityUtils securityUtils) {
+        this.emailService = emailService;
+        this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.authenticationProvider = authenticationProvider;
         this.securityUtils = securityUtils;
-        this.emailService = emailService;
+
     }
 
+    /**
+     * Inscription d'un utilisateur (par défaut, utilisateur non activé)
+     */
     @PostMapping("/inscription")
     public ResponseEntity<?> inscription(@RequestBody @Validated User user) throws IOException {
 
         // Vérifier si l'email existe déjà
-        if (stagiaireDao.findByEmail(user.getEmail()).isPresent()) {
+        if (userService.existsByEmail(user.getEmail())) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body("Un utilisateur avec cet email existe déjà.");
         }
 
-        Stagiaire stagiaire = new Stagiaire();
-        stagiaire.setEmail(user.getEmail());
-        stagiaire.setFirstName("inconnu");
-        stagiaire.setLastName("inconnu");
-        stagiaire.setAdresse("inconnue");
-        stagiaire.setPhoneNumber("inconnu");
-        Ville paris = new Ville();
-        paris.setIdVille(1);
-        stagiaire.setVille(paris);
-        stagiaire.setDateNaissance(new Date());
-        stagiaire.setPassword(passwordEncoder.encode(user.getPassword()));
+        // Initialisation
+        user.setEnabled(false); // A activer à la validation email
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
+        // Génération du token de validation d'email
+        String tokenValidationEmail = UUID.randomUUID().toString();
+        user.setJetonVerificationEmail(tokenValidationEmail);
+
+
+        userService.save(user);
+        emailService.sendActivationEmail(user.getEmail(), tokenValidationEmail);
+
+        // Masquer le password et le token dans la réponse
+        user.setPassword(null);
+        user.setJetonVerificationEmail(null);
+
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
+    }
+
+    /**
+     * Création d'un Stagiaire (admin only)
+     */
+    @PostMapping("/stagiaire")
+    @IsAdmin
+    public ResponseEntity<?> createStagiaire(@RequestBody @Valid Stagiaire stagiaire) {
+
+        // Initialisation des champs
+        stagiaire.setEnabled(false); // Compte à activer par email
+        stagiaire.setPremiereConnexion(true);
+        stagiaire.setPassword(passwordEncoder.encode(stagiaire.getPassword()));
+
+        // Génération du token de validation d'email
         String tokenValidationEmail = UUID.randomUUID().toString();
         stagiaire.setJetonVerificationEmail(tokenValidationEmail);
-        stagiaire.setPremiereConnexion(true); // Ajoute ce flag
 
+        userService.save(stagiaire);
+        emailService.sendActivationEmail(stagiaire.getEmail(), tokenValidationEmail);
 
-        stagiaireDao.save(stagiaire);
-        emailService.sendEmailValidationToken(stagiaire.getEmail(), tokenValidationEmail);
-
-        //on masque le mot de passe et le jeton de vérification
         stagiaire.setPassword(null);
         stagiaire.setJetonVerificationEmail(null);
+
         return new ResponseEntity<>(stagiaire, HttpStatus.CREATED);
     }
 //Remarques :
@@ -106,55 +124,47 @@ public class AuthController {
     //Validation des emails déjà utilisés
 //
 //Avant inscription, vérifie si un utilisateur existe déjà avec cet email (sinon, duplication possible).
+
+    /**
+     * Validation du compte par email (pour tous les users)
+     */
     @PostMapping("/validate-email")
     public ResponseEntity<?> validateEmail(@RequestBody ValidationEmailDto validationEmailDto) {
 
-        Optional<Stagiaire> stagiaireOpt = stagiaireDao.findByJetonVerificationEmail(validationEmailDto.getToken());
-
-        if (stagiaireOpt.isPresent()) {
-            Stagiaire stagiaire = stagiaireOpt.get();
-            stagiaire.setJetonVerificationEmail(null);
-            stagiaireDao.save(stagiaire);
-            // On peut retourner le flag premiereConnexion pour que le front affiche la page de changement de mdp
+        boolean success = userService.validateEmail(validationEmailDto.getToken());
+        if (success) {
             return ResponseEntity.ok(Map.of(
-                    "email", stagiaire.getEmail(),
-                    "premiereConnexion", stagiaire.isPremiereConnexion()
-            ));
+                    "message", "Compte activé avec succès !"));
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Lien de validation invalide.");
     }
 
-
+    /**
+     * Changement de mot de passe lors de la première connexion ou oubli
+     */
     @PostMapping("/change-password")
     public ResponseEntity<?> changePassword(@RequestBody ChangePasswordDto changePasswordDto) {
-        Optional<Stagiaire> stagiaireOpt = stagiaireDao.findByEmail(changePasswordDto.getEmail());
 
-        if (stagiaireOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utilisateur non trouvé.");
+        try {
+            userService.changePasswordFirstLogin(changePasswordDto.getEmail(), changePasswordDto.getNewPassword());
+            return ResponseEntity.ok("Mot de passe modifié avec succès.");
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
-
-        Stagiaire stagiaire = stagiaireOpt.get();
-
-        if (!stagiaire.isPremiereConnexion()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Changement de mot de passe non autorisé.");
-        }
-
-        stagiaire.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
-        stagiaire.setPremiereConnexion(false); // Il a changé son mdp: plus besoin de forcer le changement
-        stagiaireDao.save(stagiaire);
-        return ResponseEntity.ok("Mot de passe modifié avec succès.");
     }
 
-
-    // Méthode de connexion de l'user
+    /**
+     * Connexion (login)
+     */
     @PostMapping("/connexion")
     public ResponseEntity<String> connexion(@RequestBody @Valid User user) {
-//
-//        Optional<Stagiaire> stagiaireOpt = stagiaireDao.findByEmail(user.getEmail());
-//        if (stagiaireOpt.isPresent() && !stagiaireOpt.get().isActive()) {
-//            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-//                    .body("Compte non activé. Merci de valider votre email.");
-//        }
+
+        // Optionnel : Vérifier si le compte est activé (enabled)
+        Optional<User> userOpt = userService.findByEmail(user.getEmail());
+        if (userOpt.isEmpty() || !userOpt.get().isEnabled()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("Compte non activé. Merci de valider votre email.");
+        }
 
         try {
             AppUserDetails userDetails = (AppUserDetails) authenticationProvider
@@ -171,15 +181,32 @@ public class AuthController {
         }
     }
 
+    /**
+     * Demande de reset password (forgot password)
+     */
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> body) {
+        try {
+            userService.requestPasswordReset(body.get("email"));
+            return ResponseEntity.ok().build(); // Compliant: Setting 200 for a successful operation
+        } catch (Exception e) {
+            // On ne précise pas si l'email existe ou pas (par sécurité)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // Compliant: Setting 500 for exception
+        }
+    }
 
-//     ENDPOINTS a implémenter :
-//    - POST /change-password : changement mdp (première connexion/oubli)
-//    - (optionnel) POST /forgot-password + POST /reset-password : récupération mdp
+    /**
+     * Reset du mot de passe via token
+     */
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> body) {
+        try {
+            userService.resetPassword(body.get("token"), body.get("newPassword"));
+            return ResponseEntity.ok("Mot de passe réinitialisé avec succès.");
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
+    }
 
 
-//    Gestion du rôle/activation de compte
-//
-//Ajoute un flag “enabled” ou “isActive” sur l’entité User/Stagiaire, à mettre à “false” par défaut, à “true” lors de la validation email.
-//
-//Empêche la connexion tant que le compte n’est pas validé (sinon faille de sécurité).
 }
