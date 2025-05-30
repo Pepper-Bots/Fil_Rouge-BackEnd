@@ -21,6 +21,8 @@ public interface StagiaireService {
 
     List<Stagiaire> findAll();
 
+    Optional<Stagiaire> findByEmail(String email);
+
     void deleteById(Integer id);
 
     boolean existsById(Integer id);
@@ -33,5 +35,6 @@ public interface StagiaireService {
     List<Stagiaire> findInscritsEntre(LocalDate debut, LocalDate fin);
 
     Inscription inscrireStagiaire(Stagiaire stagiaire, Formation formation);
+
 
 }

@@ -1,17 +1,18 @@
 package com.hrizzon2.demotest.controller;
 
-import com.hrizzon2.demotest.dto.stagiaire.StagiaireCreateDTO;
-import com.hrizzon2.demotest.dto.stagiaire.StagiaireDTO;
-import com.hrizzon2.demotest.mapper.StagiaireMapper;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.hrizzon2.demotest.model.Formation;
 import com.hrizzon2.demotest.model.Stagiaire;
 import com.hrizzon2.demotest.model.enums.StatutInscription;
+import com.hrizzon2.demotest.security.IsAdmin;
 import com.hrizzon2.demotest.service.FormationService;
 import com.hrizzon2.demotest.service.stagiaire.StagiaireService;
+import com.hrizzon2.demotest.view.AffichageDossier;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -30,13 +31,11 @@ public class StagiaireController {
 
     private final StagiaireService stagiaireService;
     private final FormationService formationService;
-    private final StagiaireMapper stagiaireMapper;
 
     @Autowired
-    public StagiaireController(StagiaireService stagiaireService, FormationService formationService, StagiaireMapper stagiaireMapper) {
+    public StagiaireController(StagiaireService stagiaireService, FormationService formationService) {
         this.stagiaireService = stagiaireService;
         this.formationService = formationService;
-        this.stagiaireMapper = stagiaireMapper;
     }
 
     /**
@@ -71,8 +70,22 @@ public class StagiaireController {
      */
     // S'assurer que ton endpoint /stagiaires dans StagiaireController est accessible
     // et retourne une liste d'objets Stagiaire au format JSON.
+    @IsAdmin
     @GetMapping("/stagiaires")
+    @JsonView(AffichageDossier.Stagiaire.class)
     public ResponseEntity<List<Stagiaire>> getAllStagiaires() {
+        return ResponseEntity.ok(stagiaireService.findAll());
+    }
+
+    @GetMapping("/stagiaires/complet")
+    @JsonView(AffichageDossier.Complet.class)
+    public ResponseEntity<List<Stagiaire>> getAllStagiairesComplet() {
+        return ResponseEntity.ok(stagiaireService.findAll());
+    }
+
+    @GetMapping("/stagiaires/admin")
+    @JsonView(AffichageDossier.Admin.class)
+    public ResponseEntity<List<Stagiaire>> getAllStagiairesAdmin() {
         return ResponseEntity.ok(stagiaireService.findAll());
     }
 
@@ -89,19 +102,28 @@ public class StagiaireController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @GetMapping("/stagiaire/me")
+    @JsonView(AffichageDossier.Stagiaire.class)
+    public ResponseEntity<Stagiaire> getMonProfil(Authentication authentication) {
+        // Récupère le login/email depuis le token JWT ou le principal
+        String email = authentication.getName(); // ou .getPrincipal().getUsername() selon config
+        return stagiaireService.findByEmail(email)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     /**
      * Crée un nouveau stagiaire, avec ou sans inscription à une formation.
      *
-     * @param stagiaireCreateDTO Données du stagiaire
-     * @param formationId        ID de la formation (optionnel)
+     * @param stagiaire   Données du stagiaire
+     * @param formationId ID de la formation (optionnel)
      * @return Stagiaire créé
      */
     @PostMapping("/stagiaire")
-    public ResponseEntity<StagiaireDTO> createStagiaire(@RequestBody @Valid StagiaireCreateDTO stagiaireCreateDTO,
-                                                        @RequestParam(required = false) Integer formationId) {
+    public ResponseEntity<Stagiaire> createStagiaire(@RequestBody @Valid Stagiaire stagiaire,
+                                                     @RequestParam(required = false) Integer formationId) {
 
-        Stagiaire stagiaire = stagiaireMapper.fromCreateDTO(stagiaireCreateDTO);  // Conversion du DTO vers l'entité
-        StagiaireDTO savedStagiaireDTO = stagiaireService.save(stagiaire);  // Sauvegarde via le service
+        Stagiaire savedStagiaire = stagiaireService.save(stagiaire);  // Sauvegarde via le service
 
         // Si formationId est fourni, on associe le stagiaire à cette formation
         if (formationId != null) {
@@ -111,7 +133,7 @@ public class StagiaireController {
             }
             stagiaireService.inscrireStagiaire(stagiaire, formationOpt.get());
         }
-        return new ResponseEntity<>(savedStagiaireDTO, HttpStatus.CREATED);
+        return new ResponseEntity<>(savedStagiaire, HttpStatus.CREATED);
     }
 
     /**

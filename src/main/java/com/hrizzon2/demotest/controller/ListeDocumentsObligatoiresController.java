@@ -11,15 +11,25 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/formations")
 public class ListeDocumentsObligatoiresController {
 
-    @Autowired
-    private FormationDao formationDao;
-    @Autowired
-    private ListeDocumentsObligatoiresService listeDocsService;
+    private final FormationDao formationDao;
+    private final ListeDocumentsObligatoiresService listeDocsService;
 
+    @Autowired
+    public ListeDocumentsObligatoiresController(FormationDao formationDao, ListeDocumentsObligatoiresService listeDocsService) {
+        this.formationDao = formationDao;
+        this.listeDocsService = listeDocsService;
+    }
+
+    /**
+     * Méthode de création
+     * → Crée un document obligatoire pour la formation spécifiée.
+     */
     // POST /formations/{id}/documents-obligatoires
     @PostMapping("/{id}/documents-obligatoires")
     @IsAdmin
@@ -31,6 +41,18 @@ public class ListeDocumentsObligatoiresController {
         ListeDocumentsObligatoires created = listeDocsService.addRequiredDocument(formation, payload.getTypeDocument());
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
+
+    /**
+     * Méthode de liste
+     * → Liste tous les documents obligatoires pour la formation spécifiée.
+     */
+    @GetMapping("/{id}/documents-obligatoires")
+    public List<ListeDocumentsObligatoires> getDocumentsForFormation(@PathVariable Integer id) {
+        Formation formation = formationDao.findById(id)
+                .orElseThrow(() -> new RuntimeException("Formation non trouvée avec l'id : " + id));
+        return listeDocsService.findByFormation(formation);
+    }
+
 
     // Classe DTO simple pour le payload :
     public static class TypeDocumentPayload {
@@ -44,4 +66,11 @@ public class ListeDocumentsObligatoiresController {
             this.typeDocument = typeDocument;
         }
     }
+
+//    @Setter
+//    @Getter
+//    public static class TypeDocumentPayload {
+//        private TypeDocument typeDocument;
+//
+//    }
 }

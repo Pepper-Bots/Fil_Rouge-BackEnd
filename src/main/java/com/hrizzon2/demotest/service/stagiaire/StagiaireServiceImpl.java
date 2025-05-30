@@ -28,12 +28,13 @@ public class StagiaireServiceImpl implements StagiaireService {
 
     private final StagiaireDao stagiaireDao;
     private final InscriptionDao inscriptionDao;
-    private final EmailService emailService = new EmailService();
+    private final EmailService emailService;
 
     @Autowired
-    public StagiaireServiceImpl(StagiaireDao stagiaireDao, InscriptionDao inscriptionDao) {
+    public StagiaireServiceImpl(StagiaireDao stagiaireDao, InscriptionDao inscriptionDao, EmailService emailService) {
         this.stagiaireDao = stagiaireDao;
         this.inscriptionDao = inscriptionDao;
+        this.emailService = emailService;
     }
 
     @Override
@@ -45,6 +46,12 @@ public class StagiaireServiceImpl implements StagiaireService {
     public Optional<Stagiaire> findById(Integer id) {
         return stagiaireDao.findById(id);
     }
+
+    @Override
+    public Optional<Stagiaire> findByEmail(String email) {
+        return stagiaireDao.findByEmail(email); // à adapter au nom réel de ta méthode repository
+    }
+
 
     @Override
     @Transactional

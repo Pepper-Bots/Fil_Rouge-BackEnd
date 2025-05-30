@@ -1,6 +1,7 @@
 package com.hrizzon2.demotest.model;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.hrizzon2.demotest.model.enums.NiveauFormation;
 import com.hrizzon2.demotest.view.AffichageDossier;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -23,6 +24,9 @@ public class Formation {
     @JsonView(AffichageDossier.Formation.class)
     protected String titre;
 
+    @Enumerated(EnumType.STRING)
+    private NiveauFormation niveau;
+
     @JsonView(AffichageDossier.Formation.class)
     protected String description;
 
@@ -35,9 +39,4 @@ public class Formation {
     @OneToMany(mappedBy = "formation")
     private List<Dossier> dossiers;
 
-
-    // Ici recette -> besoin = inscription valide - dossier complet
 }
-
-
-// TODO créer des listes de documents différentes selon les formations -> 3 max

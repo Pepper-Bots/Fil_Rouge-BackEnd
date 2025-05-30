@@ -463,4 +463,141 @@ API -> Stagiaire : Succès
 C:\Users\helen\OneDrive\Bureau\Metz Numeric School\MNS - CDA\Titre\ADMIN_MNS_Helene_Rizzon_local\backend\admin_mns\src\main\java\com\hrizzon2\demotest\controller\StagiaireController.java:104:63
 java: incompatible types: com.hrizzon2.demotest.model.Stagiaire cannot be converted to com.hrizzon2.demotest.dto.stagiaire.StagiaireDTO
 
-=> enlever tous les DTO
+=> enlever tous les DTO => FAIT
+
+-----------------------
+
+Suite à suppression DTO Stagiaire -> penser à vérifier front :
+
+6. Vérifie le front !
+Si ton front envoie un objet au format DTO (champs différents de ton entity !), il faudra soit:
+
+Adapter le front pour envoyer exactement la structure de l’entité Stagiaire
+
+Ou alors tu es obligée de garder au moins un DTO côté backend… (Mais je comprends que tu veux simplifier, donc adapte le front !)
+
+---------
+
+verification json view - annotations entité Stagiaire
+
+-----------------------
+
+Fais bien hériter tes vues si tu veux éviter les répétitions.
+
+Si certaines données doivent rester strictement privées (tokens, mot de passe, etc.), ne les expose jamais en JsonView par défaut et préfère une vue vraiment dédiée (ou @JsonIgnore pour les champs qui ne doivent jamais être exposés).
+
+Sur le front, ajuste tes modèles Typescript à la structure réellement reçue.
+
+
+           +----------------+           +-----------------------+
+           |    Controller  |----[JsonView]---->|    Stagiaire Entity    |
+           +----------------+           +-----------------------+
+                        |                   |     @JsonView sur chaque champ !
+             ResponseEntity<List<Stagiaire>> |     Contrôle granulaire.
+                        |
+                  [sérialisation]
+                        |
+                 => réponse JSON au front (Angular)
+
+---------------------------------
+
+j'ai un TypeDocument mais c'est un enum, est ce que je le laisse en enum ? et pour reconnaitre un document obligatoire est ce qu'il est conseillé de donner un code de niveau pour les formations afin de simplifier la lecture ?
+en parallèle propose moi un contenu JSON pour les formations de niveau A, B et C en me montrant comment faire mes requetes dans JetClient. j'ai déjà un dossier Formation dans JetClient avec des méthodes Get, Get all, create, delete et update.
+Montre moi comment associer les documents obligatoires demandés avec les documents envoyés par le stagiaire dans l'application, cote back pour le moment, nous nous occuperons du front apres.
+
+-----------------------------------
+
+La logique métier pour croiser les documents attendus et les documents transmis par un stagiaire se met dans un service.
+Tu as deux options:
+
+Dans DocumentStagiaireService (le plus cohérent)
+→ Car il va manipuler les documents réels transmis, et peut avoir besoin d’accéder à la liste des attendus via un autre service ou le DAO.
+
+Tu peux aussi créer un service métier “DossierService” si tu veux isoler la logique de vérification de complétude, mais pour l’instant, le plus simple est dans DocumentStagiaireService.
+
+=> A voir plus tard avec logique de Dossier pour gérer complétion du dossier
+
+-----------------------------
+
+En effet, je souhaite gérer à terme la complétude du dossier avec la transmission de tous les documents demandés.
+pour rappel, un document envoyé par le stagiaire est soumis à vérification et validation de l'Admin avant de compléter la liste des documents obligatoires. ça n'est qu'un fois la totalité des documents demandés, transmis, vérifiés et validés que le dossier peut être déterminé comme complet. Est ce que ça change quelque chose dans la gestion de la logique métier, est ce que dans ce cas là ça nécessite la création d'un DTO ?
+pour l'affichage de la liste de documents obligatoires et les documents transmis par le stagiaire, un DTO est il nécessaire pour faire le lien entre les deux et gérer l'affichage dans le front ?
+
+ensuite pour ce qui est de cette requête 'Lister tous les documents d’un stagiaire pour une formation', est ce que c'est un  mettre dans un dossier stagiaire ou dans un dossier formation dans jet client ?
+Et pour supprimer un document, c'est le stagiaire qui peut supprimer un document envoyé ?
+
+pour finir, je veux bien voir la logique de comparaison(attendus vs transmis)
+
+=======================
+
+REPONSE :
+
+ Complétude du dossier et validation par l’admin — Faut-il un DTO?
+Oui!
+Dès que tu veux présenter la situation de complétude d’un dossier (pour l’admin, le stagiaire, le front, etc.),
+il te FAUT un DTO spécifique.
+Pourquoi? Parce que tu dois assembler:
+
+- Les documents attendus,
+- Les documents transmis,
+- Leur statut de validation (Validé, Refusé, En attente…),
+- Et calculer si la complétude est atteinte.
+
+Ton DTO doit donc comporter pour chaque document attendu:
+
+- Le type de document attendu (TypeDocument)
+- Si le document a été transmis
+- Si oui: statut (Validé, En attente, etc.)
+- URL ou nom du fichier transmis
+- Un booléen “est-ce que tout est complet?” (pour le dossier en entier)
+
+--------------------
+
+Liste des requêtes documents
+
+| Dossier        | Requête (Verbe + URL)                                                              | But                                          |
+| -------------- | ---------------------------------------------------------------------------------- | -------------------------------------------- |
+| Stagiaire      | GET `/stagiaires/{stagiaireId}/formations/{formationId}/statut-documents`          | Lister la progression sur les documents      |
+| Stagiaire      | GET `/stagiaires/{stagiaireId}/formations/{formationId}/documents`                 | Lister documents transmis                    |
+| Stagiaire      | POST `/stagiaires/{stagiaireId}/formations/{formationId}/documents`                | Ajouter un document transmis                 |
+| Stagiaire      | DELETE `/stagiaires/{stagiaireId}/formations/{formationId}/documents/{documentId}` | Supprimer un document transmis               |
+| Formation      | GET `/formations/{formationId}/documents-obligatoires`                             | Lister documents obligatoires pour formation |
+| Formation      | POST `/formations/{formationId}/documents-obligatoires`                            | Ajouter un document obligatoire              |
+| StatutDocument | GET `/statut-document`                                                             | Lister tous les statuts                      |
+| StatutDocument | POST `/statut-document`                                                            | Créer un statut                              |
+| Dossier        | GET `/dossier/{id}`                                                                | Récupérer un dossier                         |
+| Dossier        | GET `/dossier/stagiaire/{stagiaireId}`                                             | Tous les dossiers d’un stagiaire             |
+| Dossier        | GET `/dossier/formation/{formationId}`                                             | Tous les dossiers d’une formation            |
+
+---------------------
+Schéma synthtique -> Qui appelle Quoi ?
+
++-----------------------------------------+
+|                Frontend                 |
+|  (ex : JetClient, appli Angular)        |
++-----------------------------------------+
+                 |
+                 v
++----------------+--------------------------------------+
+|            API (Spring Boot)                          |
++-------------------------------------------------------+
+| FormationController                                   |
+|    - CRUD formations                                  |
+|    - GET /formations/{id}/documents-obligatoires      |
+|                                                       |
+| ListeDocumentsObligatoiresController                  |
+|    - Associe documents obligatoires à une formation   |
+|                                                       |
+| DocumentStagiaireController                           |
+|    - POST /stagiaires/{id}/documents                  |
+|    - GET /stagiaires/{id}/documents                   |
+|    - GET /stagiaires/{stagiaireId}/formations/        |
+|         {formationId}/statut-documents                |
+|      (croise attendus / transmis + statut)            |
+|                                                       |
+| DossierController (si tu gères la complétude globale) |
+|    - GET /dossier/{id}                                |
+|                                                       |
+| StatutDocumentController                              |
+|    - Liste/ajout des statuts de doc                   |
++-------------------------------------------------------+

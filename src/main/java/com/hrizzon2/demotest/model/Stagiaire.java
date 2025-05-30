@@ -1,5 +1,7 @@
 package com.hrizzon2.demotest.model;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.hrizzon2.demotest.view.AffichageDossier;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,7 +34,7 @@ import java.util.List;
 public class Stagiaire extends User {
 
 
-    @Column(nullable = false)
+    @JsonView({AffichageDossier.Stagiaire.class, AffichageDossier.Complet.class})
     private boolean premiereConnexion = true;
 
     /**
@@ -40,47 +42,53 @@ public class Stagiaire extends User {
      * Ce champ est obligatoire.
      */
     @Temporal(jakarta.persistence.TemporalType.DATE)
-    @Column(nullable = false)
+    @JsonView({AffichageDossier.Stagiaire.class, AffichageDossier.Complet.class})
     private Date dateNaissance;
 
     /**
      * Numéro de téléphone du stagiaire.
      * Ce champ est obligatoire.
      */
-    @Column(nullable = false)
+    @JsonView({AffichageDossier.Stagiaire.class, AffichageDossier.Complet.class})
     private String phoneNumber;
 
     /**
      * Adresse postale du stagiaire.
      * Ce champ est obligatoire.
      */
-    @Column(nullable = false)
+    @JsonView({AffichageDossier.Stagiaire.class, AffichageDossier.Complet.class})
     private String adresse;
 
-    @ManyToOne
     @JoinColumn(name = "ville_id", nullable = false)
+    @JsonView({AffichageDossier.Stagiaire.class, AffichageDossier.Complet.class})
+    @ManyToOne
     private Ville ville;
 
     /**
      * Liste des événements associés à ce stagiaire.
      */
+    @JsonView({AffichageDossier.Complet.class})
     @OneToMany(mappedBy = "stagiaire")
     private List<Evenement> evenements;
 
     /**
      * Liste des dossiers associés à ce stagiaire.
      */
+    @JsonView({AffichageDossier.Complet.class})
     @OneToMany(mappedBy = "stagiaire")
     private List<Dossier> dossiers;
 
     /**
      * Liste des inscriptions effectuées par ce stagiaire.
      */
+    @JsonView({AffichageDossier.Complet.class})
     @OneToMany(mappedBy = "stagiaire")
     private List<Inscription> inscriptions;
 
-    @Column
+    @JsonView(AffichageDossier.Admin.class)
     private String activationToken;
 
-
 }
+
+// ⚠️ Les champs non annotés ne seront jamais sérialisés
+// si tu utilises toujours une JsonView dans ton controller !

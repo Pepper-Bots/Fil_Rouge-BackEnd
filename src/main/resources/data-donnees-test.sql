@@ -120,27 +120,31 @@ VALUES (5, true, '1990-03-01', '0660606060', '12 rue des Rosses', 1),
 -- Paris (IDF)
 
 
--- Insertion de 10 formations dans la table formation (PLACER CECI AVANT L'INSERTION DES DOSSIERS)
-INSERT INTO formation (id, titre, description, date_debut, date_fin)
-VALUES (1, 'Développement Web Front-End', 'Apprendre HTML, CSS, JavaScript et React.', '2025-06-01', '2025-08-30'),
-       (2, 'Développement Web Back-End', 'Apprentissage de Node.js, Express et bases de données.', '2025-07-01',
+-- 6. FORMATION
+INSERT INTO formation (id, titre, niveau, description, date_debut, date_fin)
+VALUES (1, 'Développement Web Front-End', 'A', 'Apprendre HTML, CSS, JavaScript et React.', '2025-06-01', '2025-08-30'),
+       (2, 'Développement Web Back-End', 'A', 'Apprentissage de Node.js, Express et bases de données.', '2025-07-01',
         '2025-09-30'),
-       (3, 'Full Stack Web', 'Formation complète front-end et back-end avec projets pratiques.', '2025-06-15',
+       (3, 'Full Stack Web', 'B', 'Formation complète front-end et back-end avec projets pratiques.', '2025-06-15',
         '2025-10-15'),
-       (4, 'Sécurité Réseaux', 'Introduction à la sécurité des réseaux informatiques.', '2025-05-20', '2025-07-20'),
-       (5, 'Pentesting - Tests d''intrusion', 'Découverte des techniques d''intrusion et d''audit.', '2025-06-10',
+       (4, 'Sécurité Réseaux', 'B', 'Introduction à la sécurité des réseaux informatiques.', '2025-05-20',
+        '2025-07-20'),
+       (5, 'Pentesting - Tests d''intrusion', 'B', 'Découverte des techniques d''intrusion et d''audit.', '2025-06-10',
         '2025-09-10'),
-       (6, 'Développement Web avec Java Spring', 'Conception d''applications web sécurisées avec Spring Boot.',
+       (6, 'Développement Web avec Java Spring', 'C', 'Conception d''applications web sécurisées avec Spring Boot.',
         '2025-07-05', '2025-10-05'),
-       (7, 'Cyberdéfense et SOC', 'Mise en place d''un centre opérationnel de sécurité.', '2025-08-01', '2025-10-31'),
-       (8, 'Développement Web avec PHP et Laravel', 'Projet web avec PHP, MySQL et le framework Laravel.', '2025-05-01',
-        '2025-07-31'),
-       (9, 'Sécurité des Applications Web', 'Protection des applis web contre les vulnérabilités courantes.',
+       (7, 'Cyberdéfense et SOC', 'C', 'Mise en place d''un centre opérationnel de sécurité.', '2025-08-01',
+        '2025-10-31'),
+       (8, 'Développement Web avec PHP et Laravel', 'A', 'Projet web avec PHP, MySQL et le framework Laravel.',
+        '2025-05-01', '2025-07-31'),
+       (9, 'Sécurité des Applications Web', 'C', 'Protection des applis web contre les vulnérabilités courantes.',
         '2025-07-10', '2025-09-20'),
-       (10, 'Initiation à la cybersécurité', 'Panorama des menaces et bonnes pratiques en entreprise.', '2025-06-05',
-        '2025-08-05');
+       (10, 'Initiation à la cybersécurité', 'A', 'Panorama des menaces et bonnes pratiques en entreprise.',
+        '2025-06-05', '2025-08-05');
 
-INSERT INTO liste_documents_obligatoires (id, formation, type_document)
+
+-- 7. DOCUMENTS OBLIGATOIRES (type_document = enum en string, respecte la casse de l'enum)
+INSERT INTO liste_documents_obligatoires (id, formation_id, type_document)
 VALUES (1, 1, 'JUSTIFICATIF'),
        (2, 2, 'LETTRE_MOTIVATION'),
        (3, 3, 'CV'),
@@ -151,8 +155,6 @@ VALUES (1, 1, 'JUSTIFICATIF'),
        (8, 8, 'AUTRE'),
        (9, 9, 'JUSTIFICATIF'),
        (10, 10, 'LETTRE_MOTIVATION');
-
-
 
 INSERT INTO statut_document (id, nom)
 VALUES (1, 'ENVOYE'), -- Correction : guillemets simples
@@ -166,35 +168,46 @@ VALUES (1, 'en attente de validation'),
        (3, 'incomplet'),
        (4, 'validé');
 
--- Insertion de 20 dossiers dans la table dossier (APRÈS L'INSERTION DES FORMATIONS)
-INSERT INTO dossier (id, code_dossier, statut_dossier_id, statut_document_id,
-                     date_de_creation, last_updated, stagiaire_id, formation_id, createur_id)
-VALUES (1, 'DSR001', 2, 1, '2025-01-05 09:00:00', '2025-01-07 14:00:00', 5, 1, 1),   -- Java avancé
-       (2, 'DSR002', 1, 2, '2025-01-08 10:15:00', '2025-01-09 16:30:00', 6, 2, 2),   -- Développement Web
-       (3, 'DSR003', 3, 3, '2025-01-12 11:00:00', '2025-01-13 15:45:00', 7, 3, 3),   -- Data Science
-       (4, 'DSR004', 1, 2, '2025-01-15 08:45:00', '2025-01-17 14:20:00', 8, 4, 4),   -- UI/UX Design
-       (5, 'DSR005', 2, 1, '2025-01-20 13:30:00', '2025-01-22 17:10:00', 9, 5, 1),   -- Cybersécurité
-       (6, 'DSR006', 3, 3, '2025-01-25 09:45:00', '2025-01-26 10:00:00', 10, 6, 2),  -- DevOps
-       (7, 'DSR007', 1, 1, '2025-02-01 14:10:00', '2025-02-03 18:20:00', 11, 1, 3),  -- Java avancé
-       (8, 'DSR008', 2, 2, '2025-02-05 15:30:00', '2025-02-06 16:40:00', 12, 2, 4),  -- Développement Web
-       (9, 'DSR009', 3, 3, '2025-02-10 10:00:00', '2025-02-12 12:00:00', 13, 3, 1),  -- Data Science
-       (10, 'DSR010', 2, 1, '2025-02-14 11:30:00', '2025-02-15 14:00:00', 14, 4, 2), -- UI/UX Design
-       (11, 'DSR011', 1, 3, '2025-02-18 08:00:00', '2025-02-19 09:30:00', 15, 5, 3), -- Cybersécurité
-       (12, 'DSR012', 3, 2, '2025-02-22 13:20:00', '2025-02-23 14:45:00', 16, 6, 4), -- DevOps
-       (13, 'DSR013', 1, 1, '2025-03-01 10:00:00', '2025-03-02 11:15:00', 17, 1, 1), -- Java avancé
-       (14, 'DSR014', 2, 2, '2025-03-05 12:10:00', '2025-03-06 13:40:00', 18, 2, 2), -- Développement Web
-       (15, 'DSR015', 3, 3, '2025-03-10 09:00:00', '2025-03-12 10:20:00', 19, 3, 3), -- Data Science
-       (16, 'DSR016', 1, 2, '2025-03-15 14:45:00', '2025-03-17 16:10:00', 20, 4, 4), -- UI/UX Design
-       (17, 'DSR017', 2, 1, '2025-03-20 11:30:00', '2025-03-22 12:50:00', 21, 5, 1), -- Cybersécurité
-       (18, 'DSR018', 3, 2, '2025-03-25 15:10:00', '2025-03-26 17:25:00', 22, 6, 2), -- DevOps
-       (19, 'DSR019', 1, 3, '2025-04-01 09:30:00', '2025-04-02 10:40:00', 23, 1, 3), -- Java avancé
-       (20, 'DSR020', 2, 1, '2025-04-05 13:00:00', '2025-04-06 15:10:00', 24, 2, 4), -- Développement Web
-       (21, 'DSR021', 1, 3, '2025-03-20 11:30:00', '2025-04-06 15:10:00', 25, 3, 2), -- Développement Web
-       (22, 'DSR022', 1, 3, '2025-03-20 11:30:00', '2025-04-06 15:10:00', 26, 3, 2), -- Développement Web
-       (23, 'DSR023', 1, 3, '2025-03-20 11:30:00', '2025-04-06 15:10:00', 27, 3, 2), -- Développement Web
-       (24, 'DSR024', 1, 3, '2025-03-20 11:30:00', '2025-04-06 15:10:00', 28, 3, 2), -- Développement Web
-       (25, 'DSR025', 1, 3, '2025-03-20 11:30:00', '2025-04-06 15:10:00', 29, 3, 2);
--- Développement Web
+-- 10. DOSSIER
+INSERT INTO dossier (id, code_dossier, statut_dossier_id, date_de_creation, last_updated, date_modification,
+                     stagiaire_id, formation_id, createur_id)
+VALUES (1, 'DSR001', 2, '2025-01-05 09:00:00', '2025-01-07 14:00:00', '2025-01-07 14:00:00', 5, 1, 1),   -- Java avancé
+       (2, 'DSR002', 1, '2025-01-08 10:15:00', '2025-01-09 16:30:00', '2025-01-07 14:00:00', 6, 2, 2),-- Développement Web
+       (3, 'DSR003', 3, '2025-01-12 11:00:00', '2025-01-13 15:45:00', '2025-01-07 14:00:00', 7, 3, 3),-- Data Science
+       (4, 'DSR004', 1, '2025-01-15 08:45:00', '2025-01-17 14:20:00', '2025-01-07 14:00:00', 8, 4, 4),-- UI/UX Design
+       (5, 'DSR005', 2, '2025-01-20 13:30:00', '2025-01-22 17:10:00', '2025-01-07 14:00:00', 9, 5, 1),-- Cybersécurité
+       (6, 'DSR006', 3, '2025-01-25 09:45:00', '2025-01-26 10:00:00', '2025-01-07 14:00:00', 10, 6, 2),-- DevOps
+       (7, 'DSR007', 1, '2025-02-01 14:10:00', '2025-02-03 18:20:00', '2025-01-07 14:00:00', 11, 1, 3),-- Java avancé
+       (8, 'DSR008', 2, '2025-02-05 15:30:00', '2025-02-06 16:40:00', '2025-01-07 14:00:00', 12, 2, 4),-- Développement Web
+       (9, 'DSR009', 3, '2025-02-10 10:00:00', '2025-02-12 12:00:00', '2025-01-07 14:00:00', 13, 3, 1),-- Data Science
+       (10, 'DSR010', 2, '2025-02-14 11:30:00', '2025-02-15 14:00:00', '2025-01-07 14:00:00', 14, 4, 2),-- UI/UX Design
+       (11, 'DSR011', 1, '2025-02-18 08:00:00', '2025-02-19 09:30:00', '2025-01-07 14:00:00', 15, 5, 3),-- Cybersécurité
+       (12, 'DSR012', 3, '2025-02-22 13:20:00', '2025-02-23 14:45:00', '2025-01-07 14:00:00', 16, 6, 4), -- DevOps
+       (13, 'DSR013', 1, '2025-03-01 10:00:00', '2025-03-02 11:15:00', '2025-01-07 14:00:00', 17, 1, 1),-- Java avancé
+       (14, 'DSR014', 2, '2025-03-05 12:10:00', '2025-03-06 13:40:00', '2025-01-07 14:00:00', 18, 2, 2),-- Développement Web
+       (15, 'DSR015', 3, '2025-03-10 09:00:00', '2025-03-12 10:20:00', '2025-01-07 14:00:00', 19, 3, 3),-- Data Science
+       (16, 'DSR016', 1, '2025-03-15 14:45:00', '2025-03-17 16:10:00', '2025-01-07 14:00:00', 20, 4, 4),-- UI/UX Design
+       (17, 'DSR017', 2, '2025-03-20 11:30:00', '2025-03-22 12:50:00', '2025-01-07 14:00:00', 21, 5, 1),-- Cybersécurité
+       (18, 'DSR018', 3, '2025-03-25 15:10:00', '2025-03-26 17:25:00', '2025-01-07 14:00:00', 22, 6, 2), -- DevOps
+       (19, 'DSR019', 1, '2025-04-01 09:30:00', '2025-04-02 10:40:00', '2025-01-07 14:00:00', 23, 1, 3),-- Java avancé
+       (20, 'DSR020', 2, '2025-04-05 13:00:00', '2025-04-06 15:10:00', '2025-01-07 14:00:00', 24, 2, 4),-- Développement Web
+       (21, 'DSR021', 1, '2025-03-20 11:30:00', '2025-04-06 15:10:00', '2025-01-07 14:00:00', 25, 3, 2),-- Développement Web
+       (22, 'DSR022', 1, '2025-03-20 11:30:00', '2025-04-06 15:10:00', '2025-01-07 14:00:00', 26, 3, 2),-- Développement Web
+       (23, 'DSR023', 1, '2025-03-20 11:30:00', '2025-04-06 15:10:00', '2025-01-07 14:00:00', 27, 3, 2),-- Développement Web
+       (24, 'DSR024', 1, '2025-03-20 11:30:00', '2025-04-06 15:10:00', '2025-01-07 14:00:00', 28, 3, 2),-- Développement Web
+       (25, 'DSR025', 1, '2025-03-20 11:30:00', '2025-04-06 15:10:00', '2025-01-07 14:00:00', 29, 3,
+        2); -- Développement Web
+
+INSERT INTO document (name, type, statut_id, dossier_id)
+VALUES ('Justificatif de domicile', 'JUSTIFICATIF', 2, 1),
+       ('CV Paul', 'CV', 1, 1),
+       ('Lettre de motivation', 'LETTRE_MOTIVATION', 1, 2),
+       ('Justificatif d’identité', 'JUSTIFICATIF', 2, 2);
+
+
+INSERT INTO document_stagiaire (id, stagiaire_id, formation_id, type_document, fichier, statut_document_id)
+VALUES (1, 5, 1, 'CV', 'cv_roman_dupont.pdf', 1),
+       (2, 5, 1, 'JUSTIFICATIF', 'justificatif_roman_dupont.pdf', 2);
 
 -- Création des modèles de message
 # INSERT INTO notification_template (id, type, message)
