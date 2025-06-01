@@ -127,7 +127,7 @@ public class DossierService {
         List<ListeDocumentsObligatoires> requiredDocs = listeDocsDao.findByFormation(formation);
 
         List<Document> documents = new ArrayList<>();
-        StatutDocument statutDocAFournir = statutDocDao.findByNom("À fournir");
+        Optional<StatutDocument> statutDocAFournir = statutDocDao.findByNom("À fournir");
 
         for (ListeDocumentsObligatoires item : requiredDocs) {
             Document doc = new Document();

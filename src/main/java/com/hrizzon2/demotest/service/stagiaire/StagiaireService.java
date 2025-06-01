@@ -5,6 +5,7 @@ import com.hrizzon2.demotest.model.Inscription;
 import com.hrizzon2.demotest.model.Stagiaire;
 import com.hrizzon2.demotest.model.enums.StatutInscription;
 
+import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -37,4 +38,5 @@ public interface StagiaireService {
     Inscription inscrireStagiaire(Stagiaire stagiaire, Formation formation);
 
 
+    Long getIdFromPrincipal(Principal principal);
 }

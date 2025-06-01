@@ -601,3 +601,59 @@ Schéma synthtique -> Qui appelle Quoi ?
 | StatutDocumentController                              |
 |    - Liste/ajout des statuts de doc                   |
 +-------------------------------------------------------+
+
+--------------------------
+
+Schéma du flow envoi/chargement d'un doc
+
+[Front : Formulaire d'upload]
+         │
+         ▼
+[Controller Spring Boot : reçoit fichier, valide, check droits]
+         │
+         ▼
+[FichierService : nettoie nom, stocke fichier, enregistre en base]
+         │
+         ▼
+[Disque dur (stockage)  +  Base de données (meta : chemin, statut, id...)]
+
+------------------
+
+3️⃣ Résumé du parcours (“gymnastique”) lors d’un upload
+
+
+- Front: L’utilisateur envoie un fichier via le formulaire.
+-
+- DocumentController reçoit le fichier, valide l’accès, appelle le DocumentService.
+-
+- DocumentService:
+-
+- Nettoie le nom du fichier.
+-
+- Appelle FichierService pour écrire le fichier sur disque.
+-
+- Crée et sauvegarde un objet Document (meta : id stagiaire, nom, type, statut EN_ATTENTE…).
+-
+- FichierService écrit le fichier sur le disque, dans le bon dossier.
+-
+- DocumentDao sauvegarde les infos du fichier en base.
+
+------------------
+
+POST /stagiaires/{id}/documents
+      │
+      ▼
+[DocumentController]
+      │
+      ▼
+[DocumentService.uploadDocument()]
+      │
+      ├──> [FichierService.uploadToLocalFileSystem()]
+      │
+      └──> [DocumentDao.save(document)]
+
+-----------------
+
+  etapes à poursuivre :
+
+  continuer code et verif DocumentService.java + voir le reste

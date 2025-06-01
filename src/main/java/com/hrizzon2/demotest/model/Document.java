@@ -16,7 +16,7 @@ public class Document {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String name;
+    private String nomFichier;
 
     @Enumerated(EnumType.STRING)
     private TypeDocument type;
