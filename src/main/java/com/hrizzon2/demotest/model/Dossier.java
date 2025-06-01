@@ -137,6 +137,8 @@ public class Dossier {
                 : null;
     }
 
+    // TODO -> méthodes à utiliser ?
+
     @JsonView(AffichageDossier.Formation.class)
     public String getTitreFormation() {
         return (formation != null) ? formation.getTitre() : null;
@@ -147,6 +149,8 @@ public class Dossier {
         return (createur != null) ? createur.getLastName() : null;
     }
 
+    @JsonView({AffichageDossier.Stagiaire.class})
+    String nomImage;
 
 }
 

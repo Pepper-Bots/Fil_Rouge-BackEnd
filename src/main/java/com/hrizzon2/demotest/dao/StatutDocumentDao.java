@@ -7,8 +7,10 @@ import java.util.Optional;
 
 public interface StatutDocumentDao extends JpaRepository<StatutDocument, Integer> {
 
-    // Si tu utilises une entité pour les statuts (donc stockés en BDD), tu dois pouvoir faire des requêtes :
+    // Si tu utilises une entité pour les statuts (donc stockés en BDD), tu dois pouvoir faire des requêtes :
     //“Donne-moi l’id du statut 'À fournir', 'Validé', etc.”
     Optional<StatutDocument> findByNom(String nom);
 
 }
+
+

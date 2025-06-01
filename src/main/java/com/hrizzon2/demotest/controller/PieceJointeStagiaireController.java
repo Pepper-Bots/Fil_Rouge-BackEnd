@@ -1,18 +1,21 @@
 package com.hrizzon2.demotest.controller;
 
-import com.hrizzon2.demotest.dao.DocumentStagiaireDao;
+import com.hrizzon2.demotest.annotation.ValidFile;
 import com.hrizzon2.demotest.dto.DocumentStatutDTO;
-import com.hrizzon2.demotest.model.DocumentStagiaire;
 import com.hrizzon2.demotest.model.Formation;
+import com.hrizzon2.demotest.model.PieceJointeStagiaire;
 import com.hrizzon2.demotest.model.Stagiaire;
 import com.hrizzon2.demotest.model.enums.TypeDocument;
-import com.hrizzon2.demotest.service.DocumentStagiaireService;
 import com.hrizzon2.demotest.service.FormationService;
+import com.hrizzon2.demotest.service.PieceJointeStagiaireService;
 import com.hrizzon2.demotest.service.stagiaire.StagiaireService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -20,89 +23,77 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/stagiaires")
-public class DocumentStagiaireController {
+public class PieceJointeStagiaireController {
 
-    private final DocumentStagiaireDao documentStagiaireDao;
     private final FormationService formationService;
     private final StagiaireService stagiaireService;
-    private final DocumentStagiaireService documentStagiaireService;
+    private final PieceJointeStagiaireService pieceJointeStagiaireService;
 
     /**
      * Constructeur avec injection des dépendances.
      *
-     * @param documentStagiaireDao     DAO pour l'accès aux documents stagiaires.
-     * @param formationService         Service pour l'accès aux formations.
-     * @param stagiaireService         Service pour l'accès aux stagiaires.
-     * @param documentStagiaireService Service métier pour la logique de comparaison attendus/transmis.
+     * @param formationService            Service pour l'accès aux formations.
+     * @param stagiaireService            Service pour l'accès aux stagiaires.
+     * @param pieceJointeStagiaireService Service métier pour la logique de comparaison attendus/transmis.
      */
     @Autowired
-    public DocumentStagiaireController(DocumentStagiaireDao documentStagiaireDao,
-                                       FormationService formationService,
-                                       StagiaireService stagiaireService, DocumentStagiaireService documentStagiaireService) {
-        this.documentStagiaireDao = documentStagiaireDao;
+    public PieceJointeStagiaireController(FormationService formationService,
+                                          StagiaireService stagiaireService,
+                                          PieceJointeStagiaireService pieceJointeStagiaireService) {
         this.formationService = formationService;
         this.stagiaireService = stagiaireService;
-        this.documentStagiaireService = documentStagiaireService;
+        this.pieceJointeStagiaireService = pieceJointeStagiaireService;
     }
 
     /**
-     * Upload d'un document transmis par un stagiaire pour une formation.
+     * Upload d'une pièce jointe (document) transmis par un stagiaire pour une formation.
      *
      * @param stagiaireId ID du stagiaire
-     * @param payload     Informations sur le document à transmettre
      * @return Le document enregistré
      */
-    @PostMapping("/{stagiaireId}/documents")
-    public ResponseEntity<DocumentStagiaire> uploadDocument(
+    @PostMapping("/stagiaire/{stagiaireId}/formation/{formationId}/upload")
+    public ResponseEntity<?> uploadPieceJointe(
             @PathVariable Integer stagiaireId,
-            @RequestBody DocumentPayload payload) {
-        Stagiaire stagiaire = stagiaireService.findById(stagiaireId)
-                .orElseThrow(() -> new RuntimeException("Stagiaire non trouvé"));
-        Formation formation = formationService.findById(payload.getFormationId())
-                .orElseThrow(() -> new RuntimeException("Formation non trouvée"));
+            @PathVariable Integer formationId,
+            @RequestParam("type") String typeDocument,
+            @ValidFile @RequestParam("file") MultipartFile file
+    ) {
+        try {
+            Stagiaire stagiaire = stagiaireService.findById(stagiaireId)
+                    .orElseThrow(() -> new IllegalArgumentException("Stagiaire introuvable"));
+            Formation formation = formationService.findById(formationId)
+                    .orElseThrow(() -> new IllegalArgumentException("Formation introuvable"));
 
-        DocumentStagiaire doc = new DocumentStagiaire();
-        doc.setStagiaire(stagiaire);
-        doc.setFormation(formation);
-        doc.setTypeDocument(payload.getTypeDocument());
-        doc.setFichier(payload.getFichier());
-
-        DocumentStagiaire saved = documentStagiaireDao.save(doc);
-        return ResponseEntity.status(201).body(saved);
+            PieceJointeStagiaire piece = pieceJointeStagiaireService.uploadPieceJointe(stagiaire, formation, TypeDocument.valueOf(typeDocument), file);
+            return ResponseEntity.status(HttpStatus.CREATED).body(piece);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur d'upload");
+        }
     }
 
     /**
-     * Liste les documents transmis par un stagiaire, optionnellement filtrés par formation.
+     * Liste toutes les pièces jointes transmises par un stagiaire, optionnellement filtrés par formation.
      *
      * @param stagiaireId ID du stagiaire
      * @param formationId (optionnel) ID de la formation
      * @return Liste des documents transmis
      */
-    @GetMapping("/{stagiaireId}/documents")
-    public ResponseEntity<List<DocumentStagiaire>> getDocumentsForStagiaireAndFormation(
+    @GetMapping("/stagiaire/{stagiaireId}/formation/{formationId}")
+    public ResponseEntity<List<PieceJointeStagiaire>> getPiecesPourStagiaireEtFormation(
             @PathVariable Integer stagiaireId,
-            @RequestParam(required = false) Integer formationId) {
-        List<DocumentStagiaire> docs;
-        if (formationId != null) {
-            docs = documentStagiaireDao.findByStagiaireIdAndFormationId(stagiaireId, formationId);
-        } else {
-            docs = documentStagiaireDao.findByStagiaireId(stagiaireId);
-        }
-        return ResponseEntity.ok(docs);
+            @PathVariable Integer formationId) {
+        List<PieceJointeStagiaire> list = pieceJointeStagiaireService.getPiecesPourStagiaireEtFormation(stagiaireId, formationId);
+        return ResponseEntity.ok(list);
     }
 
     /**
      * Supprime un document transmis par un stagiaire.
      *
-     * @param stagiaireId ID du stagiaire
-     * @param docId       ID du document à supprimer
      * @return HTTP 204 si succès
      */
-    @DeleteMapping("/{stagiaireId}/documents/{docId}")
-    public ResponseEntity<Void> deleteDocument(
-            @PathVariable Integer stagiaireId,
-            @PathVariable Integer docId) {
-        documentStagiaireDao.deleteById(docId);
+    @DeleteMapping("/{pieceId}")
+    public ResponseEntity<Void> deletePieceJointe(@PathVariable Integer pieceId) {
+        pieceJointeStagiaireService.deletePieceJointe(pieceId);
         return ResponseEntity.noContent().build();
     }
 
@@ -122,7 +113,7 @@ public class DocumentStagiaireController {
                 .orElseThrow(() -> new RuntimeException("Stagiaire non trouvé"));
         Formation formation = formationService.findById(formationId)
                 .orElseThrow(() -> new RuntimeException("Formation non trouvée"));
-        List<DocumentStatutDTO> statutDocs = documentStagiaireService.getStatutDocumentsDossier(stagiaire, formation);
+        List<DocumentStatutDTO> statutDocs = pieceJointeStagiaireService.getStatutDocumentsDossier(stagiaire, formation);
         return ResponseEntity.ok(statutDocs);
     }
 

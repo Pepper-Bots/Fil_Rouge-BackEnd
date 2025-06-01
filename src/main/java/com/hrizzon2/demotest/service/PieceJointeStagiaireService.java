@@ -5,11 +5,11 @@ package com.hrizzon2.demotest.service;
 // → Car il va manipuler les documents réels transmis,
 // et peut avoir besoin d’accéder à la liste des attendus via un autre service ou le DAO.
 
-import com.hrizzon2.demotest.dao.DocumentStagiaireDao;
+import com.hrizzon2.demotest.dao.PieceJointeStagiaireDao;
 import com.hrizzon2.demotest.dto.DocumentStatutDTO;
-import com.hrizzon2.demotest.model.DocumentStagiaire;
 import com.hrizzon2.demotest.model.Formation;
 import com.hrizzon2.demotest.model.ListeDocumentsObligatoires;
+import com.hrizzon2.demotest.model.PieceJointeStagiaire;
 import com.hrizzon2.demotest.model.Stagiaire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,16 +17,19 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Service métier pour la gestion des documents transmis par les stagiaires.
+ */
 @Service
-public class DocumentStagiaireService {
+public class PieceJointeStagiaireService {
 
     private final ListeDocumentsObligatoiresService listeDocumentsObligatoiresService;
-    private final DocumentStagiaireDao documentStagiaireDao;
+    private final PieceJointeStagiaireDao pieceJointeStagiaireDao;
 
     @Autowired
-    public DocumentStagiaireService(ListeDocumentsObligatoiresService listeDocumentsObligatoiresService, DocumentStagiaireDao documentStagiaireDao) {
+    public PieceJointeStagiaireService(ListeDocumentsObligatoiresService listeDocumentsObligatoiresService, PieceJointeStagiaireDao pieceJointeStagiaireDao) {
         this.listeDocumentsObligatoiresService = listeDocumentsObligatoiresService;
-        this.documentStagiaireDao = documentStagiaireDao;
+        this.pieceJointeStagiaireDao = pieceJointeStagiaireDao;
     }
 
     public List<DocumentStatutDTO> getStatutDocumentsDossier(Stagiaire stagiaire, Formation formation) {
@@ -34,7 +37,7 @@ public class DocumentStagiaireService {
         List<ListeDocumentsObligatoires> attendus = listeDocumentsObligatoiresService.findByFormation(formation);
 
         // 2. Les documents transmis par le stagiaire pour cette formation :
-        List<DocumentStagiaire> transmis = documentStagiaireDao.findByStagiaireIdAndFormationId(stagiaire.getId(), formation.getId());
+        List<PieceJointeStagiaire> transmis = pieceJointeStagiaireDao.findByStagiaireIdAndFormationId(stagiaire.getId(), formation.getId());
 
         // 3. On assemble la réponse
         List<DocumentStatutDTO> result = new ArrayList<>();
@@ -44,7 +47,7 @@ public class DocumentStagiaireService {
             dto.setObligatoire(true);
 
             // On cherche si ce type de document a été transmis par le stagiaire :
-            DocumentStagiaire docTransmis = transmis.stream()
+            PieceJointeStagiaire docTransmis = transmis.stream()
                     .filter(doc -> doc.getTypeDocument() == attendu.getTypeDocument())
                     .findFirst()
                     .orElse(null);

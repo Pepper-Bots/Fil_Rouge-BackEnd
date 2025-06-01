@@ -1,10 +1,6 @@
 package com.hrizzon2.demotest.service;
 
-import com.hrizzon2.demotest.dao.DocumentDao;
-import com.hrizzon2.demotest.model.Document;
-import com.hrizzon2.demotest.model.StatutDocument;
 import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,7 +22,13 @@ public class FichierService {
     @Value("${private.upload.folder}")
     private String privateUploadFolder;
 
-    public  String sanitizeFileName(String fileName) {
+    /**
+     * Nettoie et sécurise le nom d'un fichier uploadé.
+     *
+     * @param fileName nom d'origine
+     * @return nom sécurisé
+     */
+    public String sanitizeFileName(String fileName) {
         String cleanName = Paths.get(fileName).getFileName().toString();
         cleanName = cleanName.replaceAll("[^a-zA-Z0-9\\.\\-_]", "_");
         if (cleanName.contains("..")) {
@@ -56,6 +58,7 @@ public class FichierService {
      * @throws IOException Si une erreur survient lors de l'écriture du fichier.
      */
     public void uploadToLocalFileSystem(InputStream inputStream, String fileName, boolean publicFile) throws IOException {
+
         Path storageDirectory = Paths.get(publicFile ? publicUploadFolder : privateUploadFolder);
 
         if (!Files.exists(storageDirectory)) {
@@ -70,16 +73,6 @@ public class FichierService {
 
         Files.copy(inputStream, destination, StandardCopyOption.REPLACE_EXISTING);
 
-    }
-
-    public void uploadDocument(Long stagiaireId, MultipartFile fichier) throws IOException {
-        String safeName = sanitizeFileName(fichier.getOriginalFilename());
-        // Stockage sur disque
-        uploadToLocalFileSystem(fichier, safeName, false);
-        // Création d’une entité Document avec statut EN_ATTENTE, etc.
-        documentDao .save(
-                new Document(stagiaireId, safeName, StatutDocument.EN_ATTENTE, ...)
-        );
     }
 
     /**
@@ -99,6 +92,10 @@ public class FichierService {
             throw new FileNotFoundException(e.getMessage());
         }
 
+    }
+
+    public Path getImagePath(String nomImage) {
+        return Paths.get(privateUploadFolder, nomImage);
     }
 
 }

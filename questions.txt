@@ -657,3 +657,93 @@ POST /stagiaires/{id}/documents
   etapes à poursuivre :
 
   continuer code et verif DocumentService.java + voir le reste
+
+-------------------------
+
+FLOW DE CREATION DOCUMENT
+
+- Le controller reçoit le fichier, le type, et l’id du dossier ou du stagiaire.
+- Le service stocke le fichier sur le disque.
+- Le service récupère le statut "EN_ATTENTE" depuis la base et l’associe à l’entité Document.
+- Le service associe le bon dossier au Document.
+- Le service sauvegarde le Document.
+
+-------------------------
+
+->> DocumentService.java -> on n'implémente pas FichierService ?
+
+StatutDocument est une entité, PAS un enum, tu dois la récupérer en base. -> qu'est ce que ça veut dire ?
+
+TypeDocument est un enum, tu peux utiliser .valueOf(...). -> où ?
+
+Les setters générés par Lombok (@Setter) doivent correspondre aux noms de champs de ton entité. -> de quoi tu parles ?
+
+je n'ai pas compris ça : Crée le StatutDocumentDao (si pas déjà fait)
+
+                         Ajoute la table et les lignes nécessaires dans la base (EN_ATTENTE, VALIDE, REFUSE).
+
+et explique moi ça : Mets à jour le service pour chercher le statut "EN_ATTENTE" avant de l’affecter à un document.
+
+                     Si besoin, crée ou adapte le DossierDao pour récupérer le dossier associé.
+
+---------------
+
+je ne vois toujours pas où ceci se passe :
+
+'Dans le code, là où tu reçois le type du document en String (par exemple, "JUSTIFICATIF_DOMICILE").
+Tu dois faire:
+document.setType(TypeDocument.valueOf(typeDocument));'
+
+ça se passe dans quel fichier ? :
+Mais il faut que tu utilises le bon nom de champ dans ton code.
+
+Par exemple, si dans Document tu as private String nomFichier; tu appelleras document.setNomFichier(...).
+
+Si tu écris document.setCheminFichier(...) mais que le champ s’appelle nomFichier, ça plantera.
+
+---------------------------
+
+[Front]
+  │
+  ▼
+[DocumentController]
+  │
+  ▼
+[DocumentService] ---(utilise)---> [FichierService] (stocke le fichier)
+  │
+  ├─> [StatutDocumentDao] (statut "EN_ATTENTE" récupéré en base)
+  ├─> [DossierDao] (dossier du stagiaire)
+  └─> [DocumentDao] (sauvegarde Document)
+
+ Bonus: Checklist “Prêt à déployer”
+
+ J’ai un StatutDocumentDao
+
+ Ma table statut_document a bien les lignes EN_ATTENTE, VALIDE, REFUSE
+
+ Mon DocumentService fait bien le lien avec le statut et le dossier existants (jamais en “dur”)
+
+ Mon FichierService ne gère QUE le stockage physique
+
+ Le front envoie le bon typeDocument (conforme à l’enum)
+
+ J’ai testé l’upload et la sauvegarde du Document (vérifié en base et sur disque)
+
+-------------------
+
+[Stagiaire → Frontend]
+     ↓
+POST /stagiaires/{stagiaireId}/documents
+     ↓
+[DocumentStagiaireController]
+     ↓
+[DocumentStagiaireService.upload(...)]
+     ↓
+[FichierService.uploadToLocalFileSystem()]
+     ↓
+[DocumentStagiaireDao.save()]
+     ↓
+[Base de données, Dossier à jour, Fichier stocké]
+
+
+
