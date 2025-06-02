@@ -46,6 +46,9 @@ public class PieceJointeStagiaire {
     @ManyToOne
     private StatutDocument statutDocument;
 
+    private String commentaire;
+
+
     // TODO Ajoute une date d'upload si besoin
 
 }

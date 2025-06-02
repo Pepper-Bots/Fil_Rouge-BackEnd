@@ -47,18 +47,6 @@ public class DocumentController {
         return doc;
     }
 
-//    @PostMapping("/stagiaires/{id}/documents")
-//    public ResponseEntity<?> uploadDocument(
-//            @PathVariable Long id,
-//            @ValidFile @RequestParam("file") MultipartFile file,
-//            Principal principal) throws IOException {
-//
-//        // 1. Contrôle d'accès et validation
-//        // 2. Appel au service métier
-//        fichierService.uploadDocument(id, file);
-//        return ResponseEntity.ok("Fichier envoyé !");
-//    }
-
     /**
      * Upload d’un document lié à un dossier (ex : pièce justificative).
      *

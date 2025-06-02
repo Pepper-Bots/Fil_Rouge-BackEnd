@@ -1,7 +1,8 @@
 package com.hrizzon2.demotest.controller;
 
 import com.hrizzon2.demotest.annotation.ValidFile;
-import com.hrizzon2.demotest.dto.DocumentStatutDTO;
+import com.hrizzon2.demotest.dto.DocumentStatutUpdateDto;
+import com.hrizzon2.demotest.dto.DocumentSummaryDto;
 import com.hrizzon2.demotest.model.Formation;
 import com.hrizzon2.demotest.model.PieceJointeStagiaire;
 import com.hrizzon2.demotest.model.Stagiaire;
@@ -106,24 +107,27 @@ public class PieceJointeStagiaireController {
      * @return Liste des statuts de chaque document attendu
      */
     @GetMapping("/{stagiaireId}/formations/{formationId}/statut-documents")
-    public ResponseEntity<List<DocumentStatutDTO>> getStatutDocuments(
+    public ResponseEntity<List<DocumentSummaryDto>> getStatutDocuments(
             @PathVariable Integer stagiaireId,
             @PathVariable Integer formationId) {
         Stagiaire stagiaire = stagiaireService.findById(stagiaireId)
                 .orElseThrow(() -> new RuntimeException("Stagiaire non trouvé"));
         Formation formation = formationService.findById(formationId)
                 .orElseThrow(() -> new RuntimeException("Formation non trouvée"));
-        List<DocumentStatutDTO> statutDocs = pieceJointeStagiaireService.getStatutDocumentsDossier(stagiaire, formation);
+        List<DocumentSummaryDto> statutDocs = pieceJointeStagiaireService.getStatutDocumentsDossier(stagiaire, formation);
         return ResponseEntity.ok(statutDocs);
     }
 
-    /**
-     * Classe interne pour le payload d'upload d'un document.
-     */
-    public static class DocumentPayload {
-        private Integer formationId;
-        private TypeDocument typeDocument;
-        private String fichier;
+
+        @PatchMapping("/documents/{documentId}/statut")
+        public ResponseEntity<?> updateDocumentStatut(
+                @PathVariable Integer documentId,
+                @RequestBody DocumentStatutUpdateDto dto
+        ) {
+            pieceJointeStagiaireService.updateStatutDocument(documentId, dto);
+            return ResponseEntity.ok().build();
+        }
+
 
         // getters/setters
         public Integer getFormationId() {

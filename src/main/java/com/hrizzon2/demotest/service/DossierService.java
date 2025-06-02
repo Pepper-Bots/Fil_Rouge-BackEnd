@@ -132,7 +132,9 @@ public class DossierService {
         for (ListeDocumentsObligatoires item : requiredDocs) {
             Document doc = new Document();
             doc.setType(item.getTypeDocument());
-            doc.setStatut(statutDocAFournir);
+            doc.setStatut(statutDocAFournir.orElseThrow(() ->
+                    new EntityNotFoundException("Statut 'À fournir' introuvable"))
+            );
             doc.setDossier(dossier);
             // Tu peux aussi initialiser d'autres champs ici (name, date, etc.)
             documents.add(doc);

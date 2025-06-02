@@ -8,9 +8,16 @@ id = '1bb39888-8c89-4f94-b9b3-fd75d60bcde5'
 [body]
 type = 'JSON'
 raw = '''
-{
-  "formationId": 2,
-  "typeDocument": "DIPLOME_BAC_2",
-  "fichier": "https://storage.monsite.fr/docs/1-diplome.pdf"
-}'''
+[
+  {
+    "id": 123,
+    "typeDocument": "CV",
+    "obligatoire": true,
+    "transmis": true,
+    "statut": "Validé",
+    "commentaire": null,
+    "fichier": "cv_helene.pdf"
+  }
+]
+'''
 ```

@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 // ingrédient apporté
 
 @Getter
@@ -29,6 +31,11 @@ public class Document {
     @ManyToOne
     @JoinColumn(name = "dossier_id")
     private Dossier dossier;
+
+    private String commentaire; // <--- Ajoute ce champ pour le refus
+    private LocalDateTime dateDepot; // <--- Optionnel mais conseillé
+    private String urlFichier;
+
 
     // TODO Optionnel mais conseillé :
     //Ajoute une colonne pour la date d’upload ou le fichier (blob/url), à voir plus tard.
