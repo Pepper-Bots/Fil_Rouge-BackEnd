@@ -38,7 +38,7 @@ public class PieceJointeStagiaire {
     /**
      * Chemin ou URL du fichier transmis.
      */
-    private String fichier; // chemin/URL du fichier transmis
+    private String cheminFichier; // chemin/URL du fichier transmis
 
     /**
      * Statut actuel du document (EN_ATTENTE, VALIDE, REFUSE...).
