@@ -11,6 +11,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -49,7 +50,7 @@ public class StagiaireServiceImpl implements StagiaireService {
 
     @Override
     public Optional<Stagiaire> findByEmail(String email) {
-        return stagiaireDao.findByEmail(email); // à adapter au nom réel de ta méthode repository
+        return stagiaireDao.findByEmail(email);
     }
 
 
@@ -58,7 +59,7 @@ public class StagiaireServiceImpl implements StagiaireService {
     public Stagiaire save(Stagiaire stagiaire) { // La signature de la méthode doit correspondre à l'interface
 
         // 1. Initialisation éventuelle des champs
-        stagiaire.setPremiereConnexion(true); // ou false selon ton workflow
+        stagiaire.setPremiereConnexion(true); // ou false selon mon workflow
 
         // 2. Génération d'un token d'activation (exemple UUID)
         String activationToken = java.util.UUID.randomUUID().toString();
@@ -119,5 +120,32 @@ public class StagiaireServiceImpl implements StagiaireService {
         inscription.setStatut(StatutInscription.EN_ATTENTE);
 
         return inscriptionDao.save(inscription);
+    }
+
+    /**
+     * Extrait l'identifiant du Stagiaire actuellement authentifié, à partir du Principal.
+     * <p>
+     * On suppose que {@code principal.getName()} contient l'email du stagiaire.
+     * On cherche ensuite en base l'entité Stagiaire correspondant à cet email
+     * et on renvoie son identifiant (Integer).
+     * </p>
+     *
+     * @param principal Principal fourni par Spring Security (dont getName() est l'email)
+     * @return l'ID du Stagiaire (Integer)
+     * @throws IllegalArgumentException si aucun Stagiaire n'est trouvé pour l'email fourni
+     */
+    @Override
+    public Integer getIdFromPrincipal(Principal principal) {
+
+        // Supposons que le principal.getName() renvoie l'email du stagiaire :
+        String email = principal.getName();
+
+        // Recherche du Stagiaire en base à partir de cet email
+        Stagiaire stagiaire = stagiaireDao.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Aucun stagiaire trouvé pour l'email : " + email));
+
+        // On renvoie l'ID
+        return stagiaire.getId();
     }
 }

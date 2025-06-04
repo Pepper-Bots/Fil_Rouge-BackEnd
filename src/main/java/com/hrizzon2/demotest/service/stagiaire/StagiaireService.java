@@ -38,5 +38,5 @@ public interface StagiaireService {
     Inscription inscrireStagiaire(Stagiaire stagiaire, Formation formation);
 
 
-    Long getIdFromPrincipal(Principal principal);
+    Integer getIdFromPrincipal(Principal principal);
 }

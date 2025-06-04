@@ -10,13 +10,13 @@ import com.hrizzon2.demotest.model.enums.TypeDocument;
 import com.hrizzon2.demotest.service.FormationService;
 import com.hrizzon2.demotest.service.PieceJointeStagiaireService;
 import com.hrizzon2.demotest.service.stagiaire.StagiaireService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -49,8 +49,11 @@ public class PieceJointeStagiaireController {
     /**
      * Upload d'une pièce jointe (document) transmis par un stagiaire pour une formation.
      *
-     * @param stagiaireId ID du stagiaire
-     * @return Le document enregistré
+     * @param stagiaireId  ID du stagiaire
+     * @param formationId  ID de la formation
+     * @param typeDocument type de document (enum TypeDocument)
+     * @param file         le fichier à uploader
+     * @return Le document enregistré (201 CREATED) ou 500 en cas d’erreur
      */
     @PostMapping("/stagiaire/{stagiaireId}/formation/{formationId}/upload")
     public ResponseEntity<?> uploadPieceJointe(
@@ -59,41 +62,61 @@ public class PieceJointeStagiaireController {
             @RequestParam("type") String typeDocument,
             @ValidFile @RequestParam("file") MultipartFile file
     ) {
-        try {
-            Stagiaire stagiaire = stagiaireService.findById(stagiaireId)
-                    .orElseThrow(() -> new IllegalArgumentException("Stagiaire introuvable"));
-            Formation formation = formationService.findById(formationId)
-                    .orElseThrow(() -> new IllegalArgumentException("Formation introuvable"));
+        // 1. On récupère le stagiaire ou lève EntityNotFoundException si pas trouvé
+        Stagiaire stagiaire = stagiaireService.findById(stagiaireId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Stagiaire non trouvé avec l'ID : " + stagiaireId));
 
-            PieceJointeStagiaire piece = pieceJointeStagiaireService.uploadPieceJointe(stagiaire, formation, TypeDocument.valueOf(typeDocument), file);
-            return ResponseEntity.status(HttpStatus.CREATED).body(piece);
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur d'upload");
+        // 2. On récupère la formation ou lève EntityNotFoundException si pas trouvée
+        Formation formation = formationService.findById(formationId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Formation non trouvée avec l'ID : " + formationId));
+
+        // 3. Conversion du paramètre "typeDocument" en enum TypeDocument
+        TypeDocument enumType;
+        try {
+            enumType = TypeDocument.valueOf(typeDocument);
+        } catch (IllegalArgumentException e) {
+            throw new EntityNotFoundException(
+                    "Type de document invalide : " + typeDocument);
         }
+
+        // 4. Appel du service métier pour stocker le fichier
+        PieceJointeStagiaire piece = pieceJointeStagiaireService
+                .uploadPieceJointe(stagiaire, formation, enumType, file);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(piece);
     }
 
     /**
      * Liste toutes les pièces jointes transmises par un stagiaire, optionnellement filtrés par formation.
      *
      * @param stagiaireId ID du stagiaire
-     * @param formationId (optionnel) ID de la formation
-     * @return Liste des documents transmis
+     * @param formationId ID de la formation
+     * @return Liste des documents transmis (200 OK)
      */
     @GetMapping("/stagiaire/{stagiaireId}/formation/{formationId}")
     public ResponseEntity<List<PieceJointeStagiaire>> getPiecesPourStagiaireEtFormation(
             @PathVariable Integer stagiaireId,
             @PathVariable Integer formationId) {
-        List<PieceJointeStagiaire> list = pieceJointeStagiaireService.getPiecesPourStagiaireEtFormation(stagiaireId, formationId);
+
+        // (Attention : on ne vérifie pas ici que le stagiaire existe, mais on peut le faire)
+        // On laisse le service gérer l’éventuel cas où il n’y a pas de pièces : il retournera une liste vide.
+        List<PieceJointeStagiaire> list =
+                pieceJointeStagiaireService.getPiecesPourStagiaireEtFormation(stagiaireId, formationId);
         return ResponseEntity.ok(list);
     }
 
     /**
      * Supprime un document transmis par un stagiaire.
      *
-     * @return HTTP 204 si succès
+     * @param pieceId ID de la pièce jointe à supprimer
+     * @return 204 No Content si tout s'est bien passé, ou 404 si l'ID n'existe pas
      */
-    @DeleteMapping("/{pieceId}")
+    @DeleteMapping("/pieces/{pieceId}")
     public ResponseEntity<Void> deletePieceJointe(@PathVariable Integer pieceId) {
+
+        // Le service lèvera EntityNotFoundException si l’ID n’existe pas
         pieceJointeStagiaireService.deletePieceJointe(pieceId);
         return ResponseEntity.noContent().build();
     }
@@ -110,48 +133,36 @@ public class PieceJointeStagiaireController {
     public ResponseEntity<List<DocumentSummaryDto>> getStatutDocuments(
             @PathVariable Integer stagiaireId,
             @PathVariable Integer formationId) {
+
         Stagiaire stagiaire = stagiaireService.findById(stagiaireId)
-                .orElseThrow(() -> new RuntimeException("Stagiaire non trouvé"));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Stagiaire non trouvé avec l'ID : " + stagiaireId));
+
         Formation formation = formationService.findById(formationId)
-                .orElseThrow(() -> new RuntimeException("Formation non trouvée"));
-        List<DocumentSummaryDto> statutDocs = pieceJointeStagiaireService.getStatutDocumentsDossier(stagiaire, formation);
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Formation non trouvée avec l'ID : " + formationId));
+
+        List<DocumentSummaryDto> statutDocs =
+                pieceJointeStagiaireService.getStatutDocumentsDossier(stagiaire, formation);
         return ResponseEntity.ok(statutDocs);
     }
 
+    /**
+     * Met à jour le statut d'un document (Validé / Refusé, etc.).
+     *
+     * @param documentId ID de la pièce jointe à mettre à jour
+     * @param dto        payload contenant le nouveau statut et l'éventuel commentaire
+     * @return 200 OK ou 404 si l’ID n’existe pas
+     */
+    @PatchMapping("/documents/{documentId}/statut")
+    public ResponseEntity<?> updateDocumentStatut(
+            @PathVariable Integer documentId,
+            @RequestBody DocumentStatutUpdateDto dto) {
 
-        @PatchMapping("/documents/{documentId}/statut")
-        public ResponseEntity<?> updateDocumentStatut(
-                @PathVariable Integer documentId,
-                @RequestBody DocumentStatutUpdateDto dto
-        ) {
-            pieceJointeStagiaireService.updateStatutDocument(documentId, dto);
-            return ResponseEntity.ok().build();
-        }
-
-
-        // getters/setters
-        public Integer getFormationId() {
-            return formationId;
-        }
-
-        public void setFormationId(Integer formationId) {
-            this.formationId = formationId;
-        }
-
-        public TypeDocument getTypeDocument() {
-            return typeDocument;
-        }
-
-        public void setTypeDocument(TypeDocument typeDocument) {
-            this.typeDocument = typeDocument;
-        }
-
-        public String getFichier() {
-            return fichier;
-        }
-
-        public void setFichier(String fichier) {
-            this.fichier = fichier;
-        }
+        // Le service lèvera EntityNotFoundException si l’ID n’existe pas
+        pieceJointeStagiaireService.updateStatutDocument(documentId, dto);
+        return ResponseEntity.ok().build();
     }
+
+
 }
