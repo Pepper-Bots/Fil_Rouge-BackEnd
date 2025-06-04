@@ -15,4 +15,5 @@ public class StatutDocument {
 
     @Column(nullable = false)
     protected String nom;
+
 }

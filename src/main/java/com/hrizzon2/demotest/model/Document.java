@@ -24,8 +24,12 @@ public class Document {
     private TypeDocument type;
 
     @ManyToOne
-    @JoinColumn(name = "statut_id", nullable = false)
+    @JoinColumn(name = "statut_document_id", nullable = false)
     private StatutDocument statut;
+
+    public StatutDocument getStatut() {
+        return StatutDocument;
+    }
 
 
     @ManyToOne

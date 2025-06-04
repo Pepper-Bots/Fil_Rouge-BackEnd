@@ -3,6 +3,7 @@ package com.hrizzon2.demotest.controller;
 import com.hrizzon2.demotest.annotation.ValidFile;
 import com.hrizzon2.demotest.model.Document;
 import com.hrizzon2.demotest.model.Dossier;
+import com.hrizzon2.demotest.model.enums.TypeDocument;
 import com.hrizzon2.demotest.service.DocumentService;
 import com.hrizzon2.demotest.service.DossierService;
 import com.hrizzon2.demotest.service.FichierService;
@@ -50,18 +51,18 @@ public class DocumentController {
     /**
      * Upload d’un document lié à un dossier (ex : pièce justificative).
      *
-     * @param dossierId    Id du dossier auquel rattacher le document
-     * @param file         Fichier à transmettre
-     * @param typeDocument Type du document (ex: "CV", "JUSTIFICATIF_DOMICILE")
+     * @param dossierId Id du dossier auquel rattacher le document
+     * @param file      Fichier à transmettre
+     * @param type      Type du document (ex: "CV", "JUSTIFICATIF_DOMICILE")
      */
     @PostMapping("/dossier/{dossierId}/upload")
     public ResponseEntity<?> uploadDocument(
             @PathVariable Integer dossierId,
             @ValidFile @RequestParam("file") MultipartFile file,
-            @RequestParam("type") String typeDocument
+            @RequestParam("type") TypeDocument type
     ) {
         try {
-            documentService.uploadDocument(dossierId, file, typeDocument);
+            documentService.uploadDocument(dossierId, file, type);
             return ResponseEntity.ok("Fichier envoyé !");
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur d'upload");
