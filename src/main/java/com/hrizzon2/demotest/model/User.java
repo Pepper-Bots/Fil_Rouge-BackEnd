@@ -26,6 +26,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@Table(name = "users")
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "nom_role", discriminatorType = DiscriminatorType.STRING)
 public class User {
@@ -45,13 +46,13 @@ public class User {
     public void setActive(boolean b) {
     }
 
-// VOIR GESTION DES DROITS AVEC UN BOOLEEN - PAGE 415 SLIDE SPRING
-
-    public interface ValidInscription {
-    }
-
-    public interface ValidModification {
-    }
+//// VOIR GESTION DES DROITS AVEC UN BOOLEEN - PAGE 415 SLIDE SPRING
+//
+//    public interface ValidInscription {
+//    }
+//
+//    public interface ValidModification {
+//    }
 
     /**
      * Identifiant unique de l'utilisateur.

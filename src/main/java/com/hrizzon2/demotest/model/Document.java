@@ -41,6 +41,4 @@ public class Document {
     private String urlFichier;
 
 
-    // TODO Optionnel mais conseillé :
-    //Ajoute une colonne pour la date d’upload ou le fichier (blob/url), à voir plus tard.
 }

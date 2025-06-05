@@ -103,7 +103,7 @@ public class DocumentService {
                 .orElseGet(() -> {
                     Dossier d = new Dossier();
                     d.setStagiaire(stagiaire);
-                    d.setStatutDossier(StatutDossier.INCOMPLET);
+                    d.setStatutDossier(StatutDossier);
                     // Par défaut on peut initialiser une liste vide de documents
                     return dossierDao.save(d);
                 });

@@ -48,7 +48,8 @@ public class PieceJointeStagiaire {
 
     private String commentaire;
 
-
-    // TODO Ajoute une date d'upload si besoin
-
+    // Dans PieceJointeStagiaire.java,
+    // le champ @ManyToOne(optional=false) private Stagiaire stagiaire;
+    // et private Formation formation;
+    // doublonnent ce qu’on trouve dans Dossier et Inscription.
 }

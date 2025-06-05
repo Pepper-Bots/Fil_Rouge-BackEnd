@@ -1,5 +1,5 @@
 -- Étape 1 : insérer les utilisateurs de base dans la table USER
-INSERT INTO user (id, last_name, first_name, email, password, nom_role)
+INSERT INTO users (id, last_name, first_name, email, password, nom_role)
 VALUES (1, 'Alice', 'Dupont', 'alice@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG',
         'ADMINISTRATEUR'),
        (2, 'Bruno', 'Durand', 'bruno@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG',
@@ -205,7 +205,7 @@ VALUES ('Justificatif de domicile', 'JUSTIFICATIF', 2, 1),
        ('Justificatif d’identité', 'JUSTIFICATIF', 2, 2);
 
 
-INSERT INTO document_stagiaire (id, stagiaire_id, formation_id, type_document, fichier, statut_document_id)
+INSERT INTO piece_jointe_stagiaire (id, stagiaire_id, formation_id, type_document, fichier, statut_document_id)
 VALUES (1, 5, 1, 'CV', 'cv_roman_dupont.pdf', 1),
        (2, 5, 1, 'JUSTIFICATIF', 'justificatif_roman_dupont.pdf', 2);
 
@@ -259,4 +259,11 @@ VALUES (1, 5, 1, 'CV', 'cv_roman_dupont.pdf', 1),
 #        (26, 4, 18),
 #        (27, 4, 19),
 #        (28, 4, 20);
+
+INSERT INTO motif (id, libelle)
+VALUES (1, RETRAIT_DOSSIER),
+       (2, JUSTIFICATIF_INFIRMITÉ)
+
+INSERT INTO evenement (id, date, est_retard, stagiaire, motif)
+VALUES (id, '2025-10-15', false, 5, ' ' )
 

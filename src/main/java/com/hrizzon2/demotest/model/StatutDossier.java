@@ -7,7 +7,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@SuppressWarnings("unused")
 public class StatutDossier {
 
     @Id

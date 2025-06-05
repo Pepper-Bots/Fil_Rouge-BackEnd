@@ -49,7 +49,7 @@ public class Dossier {
      */
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
+    @JoinColumn(name = "statut_dossier_id", nullable = false)
     @JsonView(AffichageDossier.Dossier.class)
     protected StatutDossier statutDossier;
 
@@ -61,6 +61,10 @@ public class Dossier {
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "statut_document_id", nullable = false)
 //    private StatutDocument statutDocument;
+
+    // Si on souhaite stocker une arborescence (Dossier 1↔∗Document∈Status),
+    // mieux vaut que Document référence StatutDocument et qu’un calcul métier détermine
+    // “est-ce que tous les documents du dossier sont validés ?”
 
     /**
      * Liste des documents associés au dossier.

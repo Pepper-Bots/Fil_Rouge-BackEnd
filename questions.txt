@@ -746,4 +746,91 @@ POST /stagiaires/{stagiaireId}/documents
 [Base de données, Dossier à jour, Fichier stocké]
 
 
+-------------
 
+
+                                  ================
+                                  =  05/06/2025  =
+                                  ================
+
+QUESTIONS :
+
+* Dans la classe User (table users) :
+
+    - est ce que je doiis afficher une colonne jetonVerificationEmail ?
+    - comment doit apparaitre la colonne reset_password_token dans la table ? quelle value ?
+
+* protected StatutDossier statutDossier :
+
+    - je dois annoter comme une relation mais comment ? est ce que je dois rajouter une annotation à celles déjà existantes ou changer l'ordre ?
+    @NotNull
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(nullable = false)
+        @JsonView(AffichageDossier.Dossier.class)
+        protected StatutDossier statutDossier;
+
+* // private StatutDocument statutDocument;
+
+    - est ce que tu veux dire qu'il faut que je décommente ou je j'enlève ce code de l'entité Dossier ?
+
+* StatutDossier et StatutDocument :
+
+    - Ce sont pour le moment des entités,
+    Est ce qu'il vaut mieux les passer en enum pour plus de clarté ?
+
+* Document ou PieceJointeStagiaire :
+
+    - 1. Choisir une seule entité pour représenter l’envoi de fichier :
+    soit fusionner Document et PieceJointeStagiaire en une seule classe (ex. PieceJointe),
+    soit justifier pourquoi elles coexistent (ex. Document = prévu pour notifications,
+    PieceJointeStagiaire = prévu pour dossiers).
+    Si fusion, mettre à jour la relation “Dossier–>Document” et supprimer PieceJointeStagiaire ou rediriger tous les services vers la nouvelle classe.
+    2. Supprimez (ou archivez) la classe dupliquée pour éviter la confusion.
+    Veillez à migrer les annotations, tests et contrôleurs liés à l’entité que vous conservez. |
+
+    - dans la mesure où Document concerne les documents attendus (ListeDocumentsObligatoires)
+    et permet de gérer les doucments envoyés pour justifier d'un retard ou une absence du stagiaire,
+    et que PieceJointeStagiaire gère les documents envoyés par un stagiaire pour compléter le dossier,
+    est ce qu'il n'est pas pertinent de conserver les deux entités ?
+
+* Doublon @ManyToOne(optional=false) private Stagiaire stagiaire; dans PieceJointeStagiaire.java, Dossier et Inscription :
+
+    - Un Stagiaire envoie un document (entité Document ou PieceJointeStagiaire) et a un ou plusieurs Dossier,
+    le Dossier, lorsqu'il passe à l'état complet, valide l'Inscription
+
+* Motif :
+
+    - Pour que les motifs s'affichent dans le front (liste déroulante)
+    est ce que les afficher dans data-donnees-test suffit
+    ou il vaut mieux les avoir en dur dans le code, au travers d'un enum par exemple ?
+
+* Dossier :
+
+    - La ligne INSERT INTO dossier (…) existe déjà dans data-donnees-test.sql
+
+* Inscription :
+
+    - J'envisage de supprimer l'entité Inscription pour conserver l'enum StatutInscription
+    et je pense modifier StatutInscription pour conserver seulement un boolean pour dire si StatutInscription est valide ou non.
+    ou faire une liste de 3 possibilités : valide/invalide/en cours
+
+================
+
+A FAIRE au 05-06 :
+
+* DossierService -> méthode de recalcul du StatutDossier selon mise à jour document
+
+* Document et/ou PieceJointeStagiaire :
+    Voir si nécessité des deux entités
+    -> | Document.java vs PieceJointeStagiaire.java |
+    - Il existe deux entités qui couvrent sensiblement la même fonction (gestion d’un fichier) :
+    Document et PieceJointeStagiaire.
+    Cette redondance risque d’introduire des comportements incohérents
+    (l’une se trouve dans model.Document, l’autre dans model.PieceJointeStagiaire).
+
+* Entités / Model :
+    Faire le tour des entités pour s'assurer qu'elles sont correctement mappées pour apparaitre dans les données tests
+
+* Inscription :
+    Est-ce qu'il est vraiment pertinent de conserver toutes les données dans cette entité ? Dossier peut gérer ça
+    Et Inscription sera juste un statut_inscription (deja existant) pour dire si valide ou non.

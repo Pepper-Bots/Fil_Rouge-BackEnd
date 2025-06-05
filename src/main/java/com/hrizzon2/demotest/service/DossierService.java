@@ -204,3 +204,7 @@ public class DossierService {
     }
 
 }
+
+// TODO  Implémentez une méthode dans DossierService pour recalculer le statutDossier
+//  à chaque mise à jour d’un Document
+//  (cascade “orphanRemoval” et “cascade=ALL” sur la relation documents).
