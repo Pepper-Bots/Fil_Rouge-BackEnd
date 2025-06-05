@@ -262,8 +262,8 @@ VALUES (1, 5, 1, 'CV', 'cv_roman_dupont.pdf', 1),
 
 INSERT INTO motif (id, libelle)
 VALUES (1, RETRAIT_DOSSIER),
-       (2, JUSTIFICATIF_INFIRMITÉ)
+       (2, JUSTIFICATIF_INFIRMITÉ);
 
 INSERT INTO evenement (id, date, est_retard, stagiaire, motif)
-VALUES (id, '2025-10-15', false, 5, ' ' )
+VALUES (id, '2025-10-15', false, 5, ' ');
 

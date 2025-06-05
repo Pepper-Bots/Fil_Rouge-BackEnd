@@ -22,6 +22,7 @@ public class ListeDocumentsObligatoires {
 
     @JsonView(AffichageListeDocumentsObligatoires.Complet.class)
     @ManyToOne
+    @JoinColumn(nullable = false)
     private Formation formation;
 
     @Enumerated(EnumType.STRING)

@@ -34,7 +34,7 @@ public class Formation {
     private LocalDate dateFin;
 
     @OneToMany(mappedBy = "formation")
-    private List<Inscription> inscriptions;
+    private List<Inscription> inscriptions; // TODO -> table Inscription commenté -> associer avec StatutInscription
 
     @OneToMany(mappedBy = "formation")
     private List<Dossier> dossiers;

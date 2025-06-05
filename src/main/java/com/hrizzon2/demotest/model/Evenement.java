@@ -21,9 +21,11 @@ public class Evenement {
     // ou ENUM pour RETARD / ABSENCE
 
     @ManyToOne
+    @JoinColumn(nullable = false)
     private Stagiaire stagiaire;
 
     @ManyToOne
+    @JoinColumn(nullable = false)
     private Motif motif;
 
 
