@@ -13,8 +13,10 @@ import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 // Classe concrète qui fait vraiment le travail
 // Cœur de la logique métier pour tout ce qui touche au Stagiaire.
@@ -62,7 +64,7 @@ public class StagiaireServiceImpl implements StagiaireService {
         stagiaire.setPremiereConnexion(true); // ou false selon mon workflow
 
         // 2. Génération d'un token d'activation (exemple UUID)
-        String activationToken = java.util.UUID.randomUUID().toString();
+        String activationToken = UUID.randomUUID().toString();
         stagiaire.setActivationToken(activationToken); // Ajoute ce champ dans ton entité si besoin
 
         // 3. Sauvegarde de l'entité stagiaire dans la base de données
@@ -112,14 +114,14 @@ public class StagiaireServiceImpl implements StagiaireService {
     }
 
     @Override
-    public Inscription inscrireStagiaire(Stagiaire stagiaire, Formation formation) {
+    public void inscrireStagiaire(Stagiaire stagiaire, Formation formation) {
         Inscription inscription = new Inscription();
         inscription.setStagiaire(stagiaire);
         inscription.setFormation(formation);
         inscription.setDateInscription(LocalDate.now());
         inscription.setStatut(StatutInscription.EN_ATTENTE);
 
-        return inscriptionDao.save(inscription);
+        inscriptionDao.save(inscription);
     }
 
     /**
@@ -148,4 +150,32 @@ public class StagiaireServiceImpl implements StagiaireService {
         // On renvoie l'ID
         return stagiaire.getId();
     }
+
+
+    @Override
+    public Inscription getDerniereInscription(Stagiaire stagiaire) {
+        List<Inscription> inscriptions = stagiaire.getInscriptions();
+        if (inscriptions == null || inscriptions.isEmpty()) {
+            return null;
+        }
+        return inscriptions.stream()
+                .max(Comparator.comparing(Inscription::getDateInscription))
+                .orElse(null);
+
+        // Si vous souhaitez récupérer un Stagiaire depuis la BD avant d’appeler getDerniereInscription :
+        // @Override
+        // public Inscription getDerniereInscription(Integer stagiaireId) {
+        //     Stagiaire s = stagiaireDao.findById(stagiaireId).orElseThrow(...);
+        //     return getDerniereInscription(s);
+        // }
+    }
+
+    @Override
+    public StatutInscription getStatutDerniereInscriptionById(Integer stagiaireId) {
+        Stagiaire s = stagiaireDao.findById(stagiaireId)
+                .orElseThrow(() -> new IllegalArgumentException("Stagiaire introuvable"));
+        Inscription dernier = getDerniereInscription(s);
+        return (dernier == null) ? null : dernier.getStatut();
+    }
+
 }

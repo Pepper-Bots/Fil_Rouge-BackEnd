@@ -22,6 +22,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@Table(name = "dossier")
 public class Dossier {
 
     /**
@@ -30,22 +31,21 @@ public class Dossier {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonView(AffichageDossier.Dossier.class)
+    @Column(name = "id_dossier")
     protected Integer id;
 
+
     /**
-     * Code unique d'identification du dossier.
+     * Code métier unique du dossier (longueur 2 à 10).
      */
-    @Column(length = 10, nullable = false, unique = true)
-    @Length(max = 10, min = 2)
+    @Column(name = "code_dossier", length = 10, nullable = false, unique = true)
+    @Length(min = 2, max = 10)
     @NotBlank
     @JsonView(AffichageDossier.Dossier.class)
     protected String codeDossier;
-    // TODO Optionnel si tu utilises l’id, mais tu peux le garder pour une logique métier ou un affichage utilisateur.
-
-    // validation du plat
 
     /**
-     * Statut global du dossier.
+     * Statut global du dossier (FK vers StatutDossier).
      */
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
@@ -53,75 +53,75 @@ public class Dossier {
     @JsonView(AffichageDossier.Dossier.class)
     protected StatutDossier statutDossier;
 
-    // Gestion du status du document - TODO pas nécessaire
     /**
-     * Statut des documents dans le dossier.
-     */
-//    @NotNull
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "statut_document_id", nullable = false)
-//    private StatutDocument statutDocument;
-
-    // Si on souhaite stocker une arborescence (Dossier 1↔∗Document∈Status),
-    // mieux vaut que Document référence StatutDocument et qu’un calcul métier détermine
-    // “est-ce que tous les documents du dossier sont validés ?”
-
-    /**
-     * Liste des documents associés au dossier.
+     * Liste des documents associés à ce dossier.
+     * Si vous souhaitez contrôler l’arborescence Doc↔StatutDocument,
+     * c’est à Document de référencer StatutDocument, pas l’inverse.
      */
     @OneToMany(mappedBy = "dossier", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Document> documents;
 
-
+    /**
+     * Date de création du dossier (non nullable).
+     */
     @Column(name = "date_de_creation", nullable = false)
     @NotNull
     @JsonView(AffichageDossier.Dossier.class)
     protected LocalDateTime dateCreation;
 
     /**
-     * Date et heure de la dernière mise à jour du dossier.
+     * Date/heure de la dernière mise à jour (mise à jour automatique).
      */
-    @Column(name = "last_updated")
+    @Column(name = "derniere_mise_a_jour")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime lastUpdated;
+    private LocalDateTime derniereMiseAJour;
 
     /**
-     * Date et heure de modification du dossier.
+     * Date/heure de la dernière modification (mise à jour automatique).
      */
     @Column(name = "date_modification")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime dateModification;
 
     /**
-     * Met à jour automatiquement la date de dernière modification.
+     * Callback JPA pour initialiser et mettre à jour les timestamp :
+     * - @PrePersist : dateCreation + dateModification + derniereMiseAJour = maintenant
+     * - @PreUpdate  : dateModification + derniereMiseAJour = maintenant
      */
     @PrePersist
+    public void prePersist() {
+        LocalDateTime now = LocalDateTime.now();
+        this.dateCreation = now;
+        this.dateModification = now;
+        this.derniereMiseAJour = now;
+    }
+
     @PreUpdate
-    public void updateTimeStamp() {
-        this.lastUpdated = LocalDateTime.now();
-        this.dateModification = LocalDateTime.now(); // Synchroniser les deux champs
+    public void preUpdate() {
+        LocalDateTime now = LocalDateTime.now();
+        this.dateModification = now;
+        this.derniereMiseAJour = now;
     }
 
     /**
-     * Lien vers le stagiaire concerné.
+     * Le stagiaire auquel ce dossier appartient (FK non-null).
      */
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "stagiaire_id", nullable = false)
     private Stagiaire stagiaire;
-    // Un dossier ne peut pas être créé sans stagiaire
+
 
     /**
-     * Lien vers la formation concernée.
+     * Lien vers la formation concernée par ce dossier (FK non nullable)
      */
-    @Getter
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "formation_id", nullable = false)
     private Formation formation;
 
     /**
-     * Administrateur créateur du dossier.
+     * L’admin qui a créé ce dossier (FK non nullable)
      */
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
@@ -131,8 +131,10 @@ public class Dossier {
 
     // === GETTERS DÉRIVÉS POUR AFFICHAGE SIMPLIFIÉ ===
 
+    // === Methods utilitaires pour l’affichage (JsonView) ===
+
     /**
-     * Nom et prénom du dossier (ex: nom du stagiaire).
+     * Renvoie “Prénom Nom” du stagiaire pour l’affichage simplifié.
      */
     @JsonView(AffichageDossier.Stagiaire.class)
     public String getNomPrenomStagiaire() {
@@ -141,27 +143,30 @@ public class Dossier {
                 : null;
     }
 
-    // TODO -> méthodes à utiliser ?
-
+    /**
+     * Renvoie le “titre” de la formation (ici on prend simplement le champ nom).
+     */
     @JsonView(AffichageDossier.Formation.class)
     public String getTitreFormation() {
-        return (formation != null) ? formation.getTitre() : null;
+        return (formation != null) ? formation.getNom() : null;
     }
 
+    /**
+     * Renvoie le nom de famille de l’admin qui a créé le dossier.
+     */
     @JsonView(AffichageDossier.Admin.class)
     public String getNomCreateur() {
         return (createur != null) ? createur.getLastName() : null;
     }
 
+    /**
+     * Un champ pour stocker le nom du fichier image (au besoin).
+     */
     @JsonView({AffichageDossier.Stagiaire.class})
-    String nomImage;
-
+    private String nomImage;
 }
 
-// TODO -> orphanRemoval = true ?
-// TODO -> le statut du dossier dépend du statut du document => si tous les documents (Liste complète) sont fournis + validés -> dossier validé
 
-// TODO => Liste Document + statutDocument ??
-// TODO créer une table de jointure pour formation + document ?
-// TODO -> associer à TypeDocument (ENUM)
-// TODO -> comment le faire passer d'un statut à un autre ?
+
+
+

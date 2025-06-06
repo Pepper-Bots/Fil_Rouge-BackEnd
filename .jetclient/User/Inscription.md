@@ -13,7 +13,7 @@ raw = '''
   "password": "MotDePasse123!",
   "firstName": "Dupont",
   "lastName": "Alice",
-  "role": "STAGIAIRE" 
+  "role": "STAGIAIRE"
 }
 '''
 ```

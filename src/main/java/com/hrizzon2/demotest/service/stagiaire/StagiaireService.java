@@ -16,13 +16,13 @@ import java.util.Optional;
 
 public interface StagiaireService {
 
-    Stagiaire save(Stagiaire stagiaire);
+    List<Stagiaire> findAll();
 
     Optional<Stagiaire> findById(Integer id);
 
-    List<Stagiaire> findAll();
-
     Optional<Stagiaire> findByEmail(String email);
+
+    Stagiaire save(Stagiaire stagiaire);
 
     void deleteById(Integer id);
 
@@ -30,13 +30,23 @@ public interface StagiaireService {
 
     boolean existsByEmail(String email);
 
-
     List<Stagiaire> findByStatutInscription(StatutInscription statut);
 
     List<Stagiaire> findInscritsEntre(LocalDate debut, LocalDate fin);
 
-    Inscription inscrireStagiaire(Stagiaire stagiaire, Formation formation);
-
+    void inscrireStagiaire(Stagiaire stagiaire, Formation formation);
 
     Integer getIdFromPrincipal(Principal principal);
+
+    /**
+     * Renvoie l'objet Inscription dont la dateInscription est la plus récente
+     * pour le stagiaire passé en paramètre. Null si aucune inscription existante.
+     */
+    Inscription getDerniereInscription(Stagiaire stagiaire);
+
+    /**
+     * Même logique, mais en partant de l'ID du stagiaire.
+     * Renvoie le statut de la dernière inscription de ce stagiaire (ou null s’il n’y en a pas).
+     */
+    StatutInscription getStatutDerniereInscriptionById(Integer stagiaireId);
 }

@@ -1,11 +1,13 @@
 package com.hrizzon2.demotest.model;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.hrizzon2.demotest.model.enums.StatutInscription;
 import com.hrizzon2.demotest.view.AffichageDossier;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -38,10 +40,9 @@ public class Stagiaire extends User {
     private boolean premiereConnexion = true;
 
     /**
-     * Date de naissance du stagiaire.
-     * Ce champ est obligatoire.
+     * Date de naissance (date-only).
      */
-    @Temporal(jakarta.persistence.TemporalType.DATE)
+    @Temporal(TemporalType.DATE)
     @JsonView({AffichageDossier.Stagiaire.class, AffichageDossier.Complet.class})
     private Date dateNaissance;
 
@@ -59,36 +60,50 @@ public class Stagiaire extends User {
     @JsonView({AffichageDossier.Stagiaire.class, AffichageDossier.Complet.class})
     private String adresse;
 
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "ville_id", nullable = false)
     @JsonView({AffichageDossier.Stagiaire.class, AffichageDossier.Complet.class})
-    @ManyToOne
     private Ville ville;
 
     /**
      * Liste des événements associés à ce stagiaire.
      */
+    @OneToMany(mappedBy = "stagiaire", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonView({AffichageDossier.Complet.class})
-    @OneToMany(mappedBy = "stagiaire")
     private List<Evenement> evenements;
 
     /**
      * Liste des dossiers associés à ce stagiaire.
      */
+    @OneToMany(mappedBy = "stagiaire", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonView({AffichageDossier.Complet.class})
-    @OneToMany(mappedBy = "stagiaire")
     private List<Dossier> dossiers;
 
     /**
      * Liste des inscriptions effectuées par ce stagiaire.
      */
+    @OneToMany(mappedBy = "stagiaire", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonView({AffichageDossier.Complet.class})
-    @OneToMany(mappedBy = "stagiaire")
     private List<Inscription> inscriptions;
 
     @JsonView(AffichageDossier.Admin.class)
     private String activationToken;
 
+    /**
+     * Méthode utilitaire pour obtenir le StatutInscription de la dernière inscription.
+     * (@Transient pour que ce ne soit pas pris en compte en colonne JPA)
+     * <p>
+     * Renvoie le statut de la dernière inscription (ou null s’il n’y en a pas).
+     */
+    @Transient
+    public StatutInscription getStatutActuelInscription() {
+        if (inscriptions == null || inscriptions.isEmpty()) {
+            return null;
+        }
+        return inscriptions.stream()
+                .max(Comparator.comparing(Inscription::getDateInscription))
+                .map(Inscription::getStatut)
+                .orElse(null);
+    }
 }
 
-// ⚠️ Les champs non annotés ne seront jamais sérialisés
-// si tu utilises toujours une JsonView dans ton controller !

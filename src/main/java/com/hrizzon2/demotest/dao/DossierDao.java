@@ -14,6 +14,10 @@ public interface DossierDao extends JpaRepository<Dossier, Integer> {
 
     Optional<Dossier> findByCodeDossier(String codeDossier);
 
+    /**
+     * Pour charger le dossier à partir de l’ID du stagiaire.
+     * On suppose qu’il n’y a qu’un seul Dossier actif par stagiaire à un instant t.
+     */
     Optional<Dossier> findByStagiaireId(Integer stagiaireId);
 
 }

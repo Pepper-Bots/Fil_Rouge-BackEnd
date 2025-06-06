@@ -1,63 +1,91 @@
+-- 14. Insertions exemples (statuts)
+INSERT INTO statut_document (nom)
+VALUES ('EN_ATTENTE'),
+       ('VALIDÉ'),
+       ('REJETÉ'),
+       ('MANQUANT');
+
+INSERT INTO statut_dossier (nom_statut)
+VALUES ('INCOMPLET'),
+       ('EN_COURS'),
+       ('COMPLET'),
+       ('VALIDÉ');
+
+
 -- Étape 1 : insérer les utilisateurs de base dans la table USER
-INSERT INTO users (id, last_name, first_name, email, password, nom_role)
-VALUES (1, 'Alice', 'Dupont', 'alice@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG',
-        'ADMINISTRATEUR'),
-       (2, 'Bruno', 'Durand', 'bruno@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG',
-        'ADMINISTRATEUR'),
-       (3, 'Cécile', 'Martin', 'cecile@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG',
-        'ADMINISTRATEUR'),
-       (4, 'David', 'Bernard', 'david@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG',
-        'ADMINISTRATEUR'),
-       (5, 'Dupont', 'Romain', 'romain_dupont@live.fr', '$2a$10$Dow1Kt9EdIVVQ8KQfBGoH.NkbZoCPoEdWkqITpCTBLuRFK5kZzCO2',
-        'STAGIAIRE'),
-       (6, 'Martin', 'Julie', 'julie.martin@example.com',
-        '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', 'STAGIAIRE'),
-       (7, 'Legrand', 'Paul', 'paul.legrand@example.com',
-        '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', 'STAGIAIRE'),
-       (8, 'Durand', 'Sophie', 'sophie.durand@example.com',
-        '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', 'STAGIAIRE'),
-       (9, 'Petit', 'Lucas', 'lucas.petit@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG',
-        'STAGIAIRE'),
-       (10, 'Moreau', 'Camille', 'camille.moreau@example.com',
-        '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', 'STAGIAIRE'),
-       (11, 'Fournier', 'Léo', 'leo.fournier@example.com',
-        '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', 'STAGIAIRE'),
-       (12, 'Garnier', 'Emma', 'emma.garnier@example.com',
-        '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', 'STAGIAIRE'),
-       (13, 'Henry', 'Maxime', 'maxime.henry@example.com',
-        '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', 'STAGIAIRE'),
-       (14, 'Roux', 'Manon', 'manon.roux@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG',
-        'STAGIAIRE'),
-       (15, 'Guerin', 'Tom', 'tom.guerin@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG',
-        'STAGIAIRE'),
-       (16, 'Schmitt', 'Chloé', 'chloe.schmitt@example.com',
-        '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', 'STAGIAIRE'),
-       (17, 'Robert', 'Nathan', 'nathan.robert@example.com',
-        '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', 'STAGIAIRE'),
-       (18, 'Lemoine', 'Élise', 'elise.lemoine@example.com',
-        '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', 'STAGIAIRE'),
-       (19, 'Blanc', 'Axel', 'axel.blanc@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG',
-        'STAGIAIRE'),
-       (20, 'Chevalier', 'Laura', 'laura.chevalier@example.com',
-        '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', 'STAGIAIRE'),
-       (21, 'Faure', 'Noah', 'noah.faure@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG',
-        'STAGIAIRE'),
-       (22, 'André', 'Sarah', 'sarah.andre@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG',
-        'STAGIAIRE'),
-       (23, 'Renaud', 'Julien', 'julien.renaud@example.com',
-        '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', 'STAGIAIRE'),
-       (24, 'Collet', 'Anaïs', 'anais.collet@example.com',
-        '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', 'STAGIAIRE'),
-       (25, 'Test1', 'User1', 'test1@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG',
-        'STAGIAIRE'),
-       (26, 'Test2', 'User2', 'test2@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG',
-        'STAGIAIRE'),
-       (27, 'Test3', 'User3', 'test3@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG',
-        'STAGIAIRE'),
-       (28, 'Test4', 'User4', 'test4@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG',
-        'STAGIAIRE'),
-       (29, 'Test5', 'User5', 'test5@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG',
-        'STAGIAIRE');
+INSERT INTO `user` (last_name,
+                    first_name,
+                    email,
+                    password,
+                    enabled,
+                    jeton_verification_email,
+                    nom_role,
+                    reset_password_token)
+VALUES
+-- 1. Administrateurs
+('Dupont', 'Alice', 'alice@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
+ 'token-verif-123', 'ADMINISTRATEUR', NULL),
+('Durand', 'Bruno', 'bruno@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
+ 'ADMINISTRATEUR', NULL),
+('Martin', 'Cécile', 'cecile@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
+ 'ADMINISTRATEUR', NULL),
+('Bernard', 'David', 'david@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
+ 'ADMINISTRATEUR', NULL),
+
+-- 2. Stagiaires
+('Dupont', 'Romain', 'romain_dupont@live.fr', '$2a$10$Dow1Kt9EdIVVQ8KQfBGoH.NkbZoCPoEdWkqITpCTBLuRFK5kZzCO2', TRUE,
+ NULL, 'STAGIAIRE', NULL),
+('Martin', 'Julie', 'julie.martin@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
+ NULL, 'STAGIAIRE', NULL),
+('Legrand', 'Paul', 'paul.legrand@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
+ NULL, 'STAGIAIRE', NULL),
+('Durand', 'Sophie', 'sophie.durand@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
+ NULL, 'STAGIAIRE', NULL),
+('Petit', 'Lucas', 'lucas.petit@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
+ NULL, 'STAGIAIRE', NULL),
+('Moreau', 'Camille', 'camille.moreau@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG',
+ TRUE, NULL, 'STAGIAIRE', NULL),
+('Fournier', 'Léo', 'leo.fournier@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
+ NULL, 'STAGIAIRE', NULL),
+('Garnier', 'Emma', 'emma.garnier@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
+ NULL, 'STAGIAIRE', NULL),
+('Henry', 'Maxime', 'maxime.henry@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
+ NULL, 'STAGIAIRE', NULL),
+('Roux', 'Manon', 'manon.roux@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
+ 'STAGIAIRE', NULL),
+('Guerin', 'Tom', 'tom.guerin@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
+ 'STAGIAIRE', NULL),
+('Schmitt', 'Chloé', 'chloe.schmitt@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
+ NULL, 'STAGIAIRE', NULL),
+('Robert', 'Nathan', 'nathan.robert@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
+ NULL, 'STAGIAIRE', NULL),
+('Lemoine', 'Élise', 'elise.lemoine@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
+ NULL, 'STAGIAIRE', NULL),
+('Blanc', 'Axel', 'axel.blanc@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
+ 'STAGIAIRE', NULL),
+('Chevalier', 'Laura', 'laura.chevalier@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG',
+ TRUE, NULL, 'STAGIAIRE', NULL),
+('Faure', 'Noah', 'noah.faure@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
+ 'STAGIAIRE', NULL),
+('André', 'Sarah', 'sarah.andre@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
+ NULL, 'STAGIAIRE', NULL),
+('Renaud', 'Julien', 'julien.renaud@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
+ NULL, 'STAGIAIRE', NULL),
+('Collet', 'Anaïs', 'anais.collet@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
+ NULL, 'STAGIAIRE', NULL),
+
+-- 3. Utilisateurs de test génériques
+('Test1', 'User1', 'test1@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
+ 'STAGIAIRE', NULL),
+('Test2', 'User2', 'test2@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
+ 'STAGIAIRE', NULL),
+('Test3', 'User3', 'test3@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
+ 'STAGIAIRE', NULL),
+('Test4', 'User4', 'test4@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
+ 'STAGIAIRE', NULL),
+('Test5', 'User5', 'test5@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
+ 'STAGIAIRE', NULL);
+
 
 -- Étape 2 : insérer dans ADMIN (en réutilisant les IDs ci-dessus)
 INSERT INTO admin (id, type_admin, niveau_droit)
@@ -65,6 +93,7 @@ VALUES (1, 'RESPONSABLE_ETABLISSEMENT', 'SUPER_ADMIN'),
        (2, 'RESPONSABLE_FORMATION', 'ADMIN'),
        (3, 'ASSISTANT_VIE_SCOLAIRE', 'MODERATEUR'),
        (4, 'ASSISTANT_ADMINISTRATIF', 'BASIQUE');
+
 
 INSERT INTO region (id_region, nom_region, nom_pays)
 VALUES ('ARA', 'Auvergne-Rhône-Alpes', 'France'),
@@ -121,7 +150,7 @@ VALUES (5, true, '1990-03-01', '0660606060', '12 rue des Rosses', 1),
 
 
 -- 6. FORMATION
-INSERT INTO formation (id, titre, niveau, description, date_debut, date_fin)
+INSERT INTO formation (id_formation, nom, niveau, description, date_debut, date_fin)
 VALUES (1, 'Développement Web Front-End', 'A', 'Apprendre HTML, CSS, JavaScript et React.', '2025-06-01', '2025-08-30'),
        (2, 'Développement Web Back-End', 'A', 'Apprentissage de Node.js, Express et bases de données.', '2025-07-01',
         '2025-09-30'),
@@ -143,33 +172,9 @@ VALUES (1, 'Développement Web Front-End', 'A', 'Apprendre HTML, CSS, JavaScript
         '2025-06-05', '2025-08-05');
 
 
--- 7. DOCUMENTS OBLIGATOIRES (type_document = enum en string, respecte la casse de l'enum)
-INSERT INTO liste_documents_obligatoires (id, formation_id, type_document)
-VALUES (1, 1, 'JUSTIFICATIF'),
-       (2, 2, 'LETTRE_MOTIVATION'),
-       (3, 3, 'CV'),
-       (4, 4, 'AUTRE'),
-       (5, 5, 'JUSTIFICATIF'),
-       (6, 6, 'LETTRE_MOTIVATION'),
-       (7, 7, 'CV'),
-       (8, 8, 'AUTRE'),
-       (9, 9, 'JUSTIFICATIF'),
-       (10, 10, 'LETTRE_MOTIVATION');
-
-INSERT INTO statut_document (id, nom)
-VALUES (1, 'ENVOYE'), -- Correction : guillemets simples
-       (2, 'VALIDE'), -- Correction : guillemets simples
-       (3, 'REFUSE'), -- Correction : guillemets simples
-       (4, 'MANQUANT');
-
-INSERT INTO statut_dossier (id, nom_statut)
-VALUES (1, 'en attente de validation'),
-       (2, 'complet'),
-       (3, 'incomplet'),
-       (4, 'validé');
-
 -- 10. DOSSIER
-INSERT INTO dossier (id, code_dossier, statut_dossier_id, date_de_creation, last_updated, date_modification,
+INSERT INTO dossier (id_dossier, code_dossier, statut_dossier_id, date_de_creation, derniere_mise_a_jour,
+                     date_modification,
                      stagiaire_id, formation_id, createur_id)
 VALUES (1, 'DSR001', 2, '2025-01-05 09:00:00', '2025-01-07 14:00:00', '2025-01-07 14:00:00', 5, 1, 1),   -- Java avancé
        (2, 'DSR002', 1, '2025-01-08 10:15:00', '2025-01-09 16:30:00', '2025-01-07 14:00:00', 6, 2, 2),-- Développement Web
@@ -198,14 +203,49 @@ VALUES (1, 'DSR001', 2, '2025-01-05 09:00:00', '2025-01-07 14:00:00', '2025-01-0
        (25, 'DSR025', 1, '2025-03-20 11:30:00', '2025-04-06 15:10:00', '2025-01-07 14:00:00', 29, 3,
         2); -- Développement Web
 
-INSERT INTO document (name, type, statut_id, dossier_id)
-VALUES ('Justificatif de domicile', 'JUSTIFICATIF', 2, 1),
-       ('CV Paul', 'CV', 1, 1),
-       ('Lettre de motivation', 'LETTRE_MOTIVATION', 1, 2),
-       ('Justificatif d’identité', 'JUSTIFICATIF', 2, 2);
+
+INSERT INTO document (nom_fichier, type, statut_document_id, dossier_id, commentaire, date_depot, url_fichier)
+VALUES ('Justificatif de domicile', 'JUSTIFICATIF', 2, 1, NULL, NOW(), NULL),
+       ('CV Paul', 'CV', 1, 1, NULL, NOW(), NULL),
+       ('Lettre de motivation', 'LETTRE_MOTIVATION', 1, 2, NULL, NOW(), NULL),
+       ('Justificatif d’identité', 'JUSTIFICATIF', 2, 2, NULL, NOW(), NULL);
 
 
-INSERT INTO piece_jointe_stagiaire (id, stagiaire_id, formation_id, type_document, fichier, statut_document_id)
+-- 1) Inscription n°1 pour le stagiaire dont id = 3, sur la formation id = 5, en EN_ATTENTE,
+--    pas encore de dossier (dossier_id = NULL), date_modification et date_validation NULL :
+
+-- Exemple inscription
+INSERT INTO inscription (id_inscription, date_inscription, date_modification, date_validation, statut_inscription,
+                         stagiaire_id,
+                         formation_id, dossier_id)
+VALUES (1, CURDATE(), NULL, NULL, 'EN_ATTENTE', 5, 1, 1);
+
+
+INSERT INTO motif (id, libelle)
+VALUES (1, 'RETRAIT_DOSSIER'),
+       (2, 'JUSTIFICATIF_INFIRMITÉ');
+
+
+INSERT INTO evenement (id_evenement, date_debut, date_fin, est_retard, stagiaire_id, motif_id, document_id)
+VALUES (1, '2025-10-15', '2025-10-16', FALSE, 5, 1, NULL);
+
+
+-- 7. DOCUMENTS OBLIGATOIRES (type_document = enum en string, respecte la casse de l'enum)
+INSERT INTO liste_documents_obligatoires (id, formation_id, type_document)
+VALUES (1, 1, 'JUSTIFICATIF'),
+       (2, 2, 'LETTRE_MOTIVATION'),
+       (3, 3, 'CV'),
+       (4, 4, 'AUTRE'),
+       (5, 5, 'JUSTIFICATIF'),
+       (6, 6, 'LETTRE_MOTIVATION'),
+       (7, 7, 'CV'),
+       (8, 8, 'AUTRE'),
+       (9, 9, 'JUSTIFICATIF'),
+       (10, 10, 'LETTRE_MOTIVATION');
+
+
+
+INSERT INTO piece_jointe_stagiaire (id, stagiaire_id, formation_id, type_document, chemin_fichier, statut_document_id)
 VALUES (1, 5, 1, 'CV', 'cv_roman_dupont.pdf', 1),
        (2, 5, 1, 'JUSTIFICATIF', 'justificatif_roman_dupont.pdf', 2);
 
@@ -260,10 +300,7 @@ VALUES (1, 5, 1, 'CV', 'cv_roman_dupont.pdf', 1),
 #        (27, 4, 19),
 #        (28, 4, 20);
 
-INSERT INTO motif (id, libelle)
-VALUES (1, RETRAIT_DOSSIER),
-       (2, JUSTIFICATIF_INFIRMITÉ);
 
-INSERT INTO evenement (id, date, est_retard, stagiaire, motif)
-VALUES (id, '2025-10-15', false, 5, ' ');
+
+
 

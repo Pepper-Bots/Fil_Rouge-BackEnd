@@ -28,7 +28,7 @@ public class PieceJointeStagiaire {
      * Formation à laquelle le document est rattaché.
      */
     @ManyToOne(optional = false)
-    @JoinColumn(name = "formation_nom", nullable = false)
+    @JoinColumn(name = "formation_id", nullable = false)
     private Formation formation;
 
     /**
@@ -46,7 +46,7 @@ public class PieceJointeStagiaire {
      * Statut actuel du document (EN_ATTENTE, VALIDE, REFUSE...).
      */
     @ManyToOne
-    @JoinColumn(name = "statut_document", nullable = false)
+    @JoinColumn(name = "statut_document_id", nullable = false)
     private StatutDocument statutDocument;
 
     private String commentaire;

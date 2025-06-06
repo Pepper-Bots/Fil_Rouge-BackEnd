@@ -834,3 +834,14 @@ A FAIRE au 05-06 :
 * Inscription :
     Est-ce qu'il est vraiment pertinent de conserver toutes les données dans cette entité ? Dossier peut gérer ça
     Et Inscription sera juste un statut_inscription (deja existant) pour dire si valide ou non.
+
+---------------
+
+Refacto à opérer 06/06
+
+=> Fusion PieceJointeStagiaire + Document
+-> Conserver 2 controllers pour :
+    * gestion Doc - Evenement -> JustificatifController
+    * gestion complétude Dossier -> CompletudeDossierController
+
+Voir gestion des services

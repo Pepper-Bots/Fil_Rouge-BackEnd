@@ -25,9 +25,10 @@ public class DocumentService {
     private final InscriptionDao inscriptionDao;
     private final FichierService fichierService;
     private final StatutDocumentDao statutDocumentDao;
+    private final StatutDossierDao statutDossierDao;
 
     /**
-     * Liste statique (ou potentiellement paramétrée en base)
+     * Liste statique
      * des types de documents obligatoires.
      */
     private final List<TypeDocument> listeDocsObligatoires = List.of(
@@ -44,13 +45,14 @@ public class DocumentService {
     );
 
     @Autowired
-    public DocumentService(DocumentDao documentDao, DossierDao dossierDao, StagiaireDao stagiaireDao, InscriptionDao inscriptionDao, FichierService fichierService, StatutDocumentDao statutDocumentDao) {
+    public DocumentService(DocumentDao documentDao, DossierDao dossierDao, StagiaireDao stagiaireDao, InscriptionDao inscriptionDao, FichierService fichierService, StatutDocumentDao statutDocumentDao, StatutDossierDao statutDossierDao) {
         this.documentDao = documentDao;
         this.dossierDao = dossierDao;
         this.stagiaireDao = stagiaireDao;
         this.inscriptionDao = inscriptionDao;
         this.fichierService = fichierService;
         this.statutDocumentDao = statutDocumentDao;
+        this.statutDossierDao = statutDossierDao;
     }
 
     /**
@@ -83,10 +85,10 @@ public class DocumentService {
         }
 
         // 3. Vérifier s’il n’y a pas déjà un Document du même type en attente ou validé
-        boolean dejaSoumis = documentDao.findByDossierStagiaireIdAndType(
-                        stagiaireId.longValue(),
-                        type)
+        boolean dejaSoumis = documentDao
+                .findByDossierStagiaireIdAndType(stagiaireId, type)
                 .stream()
+                // À présent, doc est bien un Document, pas un Object
                 .anyMatch(doc -> !doc.getStatut().getNom().equals("REJETÉ"));
         if (dejaSoumis) {
             throw new IllegalArgumentException(
@@ -99,19 +101,25 @@ public class DocumentService {
         fichierService.uploadToLocalFileSystem(fichier, safeName, false);
 
         // 5. Charger (ou créer) le Dossier associé au stagiaire
+        // On récupère, s’il existe, le dossier du stagiaire
         Dossier dossier = dossierDao.findByStagiaireId(stagiaireId)
                 .orElseGet(() -> {
+                    // Créer un nouveau Dossier s’il n’existe pas
                     Dossier d = new Dossier();
                     d.setStagiaire(stagiaire);
-                    d.setStatutDossier(StatutDossier);
-                    // Par défaut on peut initialiser une liste vide de documents
+                    // Initialiser le statut du dossier à « INCOMPLET » (pour commencer)
+                    StatutDossier statIncomplet = statutDossierDao
+                            .findByNomStatut("INCOMPLET")
+                            .orElseThrow(() -> new IllegalStateException(
+                                    "StatutDossier « INCOMPLET » introuvable en base !"));
+                    d.setStatutDossier(statIncomplet);
                     return dossierDao.save(d);
                 });
 
         // 6. Récupérer l'entité StatutDocument « EN_ATTENTE »
         StatutDocument statutEnAttente = statutDocumentDao.findByNom("EN_ATTENTE")
                 .orElseThrow(() -> new IllegalStateException(
-                        "Statut EN_ATTENTE introuvable en base !"));
+                        "StatutDocument « EN_ATTENTE » introuvable en base !"));
 
         // 7. Créer et sauver l’entité Document
         Document document = new Document();
@@ -162,31 +170,44 @@ public class DocumentService {
                         "Stagiaire introuvable (ID=" + stagiaireId + ")"));
 
         // 3. Charger (ou créer) le dossier
-        Dossier dossier = dossierDao.findByStagiaireId((int) stagiaireId)
+        Dossier dossier = dossierDao.findByStagiaireId(stagiaireId)
                 .orElseGet(() -> {
                     Dossier d = new Dossier();
                     d.setStagiaire(stagiaire);
-                    d.setStatutDossier(StatutDossier.INCOMPLET);
+                    StatutDossier statIncomplet = statutDossierDao
+                            .findByNomStatut("INCOMPLET")
+                            .orElseThrow(() -> new IllegalStateException(
+                                    "StatutDossier « INCOMPLET » introuvable en base !"));
+                    d.setStatutDossier(statIncomplet);
                     return dossierDao.save(d);
                 });
 
+        // 4. On rattache la liste de documents au dossier
         dossier.setDocuments(docs);
 
-// 4. Calcul du statut global
+        // 5. Calcul du statut global du dossier
         boolean complet = listeDocsObligatoires.stream().allMatch(type ->
                 docs.stream().anyMatch(doc ->
-                        doc.getType() == type && doc.getStatut().getNom().equals("VALIDÉ")
+                        doc.getType() == type
+                                && doc.getStatut().getNom().equals("VALIDÉ")
                 )
         );
-        dossier.setStatutDossier(complet ? StatutDossier.COMPLET : StatutDossier.INCOMPLET);
+        StatutDossier nouveauStatut = statutDossierDao
+                .findByNomStatut(complet ? "COMPLET" : "INCOMPLET")
+                .orElseThrow(() -> new IllegalStateException(
+                        "StatutDossier introuvable pour « " + (complet ? "COMPLET" : "INCOMPLET") + " »"
+                ));
+        dossier.setStatutDossier(nouveauStatut);
 
-        // 5. Si COMPLET → valider l’inscription EN_ATTENTE
+        // 6. Si COMPLET → valider l’inscription EN_ATTENTE associée
         if (complet) {
             inscriptionDao.findByStagiaireIdAndStatut(
-                    (int) stagiaireId,
+                    stagiaireId,
                     StatutInscription.EN_ATTENTE
             ).ifPresent(inscription -> {
                 inscription.setStatut(StatutInscription.VALIDEE);
+                inscription.setDateValidation(java.time.LocalDate.now());
+                inscription.setDateModification(java.time.LocalDate.now());
                 inscriptionDao.save(inscription);
             });
         }
@@ -197,12 +218,12 @@ public class DocumentService {
 
     /**
      * Renvoie la liste de tous les documents EN_ATTENTE (non encore validés),
-     * afin que l’admin puisse les examiner.
+     * afin que l’admin puisse les examiner en masse.
      *
      * @return Liste de Document dont statut.nom == "EN_ATTENTE"
      */
     public List<Document> getPendingDocuments() {
-        return documentDao.findByStatut("EN_ATTENTE");
+        return documentDao.findByStatutNom("EN_ATTENTE");
     }
 
     /**
@@ -222,7 +243,8 @@ public class DocumentService {
 
         // 1. Changer le statut en VALIDÉ
         StatutDocument statutValide = statutDocumentDao.findByNom("VALIDÉ")
-                .orElseThrow(() -> new IllegalStateException("Statut VALIDÉ introuvable en base !"));
+                .orElseThrow(() -> new IllegalStateException(
+                        "StatutDocument « VALIDÉ » introuvable en base !"));
         doc.setStatut(statutValide);
         documentDao.save(doc);
 

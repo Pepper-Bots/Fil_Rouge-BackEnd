@@ -23,21 +23,28 @@ public class Document {
     @Enumerated(EnumType.STRING)
     private TypeDocument type;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "statut_document_id", nullable = false)
     private StatutDocument statut;
 
-    public StatutDocument getStatut() {
-        return StatutDocument;
-    }
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "dossier_id")
+//    private Dossier dossier;
 
+    /**
+     * Pour stocker un éventuel commentaire en cas de refus
+     */
+    @Column(length = 500)
+    private String commentaire;
 
-    @ManyToOne
-    @JoinColumn(name = "dossier_id")
-    private Dossier dossier;
+    /**
+     * Date et heure du dépôt du document
+     */
+    private LocalDateTime dateDepot;
 
-    private String commentaire; // <--- Ajoute ce champ pour le refus
-    private LocalDateTime dateDepot; // <--- Optionnel mais conseillé
+    /**
+     * URL ou chemin vers le fichier, selon votre implémentation
+     */
     private String urlFichier;
 
 

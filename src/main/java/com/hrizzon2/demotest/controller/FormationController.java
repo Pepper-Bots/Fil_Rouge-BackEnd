@@ -47,7 +47,7 @@ public class FormationController {
         }
 
         Formation existing = optionalFormation.get();
-        existing.setTitre(updatedFormation.getTitre());
+        existing.setNom(updatedFormation.getTitre());
         existing.setDescription(updatedFormation.getDescription());
 
         return ResponseEntity.ok(formationService.save(existing));

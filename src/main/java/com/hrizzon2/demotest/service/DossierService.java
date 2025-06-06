@@ -114,14 +114,14 @@ public class DossierService {
         dossier.setFormation(formation);
 
         // Statut dossier par défaut (ex: "EN_ATTENTE" ou 1)
-        StatutDossier statutDossierDefaut = statutDossierDao.findByNomStatut("EN_ATTENTE");
+        StatutDossier statutDossierDefaut = statutDossierDao.findByNomStatut("EN_ATTENTE").get();
         dossier.setStatutDossier(statutDossierDefaut);
 
         // Dates
         LocalDateTime now = LocalDateTime.now();
         dossier.setDateCreation(now);
         dossier.setDateModification(now);
-        dossier.setLastUpdated(now);
+        dossier.setDerniereMiseAJour(now);
 
         // Génération automatique des documents obligatoires
         List<ListeDocumentsObligatoires> requiredDocs = listeDocsDao.findByFormation(formation);

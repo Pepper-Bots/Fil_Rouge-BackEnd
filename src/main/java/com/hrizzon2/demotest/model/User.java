@@ -26,21 +26,17 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "users")
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "nom_role", discriminatorType = DiscriminatorType.STRING)
 public class User {
 
-    @Column(name = "enabled")
-    private boolean enabled = false;
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
+//    public boolean isEnabled() {
+//        return enabled;
+//    }
+//
+//    public void setEnabled(boolean enabled) {
+//        this.enabled = enabled;
+//    }
 
 
     public void setActive(boolean b) {
@@ -61,6 +57,9 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Integer id;
+
+    @Column(name = "enabled", nullable = false)
+    private boolean enabled = false;
 
     /**
      * Nom de famille de l'utilisateur.
@@ -93,6 +92,7 @@ public class User {
     @OneToMany(mappedBy = "destinataire", fetch = FetchType.LAZY)
     protected List<Notification> notifications;
 
+    @Column(name = "jeton_verification_email")
     protected String jetonVerificationEmail;
 
     @Column(name = "nom_role", insertable = false, updatable = false)

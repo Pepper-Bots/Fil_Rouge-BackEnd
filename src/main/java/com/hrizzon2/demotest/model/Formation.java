@@ -13,30 +13,44 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@SuppressWarnings("unused")
+@Table(name = "formation")
 public class Formation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonView(AffichageDossier.Formation.class)
+    @Column(name = "id_formation")
     private Integer id;
 
     @JsonView(AffichageDossier.Formation.class)
-    protected String titre;
+    @Column(name = "nom", length = 80, nullable = false)
+    protected String nom;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "niveau", length = 20)
     private NiveauFormation niveau;
 
     @JsonView(AffichageDossier.Formation.class)
+    @Column(name = "description", length = 255)
     protected String description;
 
+    @Column(name = "date_debut")
     private LocalDate dateDebut;
+
+    @Column(name = "date_fin")
     private LocalDate dateFin;
 
-    @OneToMany(mappedBy = "formation")
-    private List<Inscription> inscriptions; // TODO -> table Inscription commenté -> associer avec StatutInscription
+    @OneToMany(mappedBy = "formation", fetch = FetchType.LAZY)
+    private List<Inscription> inscriptions;
 
-    @OneToMany(mappedBy = "formation")
+    @OneToMany(mappedBy = "formation", fetch = FetchType.LAZY)
     private List<Dossier> dossiers;
 
+    /**
+     * Méthode utilitaire pour renvoyer le nom comme titre.
+     */
+    @Transient
+    public String getTitre() {
+        return this.nom;
+    }
 }
