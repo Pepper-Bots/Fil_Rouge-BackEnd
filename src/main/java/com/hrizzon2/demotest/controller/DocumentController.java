@@ -1,7 +1,6 @@
 package com.hrizzon2.demotest.controller;
 
 import com.hrizzon2.demotest.annotation.ValidFile;
-import com.hrizzon2.demotest.model.Document;
 import com.hrizzon2.demotest.model.Dossier;
 import com.hrizzon2.demotest.model.enums.TypeDocument;
 import com.hrizzon2.demotest.service.DocumentService;
@@ -40,16 +39,8 @@ public class DocumentController {
         this.fichierService = fichierService;
     }
 
-    @GetMapping("/document")
-    public Document get() {
-        Document doc = new Document();
-        doc.setId(1); // exemple simple
-
-        return doc;
-    }
-
     /**
-     * Upload d’un document lié à un dossier (ex : pièce justificative).
+     * Upload d’un document lié à un dossier (ex: pièce justificative).
      *
      * @param dossierId Id du dossier auquel rattacher le document
      * @param file      Fichier à transmettre
@@ -117,29 +108,6 @@ public class DocumentController {
         }
     }
 
-    // === EXEMPLE pour upload d’une image de profil stagiaire ===
-    // À adapter à ton modèle et à placer plutôt dans un StagiaireController !
-
-    /*
-    @PostMapping("/stagiaire/{id}/photo")
-    public ResponseEntity<?> uploadPhotoProfil(
-            @PathVariable Integer id,
-            @ValidFile @RequestParam("file") MultipartFile file) {
-        try {
-            // Stocke l’image, mets à jour le champ photo du stagiaire
-            String nomImage = fichierService.sanitizeFileName(file.getOriginalFilename());
-            fichierService.uploadToLocalFileSystem(file, nomImage, false);
-            stagiaireService.updatePhotoProfil(id, nomImage);
-            return ResponseEntity.ok("Photo envoyée !");
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur d'upload");
-        }
-    }
-    */
-    // TODO : ajouter ici d'autres méthodes :
-    // POST pour envoyer un document
-    // GET pour visualiser
-    // PUT pour valider, etc.
 
 }
 

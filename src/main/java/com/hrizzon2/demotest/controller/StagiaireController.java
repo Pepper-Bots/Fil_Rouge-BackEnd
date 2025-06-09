@@ -1,6 +1,7 @@
 package com.hrizzon2.demotest.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.hrizzon2.demotest.annotation.ValidFile;
 import com.hrizzon2.demotest.model.Document;
 import com.hrizzon2.demotest.model.Dossier;
 import com.hrizzon2.demotest.model.Formation;
@@ -9,6 +10,7 @@ import com.hrizzon2.demotest.model.enums.StatutInscription;
 import com.hrizzon2.demotest.model.enums.TypeDocument;
 import com.hrizzon2.demotest.security.IsAdmin;
 import com.hrizzon2.demotest.service.DocumentService;
+import com.hrizzon2.demotest.service.FichierService;
 import com.hrizzon2.demotest.service.FormationService;
 import com.hrizzon2.demotest.service.stagiaire.StagiaireService;
 import com.hrizzon2.demotest.view.AffichageDossier;
@@ -40,15 +42,17 @@ import java.util.Optional;
 @RequestMapping("/api/stagiaires")
 public class StagiaireController {
 
-    protected StagiaireService stagiaireService;
-    protected FormationService formationService;
-    protected DocumentService documentService;
+    private final StagiaireService stagiaireService;
+    private final FormationService formationService;
+    private final DocumentService documentService;
+    private final FichierService fichierService;
 
     @Autowired
-    public StagiaireController(StagiaireService stagiaireService, FormationService formationService, DocumentService documentService) {
+    public StagiaireController(StagiaireService stagiaireService, FormationService formationService, DocumentService documentService, FichierService fichierService) {
         this.stagiaireService = stagiaireService;
         this.formationService = formationService;
         this.documentService = documentService;
+        this.fichierService = fichierService;
     }
 
 
@@ -288,7 +292,7 @@ public class StagiaireController {
 
 
     /**
-     * Met à jour uniqument le profil du stagiaire connecté (nom, prénom, email uniquement).
+     * Met à jour uniquement le profil du stagiaire connecté (nom, prénom, email uniquement).
      * <br><em>Le stagiaire ne peut pas modifier d’autres champs sensibles,
      * et seul son propre compte est affecté.</em>
      *
@@ -425,6 +429,25 @@ public class StagiaireController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         return ResponseEntity.noContent().build();
+    }
+
+// === EXEMPLE pour upload d’une image de profil stagiaire ===
+// À adapter à ton modèle et à placer plutôt dans un StagiaireController !
+
+
+    @PostMapping("/stagiaire/{id}/photo")
+    public ResponseEntity<?> uploadPhotoProfil(
+            @PathVariable Integer id,
+            @ValidFile @RequestParam("file") MultipartFile file) {
+        try {
+            // Stocke l’image, mets à jour le champ photo du stagiaire
+            String nomImage = fichierService.sanitizeFileName(file.getOriginalFilename());
+            fichierService.uploadToLocalFileSystem(file, nomImage, false);
+            stagiaireService.updatePhotoProfil(id, nomImage);
+            return ResponseEntity.ok("Photo envoyée !");
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur d'upload");
+        }
     }
 }
 

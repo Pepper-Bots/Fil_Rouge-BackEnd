@@ -53,7 +53,7 @@ public class ListeDocumentsObligatoiresController {
         return listeDocsService.findByFormation(formation);
     }
 
-
+    // TODO à laisser ici ou mettre dans l'entité ?
     // Classe DTO simple pour le payload :
     public static class TypeDocumentPayload {
         private TypeDocument typeDocument;

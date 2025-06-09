@@ -49,4 +49,6 @@ public interface StagiaireService {
      * Renvoie le statut de la dernière inscription de ce stagiaire (ou null s’il n’y en a pas).
      */
     StatutInscription getStatutDerniereInscriptionById(Integer stagiaireId);
+
+    void updatePhotoProfil(Integer id, String nomImage);
 }
