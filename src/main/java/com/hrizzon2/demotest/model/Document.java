@@ -27,9 +27,9 @@ public class Document {
     @JoinColumn(name = "statut_document_id", nullable = false)
     private StatutDocument statut;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "dossier_id")
-//    private Dossier dossier;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dossier_id")
+    private Dossier dossier;
 
     /**
      * Pour stocker un éventuel commentaire en cas de refus
