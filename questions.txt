@@ -330,7 +330,7 @@ void resetPassword(String token, String newPassword);
 et j'ai aussi cette erreur :
 
 C:\Users\helen\OneDrive\Bureau\Metz Numeric School\MNS - CDA\Titre\ADMIN_MNS_Helene_Rizzon_local\backend\admin_mns\src\main\java\com\hrizzon2\demotest\service\UserServiceImpl.java:13:8
-java: com.hrizzon2.demotest.service.UserServiceImpl is not abstract and does not override abstract method resetPassword(java.lang.String,java.lang.String) in com.hrizzon2.demotest.service.UserService
+java: com.hrizzon2.demotest.service.User.UserServiceImpl is not abstract and does not override abstract method resetPassword(java.lang.String,java.lang.String) in com.hrizzon2.demotest.service.User.UserService
 
 // Code corrigé
 -----------------------------------

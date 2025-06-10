@@ -5,7 +5,7 @@ import com.hrizzon2.demotest.model.Formation;
 import com.hrizzon2.demotest.model.Inscription;
 import com.hrizzon2.demotest.model.Stagiaire;
 import com.hrizzon2.demotest.model.enums.StatutInscription;
-import com.hrizzon2.demotest.service.stagiaire.StagiaireService;
+import com.hrizzon2.demotest.service.Stagiaire.StagiaireService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -9,7 +9,7 @@ import com.hrizzon2.demotest.model.Stagiaire;
 import com.hrizzon2.demotest.model.enums.TypeDocument;
 import com.hrizzon2.demotest.service.FormationService;
 import com.hrizzon2.demotest.service.PieceJointeStagiaireService;
-import com.hrizzon2.demotest.service.stagiaire.StagiaireService;
+import com.hrizzon2.demotest.service.Stagiaire.StagiaireService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

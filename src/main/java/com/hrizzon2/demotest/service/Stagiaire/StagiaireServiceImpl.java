@@ -1,4 +1,4 @@
-package com.hrizzon2.demotest.service.stagiaire;
+package com.hrizzon2.demotest.service.Stagiaire;
 
 import com.hrizzon2.demotest.dao.InscriptionDao;
 import com.hrizzon2.demotest.dao.StagiaireDao;
@@ -177,5 +177,20 @@ public class StagiaireServiceImpl implements StagiaireService {
         Inscription dernier = getDerniereInscription(s);
         return (dernier == null) ? null : dernier.getStatut();
     }
+
+    @Override
+    @Transactional
+    public void updatePhotoProfil(Integer id, String nomImage) {
+        // Recherche du stagiaire par ID
+        Stagiaire stagiaire = stagiaireDao.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Stagiaire introuvable avec l'id : " + id));
+
+        // Mise à jour du champ photoProfil (supposé être un attribut String dans Stagiaire)
+        stagiaire.setPhotoProfil(nomImage);
+
+        // Sauvegarde de l'entité modifiée
+        stagiaireDao.save(stagiaire);
+    }
+
 
 }

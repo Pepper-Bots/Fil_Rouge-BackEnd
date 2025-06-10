@@ -105,5 +105,13 @@ public class Stagiaire extends User {
                 .map(Inscription::getStatut)
                 .orElse(null);
     }
+
+    /**
+     * Nom ou chemin relatif de la photo de profil du stagiaire.
+     */
+    @JsonView({AffichageDossier.Stagiaire.class, AffichageDossier.Complet.class})
+    @Column(name = "photo_profil")
+    private String photoProfil;
+    
 }
 

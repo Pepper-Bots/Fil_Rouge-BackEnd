@@ -1,4 +1,4 @@
-package com.hrizzon2.demotest.service;
+package com.hrizzon2.demotest.service.User;
 
 import com.hrizzon2.demotest.model.User;
 

@@ -120,32 +120,32 @@ VALUES (1, 'ARA', '69001', 'Lyon'),
 -- Provence-Alpes-Côte d'Azur
 
 -- Insertion dans la table stagiaire en utilisant ville_id
-INSERT INTO stagiaire (id, premiere_connexion, date_naissance, phone_number, adresse, ville_id)
-VALUES (5, true, '1990-03-01', '0660606060', '12 rue des Rosses', 1),
-       (6, true, '1985-07-14', '0678451223', '8 avenue des Lilas', 2),
-       (7, true, '1992-11-22', '0654239876', '34 boulevard Victor Hugo', 3),
-       (8, true, '1980-06-30', '0612789543', '21 rue des Vignes', 4),
-       (9, true, '1978-04-19', '0634561287', '5 impasse des Fleurs', 5),
-       (10, true, '1991-01-08', '0645129384', '17 rue des Jardins', 6),
-       (11, true, '1983-09-12', '0625897412', '98 rue de la République', 7),
-       (12, true, '1994-10-02', '0678932154', '66 avenue des Champs', 8),
-       (13, true, '1987-05-06', '0612347895', '43 rue Jean Jaurès', 9),
-       (14, true, '1995-12-29', '0698123475', '7 place du Marché', 10),
-       (15, true, '1986-03-17', '0665432187', '28 rue des Cerisiers', 11),
-       (16, true, '1988-07-30', '0698342150', '55 avenue de Paris', 1),
-       (17, true, '1984-11-09', '0655012374', '72 rue des Prés', 2),
-       (18, true, '1996-04-04', '0689234578', '16 rue Pasteur', 3),
-       (19, true, '1999-01-01', '0678123999', '91 boulevard Saint-Michel', 4),
-       (20, true, '1989-12-12', '0634567890', '2 avenue du Général Leclerc', 5),
-       (21, true, '1992-05-03', '0708090103', '28, rue des Bleuets', 6),
-       (22, true, '1982-08-24', '0654891234', '13 allée des Marronniers', 7),
-       (23, true, '1993-02-11', '0689741235', '10 rue Voltaire', 8),
-       (24, true, '1981-06-05', '0623789120', '3 rue Lamartine', 9),
-       (25, true, '1990-09-23', '0678123490', '4 place de la Mairie', 10),
-       (26, true, '1993-06-15', '0611122233', '15 rue Lafayette', 11),
-       (27, true, '1995-01-20', '0666677788', '1 avenue des Champs', 12),-- Paris (IDF)
-       (28, true, '1987-03-11', '0655566677', '24 rue Paradis', 13),-- Marseille (PAC)
-       (29, true, '1990-11-30', '0644433322', '12 boulevard Haussmann', 12);
+INSERT INTO stagiaire (id, premiere_connexion, date_naissance, phone_number, adresse, ville_id, photo_profil)
+VALUES (5, true, '1990-03-01', '0660606060', '12 rue des Rosses', 1, 'default-profile.png'),
+       (6, true, '1985-07-14', '0678451223', '8 avenue des Lilas', 2, null),
+       (7, true, '1992-11-22', '0654239876', '34 boulevard Victor Hugo', 3, null),
+       (8, true, '1980-06-30', '0612789543', '21 rue des Vignes', 4, null),
+       (9, true, '1978-04-19', '0634561287', '5 impasse des Fleurs', 5, null),
+       (10, true, '1991-01-08', '0645129384', '17 rue des Jardins', 6, null),
+       (11, true, '1983-09-12', '0625897412', '98 rue de la République', 7, null),
+       (12, true, '1994-10-02', '0678932154', '66 avenue des Champs', 8, null),
+       (13, true, '1987-05-06', '0612347895', '43 rue Jean Jaurès', 9, null),
+       (14, true, '1995-12-29', '0698123475', '7 place du Marché', 10, null),
+       (15, true, '1986-03-17', '0665432187', '28 rue des Cerisiers', 11, null),
+       (16, true, '1988-07-30', '0698342150', '55 avenue de Paris', 1, null),
+       (17, true, '1984-11-09', '0655012374', '72 rue des Prés', 2, null),
+       (18, true, '1996-04-04', '0689234578', '16 rue Pasteur', 3, null),
+       (19, true, '1999-01-01', '0678123999', '91 boulevard Saint-Michel', 4, null),
+       (20, true, '1989-12-12', '0634567890', '2 avenue du Général Leclerc', 5, null),
+       (21, true, '1992-05-03', '0708090103', '28, rue des Bleuets', 6, null),
+       (22, true, '1982-08-24', '0654891234', '13 allée des Marronniers', 7, null),
+       (23, true, '1993-02-11', '0689741235', '10 rue Voltaire', 8, null),
+       (24, true, '1981-06-05', '0623789120', '3 rue Lamartine', 9, null),
+       (25, true, '1990-09-23', '0678123490', '4 place de la Mairie', 10, null),
+       (26, true, '1993-06-15', '0611122233', '15 rue Lafayette', 11, null),
+       (27, true, '1995-01-20', '0666677788', '1 avenue des Champs', 12, null),-- Paris (IDF)
+       (28, true, '1987-03-11', '0655566677', '24 rue Paradis', 13, null),-- Marseille (PAC)
+       (29, true, '1990-11-30', '0644433322', '12 boulevard Haussmann', 12, null);
 -- Paris (IDF)
 
 

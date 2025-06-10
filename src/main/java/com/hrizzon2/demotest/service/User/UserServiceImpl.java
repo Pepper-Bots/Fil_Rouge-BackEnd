@@ -1,8 +1,9 @@
-package com.hrizzon2.demotest.service;
+package com.hrizzon2.demotest.service.User;
 
 import com.hrizzon2.demotest.dao.UserDao;
 import com.hrizzon2.demotest.model.Stagiaire;
 import com.hrizzon2.demotest.model.User;
+import com.hrizzon2.demotest.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

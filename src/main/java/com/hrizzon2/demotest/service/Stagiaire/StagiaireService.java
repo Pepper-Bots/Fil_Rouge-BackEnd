@@ -1,4 +1,4 @@
-package com.hrizzon2.demotest.service.stagiaire;
+package com.hrizzon2.demotest.service.Stagiaire;
 
 import com.hrizzon2.demotest.model.Formation;
 import com.hrizzon2.demotest.model.Inscription;

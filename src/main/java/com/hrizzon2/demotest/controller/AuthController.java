@@ -9,7 +9,7 @@ import com.hrizzon2.demotest.security.AppUserDetails;
 import com.hrizzon2.demotest.security.ISecurityUtils;
 import com.hrizzon2.demotest.security.IsAdmin;
 import com.hrizzon2.demotest.service.EmailService;
-import com.hrizzon2.demotest.service.UserService;
+import com.hrizzon2.demotest.service.User.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

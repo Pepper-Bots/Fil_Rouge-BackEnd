@@ -12,7 +12,7 @@ import com.hrizzon2.demotest.security.IsAdmin;
 import com.hrizzon2.demotest.service.DocumentService;
 import com.hrizzon2.demotest.service.FichierService;
 import com.hrizzon2.demotest.service.FormationService;
-import com.hrizzon2.demotest.service.stagiaire.StagiaireService;
+import com.hrizzon2.demotest.service.Stagiaire.StagiaireService;
 import com.hrizzon2.demotest.view.AffichageDossier;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
