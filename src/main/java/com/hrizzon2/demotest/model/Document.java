@@ -32,6 +32,20 @@ public class Document {
     private Dossier dossier;
 
     /**
+     * Association vers le stagiaire qui a soumis ce document
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "stagiaire_id", nullable = false)
+    private Stagiaire stagiaire;
+
+    /**
+     * Association optionnelle vers l'évènement justifié par ce document
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "evenement_id", nullable = true)
+    private Evenement evenement;
+
+    /**
      * Pour stocker un éventuel commentaire en cas de refus
      */
     @Column(length = 500)
@@ -46,6 +60,5 @@ public class Document {
      * URL ou chemin vers le fichier, selon votre implémentation
      */
     private String urlFichier;
-
-
+    
 }

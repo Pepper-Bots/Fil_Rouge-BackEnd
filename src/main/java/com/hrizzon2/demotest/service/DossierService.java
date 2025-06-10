@@ -203,6 +203,8 @@ public class DossierService {
                         dossier.getCreateur().getId().equals(userDetails.getUser().getId()));
     }
 
+    public void verifierEtMettreAJourStatut(Integer id) {
+    }
 }
 
 // TODO  Implémentez une méthode dans DossierService pour recalculer le statutDossier

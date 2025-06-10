@@ -204,11 +204,12 @@ VALUES (1, 'DSR001', 2, '2025-01-05 09:00:00', '2025-01-07 14:00:00', '2025-01-0
         2); -- Développement Web
 
 
-INSERT INTO document (nom_fichier, type, statut_document_id, dossier_id, commentaire, date_depot, url_fichier)
-VALUES ('Justificatif de domicile', 'JUSTIFICATIF', 2, 1, NULL, NOW(), NULL),
-       ('CV Paul', 'CV', 1, 1, NULL, NOW(), NULL),
-       ('Lettre de motivation', 'LETTRE_MOTIVATION', 1, 2, NULL, NOW(), NULL),
-       ('Justificatif d’identité', 'JUSTIFICATIF', 2, 2, NULL, NOW(), NULL);
+INSERT INTO document (nom_fichier, type, statut_document_id, dossier_id, stagiaire_id, evenement_id, commentaire,
+                      date_depot, url_fichier)
+VALUES ('Justificatif de domicile', 'JUSTIFICATIF', 2, 1, 5, NULL, NULL, NOW(), NULL),
+       ('CV Paul', 'CV', 1, 1, 6, NULL, NULL, NOW(), NULL),
+       ('Lettre de motivation', 'LETTRE_MOTIVATION', 1, 2, 7, NULL, NULL, NOW(), NULL),
+       ('Justificatif d’identité', 'JUSTIFICATIF', 2, 2, 8, NULL, NULL, NOW(), NULL);
 
 
 -- 1) Inscription n°1 pour le stagiaire dont id = 3, sur la formation id = 5, en EN_ATTENTE,

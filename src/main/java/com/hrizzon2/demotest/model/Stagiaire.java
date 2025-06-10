@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -70,21 +71,24 @@ public class Stagiaire extends User {
      */
     @OneToMany(mappedBy = "stagiaire", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonView({AffichageDossier.Complet.class})
-    private List<Evenement> evenements;
+    private List<Evenement> evenements = new ArrayList<>();
+
+    @OneToMany(mappedBy = "stagiaire", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Document> documents = new ArrayList<>();
 
     /**
      * Liste des dossiers associés à ce stagiaire.
      */
     @OneToMany(mappedBy = "stagiaire", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonView({AffichageDossier.Complet.class})
-    private List<Dossier> dossiers;
+    private List<Dossier> dossiers = new ArrayList<>();
 
     /**
      * Liste des inscriptions effectuées par ce stagiaire.
      */
     @OneToMany(mappedBy = "stagiaire", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonView({AffichageDossier.Complet.class})
-    private List<Inscription> inscriptions;
+    private List<Inscription> inscriptions = new ArrayList<>();
 
     @JsonView(AffichageDossier.Admin.class)
     private String activationToken;
@@ -112,6 +116,6 @@ public class Stagiaire extends User {
     @JsonView({AffichageDossier.Stagiaire.class, AffichageDossier.Complet.class})
     @Column(name = "photo_profil")
     private String photoProfil;
-    
+
 }
 

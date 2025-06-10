@@ -165,6 +165,10 @@ public class NotificationService {
     public List<Notification> getNotificationsForUser(Integer userId) {
         return notificationDao.findByDestinataireId(userId);
     }
+
+    // TODO à vérifier
+    public void notifyStagiaireValidationDocument(long id, Integer id1, boolean b) {
+    }
 }
 
 
