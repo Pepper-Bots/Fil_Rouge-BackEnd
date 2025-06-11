@@ -11,3 +11,8 @@ public class EvenementService {
     public void marquerNonJustifie(long id) {
     }
 }
+
+// TODO
+//  - createEvenement, updateEvenement, marquerJustifie(evenementId), marquerNonJustifie(evenementId)
+//  Conserver
+//  Gestion justification évènements via validation documents

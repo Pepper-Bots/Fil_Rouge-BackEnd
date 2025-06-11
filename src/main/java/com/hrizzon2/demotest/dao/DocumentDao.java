@@ -41,3 +41,7 @@ public interface DocumentDao extends JpaRepository<Document, Integer> {
 
 
 }
+
+// TODO **Conserver** :
+//  gérer Documents, incluant liens vers Stagiaire, Dossier, Evenement, StatutDocument.
+//  Requête pour documents par stagiaire, dossier, évènement.

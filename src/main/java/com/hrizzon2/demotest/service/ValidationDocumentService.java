@@ -86,3 +86,8 @@ public class ValidationDocumentService {
     }
 
 }
+
+// TODO
+//  - validerDocument(documentId), rejeterDocument(documentId)
+//  Créer / Conserver
+//  Changement de statut, mise à jour dossier & évènement + notif

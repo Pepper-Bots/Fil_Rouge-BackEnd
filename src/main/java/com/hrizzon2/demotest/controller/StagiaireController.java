@@ -451,3 +451,6 @@ public class StagiaireController {
     }
 }
 
+// TODO - getProfil, updateProfil, getMesDocuments (consultation)
+//  Conserver
+//  Ne pas gérer upload ici, uniquement consultation

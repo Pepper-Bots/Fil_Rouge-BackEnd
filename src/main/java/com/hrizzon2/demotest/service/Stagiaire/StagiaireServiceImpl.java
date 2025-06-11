@@ -192,5 +192,8 @@ public class StagiaireServiceImpl implements StagiaireService {
         stagiaireDao.save(stagiaire);
     }
 
-
 }
+
+// todo
+//  - getProfilStagiaire, updateProfil
+//  Conserver

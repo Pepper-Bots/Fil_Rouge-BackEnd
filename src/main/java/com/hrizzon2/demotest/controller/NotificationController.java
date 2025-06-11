@@ -77,3 +77,7 @@ public class NotificationController {
         notificationService.markNotificationAsRead(notificationId);
     }
 }
+
+// TODO - Envoi notifications mail / app
+//  Conserver
+//  Notification sur validation, rejet, alertes

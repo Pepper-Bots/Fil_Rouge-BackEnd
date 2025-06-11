@@ -46,3 +46,8 @@ public class ValidationDocumentController {
         return ResponseEntity.ok(docRejete);
     }
 }
+
+// TODO
+//  - validerDocument / rejeterDocument
+//  Créer / Conserver
+//  Gérer validation, rejet, mise à jour statuts, notifications

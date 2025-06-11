@@ -21,3 +21,6 @@ public interface DossierDao extends JpaRepository<Dossier, Integer> {
     Optional<Dossier> findByStagiaireId(Integer stagiaireId);
 
 }
+
+// TODO **Conserver** :
+//  dossiers d’inscription.

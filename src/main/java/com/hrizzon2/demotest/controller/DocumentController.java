@@ -108,6 +108,13 @@ public class DocumentController {
         }
     }
 
-
 }
+
+// TODO
+//  - uploadDocument (upload fichier lié à dossier ou évènement)
+//  Conserver + Fusion
+//  Centraliser upload / téléchargement / suppression documents
+//
+//  - getDocumentsByStagiaire / Dossier / Evenement
+
 

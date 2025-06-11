@@ -11,3 +11,6 @@ public interface InscriptionDao extends JpaRepository<Inscription, Integer> {
     Optional<Inscription> findByStagiaireIdAndStatut(Integer stagiaireId, StatutInscription statut);
 
 }
+
+// TODO **Conserver** :
+//  inscriptions stagiaires-formations.

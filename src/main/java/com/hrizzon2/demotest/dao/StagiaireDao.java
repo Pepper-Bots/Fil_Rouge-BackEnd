@@ -42,3 +42,6 @@ public interface StagiaireDao extends JpaRepository<Stagiaire, Integer> {
 
 
 }
+
+// TODO **Conserver** :
+//  stagiaires.

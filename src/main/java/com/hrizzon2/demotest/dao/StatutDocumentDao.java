@@ -17,3 +17,5 @@ public interface StatutDocumentDao extends JpaRepository<StatutDocument, Integer
 }
 
 
+// TODO **Conserver** :
+//  récupérer statuts document (ex: "VALIDÉ", "EN\_ATTENTE", "REJETÉ").

@@ -279,3 +279,10 @@ public class DocumentService {
         getDossierCompletPourStagiaire(doc.getDossier().getStagiaire().getId());
     }
 }
+
+// TODO
+//  - uploadDocument(MultipartFile, dossierId?, evenementId?, stagiaireId)
+//  Conserver + Fusion
+//  Logique stockage + association documents / dossiers / évènements
+//  - getDocumentsByStagiaire, getDocumentsByDossier, getDocumentsByEvenement
+//  - deleteDocument

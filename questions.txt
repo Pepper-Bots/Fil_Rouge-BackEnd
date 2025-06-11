@@ -845,3 +845,33 @@ Refacto à opérer 06/06
     * gestion complétude Dossier -> CompletudeDossierController
 
 Voir gestion des services
+
+----------------
+
+11/06
+
+Quelles méthodes ?
+-> MotifDao
+-> EvenementDao
+-> FormationDao
+-> VilleDao
+
+------------------------
+
+Diagramme d'architecture :
+
+ +---------------------+        +---------------------+        +---------------------+
+ |  Controller Layer    | <----> |   Service Layer     | <----> |    DAO Layer        |
+ +---------------------+        +---------------------+        +---------------------+
+ |                     |        |                     |        |                     |
+ | - StagiaireController|        | - StagiaireService  |        | - StagiaireDao      |
+ | - DocumentController |        | - DocumentService   |        | - DocumentDao       |
+ | - ValidationDocumentController| - ValidationDocumentService | - StatutDocumentDao  |
+ | - DossierController  |        | - DossierService    |        | - DossierDao        |
+ | - EvenementController|        | - EvenementService  |        | - EvenementDao      |
+ | - InscriptionController|      | - InscriptionService|        | - InscriptionDao    |
+ | - AdminController    |        | - AdminService      |        | - AdminDao (si besoin)|
+ | - NotificationController|     | - NotificationService|       | - NotificationDao (optionnel)|
+ +---------------------+        +---------------------+        +---------------------+
+
+ => Motifs != selon type d'évènement

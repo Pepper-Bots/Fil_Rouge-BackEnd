@@ -171,4 +171,7 @@ public class NotificationService {
     }
 }
 
-
+// todo
+//  - notifyStagiaireValidationDocument(stagiaireId, documentId, boolean valide)
+//  Conserver
+//  Notifications mails et in-app sur validation / rejet documents

@@ -5,5 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface FormationDao extends JpaRepository<Formation, Integer> {
 
-
+    // Exemple : compter stagiaires par formation
+    long countStagiairesById(Integer formationId);
 }
