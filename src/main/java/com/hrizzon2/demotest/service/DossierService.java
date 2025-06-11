@@ -203,16 +203,39 @@ public class DossierService {
                         dossier.getCreateur().getId().equals(userDetails.getUser().getId()));
     }
 
-    public void verifierEtMettreAJourStatut(Integer id) {
+    /**
+     * Recalcule et met à jour le statut global du dossier selon l'état des documents associés.
+     * Ex : si tous les documents obligatoires sont validés, le statut passe à "COMPLET".
+     *
+     * @param dossierId l'identifiant du dossier à vérifier
+     */
+    public void verifierEtMettreAJourStatut(Integer dossierId) {
+        // Implémentation :
+        // - récupérer dossier + documents
+        // - vérifier état des documents (validé / non validé)
+        // - mettre à jour statut dossier et sauvegarder
+    }
+
+    /**
+     * Compte le nombre d'absences déclarées pour un stagiaire donné.
+     *
+     * @param stagiaireId l'identifiant du stagiaire
+     * @return nombre total d'absences
+     */
+    public int countAbsences(int stagiaireId) {
+        // Implémentation : requête DAO ou calcul métier sur les évènements absences
+        return 0; // placeholder
+    }
+
+
+    /**
+     * Compte le nombre de retards déclarés pour un stagiaire donné.
+     *
+     * @param stagiaireId l'identifiant du stagiaire
+     * @return nombre total de retards
+     */
+    public int countRetards(int stagiaireId) {
+        // Implémentation : requête DAO ou calcul métier sur les évènements retards
+        return 0; // placeholder
     }
 }
-
-// TODO  Implémentez une méthode dans DossierService pour recalculer le statutDossier
-//  à chaque mise à jour d’un Document
-//  (cascade “orphanRemoval” et “cascade=ALL” sur la relation documents).
-
-// todo
-//  - verifierEtMettreAJourStatut(dossierId)
-//  Conserver
-//  Calcul complétude dossier selon documents validés
-//  - getDossierById, createDossier, updateDossier

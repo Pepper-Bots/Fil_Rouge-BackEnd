@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+//  création, lecture, mise à jour des notifications (CRUD).
+
 @Service
 public class NotificationService {
 
@@ -94,6 +96,26 @@ public class NotificationService {
     }
 
     /**
+     * Notifie le stagiaire qu’un document a été validé par l’administrateur.
+     *
+     * @param stagiaireId id du stagiaire concerné
+     */
+    public void notifyStagiaireOnDocumentValidated(int stagiaireId) {
+        User stagiaire = userDao.findById(stagiaireId).orElse(null);
+        if (stagiaire != null) {
+            NotificationTemplate template = templateDao.findByType(TypeNotification.CONFIRMATION);
+            if (template != null) {
+                Notification notification = new Notification();
+                notification.setTemplate(template);
+                notification.setDestinataire(stagiaire);
+                notification.setRead(false);
+                notification.setDate(LocalDateTime.now());
+                notificationDao.save(notification);
+            }
+        }
+    }
+
+    /**
      * Envoie une notification de type WARNING_DOCUMENT au stagiaire si son document n'est pas validé.
      */
     public void notifyStagiaireOnDocumentNotValidated(int stagiaireId) {
@@ -113,7 +135,7 @@ public class NotificationService {
     }
 
     /**
-     * Envoie une notification WARNING_ABSENCE au stagiaire lorsque son seuil d'absence est atteint.
+     * Envoie une notification WARNING_ABSENCE au stagiaire lorsque son seuil d'absence est atteint ou proche
      */
     public void notifyStagiaireOnAbsenceThreshold(int stagiaireId) {
         User stagiaire = userDao.findById(stagiaireId).orElse(null);
@@ -127,15 +149,16 @@ public class NotificationService {
                 notification.setDate(LocalDateTime.now());
                 notificationDao.save(notification);
             }
+            // todo modifier pour ajouter le rapprochement du seuil (pas notif seulement pour seuil atteint)
         }
     }
 
     /**
      * Envoie une notification RAPPEL au stagiaire si son dossier d'inscription est incomplet.
+     * Garder à jour la méthode de rappel avec une date ou contexte (TODO à définir)
      */
     public void remindStagiaireToCompleteFile(int stagiaireId) {
         User stagiaire = userDao.findById(stagiaireId).orElse(null);
-
         if (stagiaire != null) {
             NotificationTemplate template = templateDao.findByType(TypeNotification.RAPPEL);
             if (template != null) {
@@ -168,6 +191,39 @@ public class NotificationService {
 
     // TODO à vérifier
     public void notifyStagiaireValidationDocument(long id, Integer id1, boolean b) {
+    }
+
+
+    /**
+     * Notifie le stagiaire que le seuil de retard est proche ou atteint.
+     *
+     * @param stagiaireId id du stagiaire concerné
+     */
+    public void notifyStagiaireOnDelayThreshold(int stagiaireId) {
+        User stagiaire = userDao.findById(stagiaireId).orElse(null);
+        if (stagiaire != null) {
+            NotificationTemplate template = templateDao.findByType(TypeNotification.WARNING_DELAY);
+            if (template != null) {
+                Notification notification = new Notification();
+                notification.setTemplate(template);
+                notification.setDestinataire(stagiaire);
+                notification.setRead(false);
+                notification.setDate(LocalDateTime.now());
+                notificationDao.save(notification);
+            }
+        }
+    }
+
+    /**
+     * Envoie une notification personnalisée à un administrateur liée à un stagiaire et un type d'alerte.
+     *
+     * @param admin       admin destinataire
+     * @param stagiaireId id du stagiaire concerné
+     * @param type        type d'alerte ("Absence", "Retard", etc.)
+     * @param seuil       message lié au seuil ("Seuil atteint", "Seuil proche")
+     */
+    public void sendCustomAdminNotification(Admin admin, int stagiaireId, String type, String seuilAtteint) {
+        // Créer et sauvegarder notification personnalisée
     }
 }
 

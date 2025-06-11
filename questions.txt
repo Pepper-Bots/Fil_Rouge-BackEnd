@@ -875,3 +875,28 @@ Diagramme d'architecture :
  +---------------------+        +---------------------+        +---------------------+
 
  => Motifs != selon type d'évènement
+
+---------------------
+
+Diagramme de séquences - "Validation document" et "Seuils Absences/Retards"
+
+Utilisateur(Administrateur)        NotificationTriggerService          NotificationService         AdminService        DossierService
+
+        |                                  |                                  |                       |                    |
+        |--- Valide/Rejette Document ----->|                                  |                       |                    |
+        |                                  |--- onDocumentValidation() ------>|                       |                    |
+        |                                  |                                  |--- Crée notif stagiaire ---> Save en BD            |
+        |                                  |                                  |                       |                    |
+
+        |                                  |                                  |                       |                    |
+        |--- Déclare Absence/Retard ------>|                                  |                       |                    |
+        |                                  |--- checkSeuilsAbsenceRetard() --->|                       |                    |
+        |                                  |                                  |                       |                    |
+        |                                  |                                  |<-- dossierService.countAbsences()                  |
+        |                                  |                                  |<-- dossierService.countRetards()                    |
+        |                                  |                                  |                       |                    |
+        |                                  |                                  |-- notif stagiaire si seuil atteint ou proche ----> Save en BD
+        |                                  |                                  |                       |                    |
+        |                                  |                                  |-- demande admins concernés via adminService ----> |
+        |                                  |                                  |                       |                    |
+        |                                  |                                  |-- notif admins seuil atteint/proche ------------> Save en BD

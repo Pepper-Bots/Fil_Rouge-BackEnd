@@ -10,7 +10,7 @@ public interface MotifDao extends JpaRepository<Motif, Integer> {
     // Par défaut, JpaRepository fournit findAll(), findById(), save(), delete(), etc.
     // Ajoute ici si besoin des méthodes spécifiques, par exemple :
 
-    List<Motif> findByType(String type);
+    List<Motif> findByLibelle(String libelle);
 }
 
 // TODO **Conserver** :
