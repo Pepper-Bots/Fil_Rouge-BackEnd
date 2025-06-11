@@ -16,7 +16,9 @@ public class StagiaireTest {
 
     @Test
     void exampleTest() {
+
         assert (stagiaireService != null);
+        
         // Ajoute ici tes tests métier    }
 
     }

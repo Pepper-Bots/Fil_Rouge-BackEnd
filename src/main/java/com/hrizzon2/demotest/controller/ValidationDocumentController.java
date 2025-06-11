@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Controller REST pour la validation des documents soumis par les stagiaires.
- * Seuls les admins peuvent valider ou rejeter les documents.
+ * Contrôleur REST pour la validation/rejet des documents par un administrateur.
+ * Seuls les utilisateurs avec rôle ADMINISTRATEUR ou RESPONSABLE y ont accès.
  */
 @RestController
 @RequestMapping("/api/validation-documents")
@@ -27,27 +27,29 @@ public class ValidationDocumentController {
     }
 
     /**
-     * Valide un document par son ID.
+     * Valide un document identifié par son ID.
+     *
+     * @param documentId id du document à valider
+     * @return document mis à jour
      */
     @PreAuthorize("hasRole('ADMINISTRATEUR') or hasRole('RESPONSABLE')")
     @PostMapping("/{documentId}/valider")
-    public ResponseEntity<Document> validerDocument(@PathVariable @NotNull Long documentId) {
-        Document docValide = validationDocumentService.validerDocument(documentId);
+    public ResponseEntity<Document> validerDocument(@PathVariable @NotNull Integer documentId) {
+        Document docValide = validationDocumentService.validerDocument(Long.valueOf((documentId)));
         return ResponseEntity.ok(docValide);
     }
 
     /**
-     * Rejette un document par son ID.
+     * Rejette un document identifié par son ID.
+     *
+     * @param documentId id du document à rejeter
+     * @return document mis à jour
      */
     @PreAuthorize("hasRole('ADMINISTRATEUR') or hasRole('RESPONSABLE')")
     @PostMapping("/{documentId}/rejeter")
-    public ResponseEntity<Document> rejeterDocument(@PathVariable @NotNull Long documentId) {
-        Document docRejete = validationDocumentService.rejeterDocument(documentId);
+    public ResponseEntity<Document> rejeterDocument(@PathVariable @NotNull Integer documentId) {
+        Document docRejete = validationDocumentService.rejeterDocument(Long.valueOf(documentId));
         return ResponseEntity.ok(docRejete);
     }
 }
 
-// TODO
-//  - validerDocument / rejeterDocument
-//  Créer / Conserver
-//  Gérer validation, rejet, mise à jour statuts, notifications

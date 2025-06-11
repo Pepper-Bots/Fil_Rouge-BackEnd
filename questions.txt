@@ -900,3 +900,13 @@ Utilisateur(Administrateur)        NotificationTriggerService          Notificat
         |                                  |                                  |-- demande admins concernés via adminService ----> |
         |                                  |                                  |                       |                    |
         |                                  |                                  |-- notif admins seuil atteint/proche ------------> Save en BD
+
+-----------------------------
+
+ok donc on reprend à 0.
+je conserve DocumentController pour la gestion des documents et je vire PieceJointeStagiaireController.
+je garde DossierDocumentService pour la gestion des documents qui complètent le dossier
+et EvenementDocumentService pour la gestion documentaire pour justifier les évènements ?
+ValidationDocumentController pour gérer la validation d'un document envoyé par un stagiaire, coté admin.
+et ListeDocumentsObligatoires pour comparer les documents envoyés via DocumentController .
+c'est ça ?
