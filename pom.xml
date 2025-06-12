@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.hrizzon2</groupId>
-    <artifactId>demotest</artifactId>
+    <artifactId>admin_mns_back</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>demotest</name>
-    <description>demotest</description>
+    <name>admin_mns_back</name>
+    <description>admin_mns_back</description>
     <url/>
     <licenses>
         <license/>
@@ -28,6 +28,7 @@
     </scm>
     <properties>
         <java.version>17</java.version>
+        <final.jar.name>app</final.jar.name>
     </properties>
     <dependencies>
         <dependency>
@@ -98,7 +99,29 @@
 
 
     <build>
+        <finalName>${final.jar.name}</finalName>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.3</version>
+                <configuration>
+                    <!-- Inclure les tests unitaires -->
+                    <includes>
+                        <include>**/*Test.java</include>
+                    </includes>
+                    <!-- Exclure les tests d'intégration -->
+                    <excludes>
+                        <exclude>**/*ApplicationTests.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.4.2</version>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
