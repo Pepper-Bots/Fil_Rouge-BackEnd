@@ -1,3 +1,6 @@
+.local.env
+/uploads
+
 HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
@@ -31,3 +34,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+/src/main/java/com/hrizzon/demo2/
+/src/test/java/com/hrizzon/demo2/

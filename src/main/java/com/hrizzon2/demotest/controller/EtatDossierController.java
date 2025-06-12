@@ -1,6 +1,6 @@
 package com.hrizzon2.demotest.controller;
 
-import com.hrizzon2.demotest.dao.EtatDossierDao;
+import com.hrizzon2.demotest.dao.StatutDossierDao;
 import com.hrizzon2.demotest.model.StatutDossier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,17 +14,17 @@ import java.util.Optional;
 @RestController
 public class EtatDossierController {
 
-    protected EtatDossierDao etatDossierDao;
+    protected StatutDossierDao statutDossierDao;
 
     @Autowired
-    public EtatDossierController(EtatDossierDao etatDossierDao) {
-        this.etatDossierDao = etatDossierDao;
+    public EtatDossierController(StatutDossierDao statutDossierDao) {
+        this.statutDossierDao = statutDossierDao;
     }
 
     @GetMapping("/etatdossier/{id}")
     public ResponseEntity<StatutDossier> getEtatDossier(@PathVariable int id) {
 
-        Optional<StatutDossier> optionalEtatDossier = etatDossierDao.findById(id);
+        Optional<StatutDossier> optionalEtatDossier = statutDossierDao.findById(id);
 
         if (optionalEtatDossier.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -35,12 +35,12 @@ public class EtatDossierController {
     @GetMapping("/etatdossiers")
     public List<StatutDossier> getAll() {
 
-        return etatDossierDao.findAll();
+        return statutDossierDao.findAll();
     }
 
     @PostMapping("/etatdossier")
     public ResponseEntity<StatutDossier> save(@RequestBody StatutDossier statutDossier) {
-        etatDossierDao.save(statutDossier);
+        statutDossierDao.save(statutDossier);
 
         return new ResponseEntity<>(statutDossier, HttpStatus.CREATED);
     }
@@ -48,12 +48,12 @@ public class EtatDossierController {
     @DeleteMapping("/etatdossier/{id}")
     public ResponseEntity<StatutDossier> delete(@PathVariable int id) {
 
-        Optional<StatutDossier> optionalEtatDossier = etatDossierDao.findById(id);
+        Optional<StatutDossier> optionalEtatDossier = statutDossierDao.findById(id);
 
         if (optionalEtatDossier.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        etatDossierDao.deleteById(id);
+        statutDossierDao.deleteById(id);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -63,7 +63,7 @@ public class EtatDossierController {
             @PathVariable int id,
             @RequestBody StatutDossier statutDossier) {
 
-        Optional<StatutDossier> optionalEtatDossier = etatDossierDao.findById(id);
+        Optional<StatutDossier> optionalEtatDossier = statutDossierDao.findById(id);
 
         if (optionalEtatDossier.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -71,7 +71,7 @@ public class EtatDossierController {
 
         statutDossier.setId(id);
 
-        etatDossierDao.save(statutDossier);
+        statutDossierDao.save(statutDossier);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

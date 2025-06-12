@@ -1,0 +1,912 @@
+faut il créer un ValidationAdmin ? -> DTO ?
+
+entités StatutDocument + StatutDossier existent -> bien faites ? les 2 sont elles nécessaires ? le Statut du Doc si validé et si tous les Doc fournis viennent modifier auto le Statut du Dossier
+
+il faut donc mapper foramtion dans Document et non Dossier ? mais un Document doit compléter un Dossier
+
+comment différencier la liste théorique des documents attendus et les documents réellement fournis ?
+
+# Ce code :
+List<ListeDocumentsObligatoires> requiredDocs = listeDocumentsObligatoiresRepository.findByFormationId(formationId);
+// Pour chaque type, créer un Document dans le dossier du stagiaire
+# est à mettre dans Formation ou dans Dossier ?
+
+
+ garder TypeDocument en enum ou créer une classe ?
+ avec ceci : Pour chaque TypeDocument dans la table de correspondance, créer un Document (statut = "à fournir") dans le dossier du stagiaire.
+
+ est ce que je dois garder l'entité Inscription ?
+
+
+ Formation -(1,n)- ListeDocumentsObligatoires -(n,1)- TypeDocument
+           |
+           v
+       Inscription  ---(1,1)--- Dossier ---(1,n)-- Document
+           |                                 |
+      Stagiaire                      StatutDocument
+                                       |
+                                StatutDossier
+
+---------------------------------------------------------------------------------
+
+la logique métier dans DossierService.java :
+
+- Un Admin créer un profil de Stagiaire + son 1er Dossier d'inscription dans l'application.
+- Le stagiaire reçoit un mail avec un lien pour activer son compte. le stagiaire clique sur le lien et active son compte dans l'application. une fois activé, le stagiaire peut accéder à son compte et visualiser son dossier.
+- A partir du moment où le compte du stagiaire est activé, il peut lui meme se pré-inscrire à une autre formation et creer un nouveau dossier d'inscription qu'il devra aussi compléter.
+- Le dossier ou les dossiers du stagiaire doivent être complétés par un ensemble de documents qui doivent etre vérifiés et validés pour que le dossier soit complet + accepté
+- un dossier = une inscription = une formation
+
+----------------------------------------------------------------------
+
+# Flux visuel
+
+Admin/Stagiaire → Crée une inscription (formation X)
+         |
+         → Génère un Dossier
+         |
+         → Génère automatiquement tous les Documents obligatoires pour la formation
+         |
+         → Documents à fournir (statut initial = à fournir)
+         |
+Stagiaire → Uploade chaque document → statut passe à “à valider”
+         |
+Admin → Vérifie/valide/refuse chaque document
+         |
+Si tous “validés” → Dossier passe à “complet/accepté”
+Sinon → “incomplet”
+
+------------------------------------------------------------------
+
+# Création d’un Dossier d’Inscription avec Documents Automatiques
+
+graph TD
+    A[Admin ou Stagiaire<br/>initie une inscription] --> B[Choix de la formation]
+    B --> C[Appel du service<br/>createWithRequiredDocuments]
+    C --> D[Création d'un nouveau Dossier]
+    D --> E[Récupération de la liste des<br/>documents obligatoires pour la formation]
+    E --> F[Pour chaque document attendu,<br/>création d'un Document dans le Dossier<br/>statut = 'À fournir']
+    F --> G[Sauvegarde du Dossier<br/>avec tous ses Documents]
+    G --> H[Retour à l'utilisateur<br/>(le stagiaire voit son Dossier et les Documents à fournir)]
+
+--------------------------------------------------------------
+
+# résumé visuel de la logique
+
+graph LR
+  Formation -- "1..n" --> ListeDocumentsObligatoires
+  ListeDocumentsObligatoires -- "n..1" --> TypeDocument
+  Stagiaire -- "1..n" --> Inscription
+  Inscription -- "n..1" --> Formation
+  Inscription -- "1..1" --> Dossier
+  Dossier -- "1..n" --> Document
+  Document -- "n..1" --> StatutDocument
+  Dossier -- "n..1" --> StatutDossier
+  Dossier -- "n..1" --> Stagiaire
+  Dossier -- "n..1" --> Formation
+  Dossier -- "n..1" --> Admin
+
+----------------------------------------------------
+
+- ou créer cette méthode ? createWithRequiredDocuments -> dans DossierService ? à la place de celle-ci ?
+
+'@Transactional
+    public Dossier create(Dossier dossier, AppUserDetails userDetails) {
+
+        // Définit l'admin créateur
+        dossier.setCreateur((Admin) userDetails.getUser());
+
+        // Définit le statut par défaut (en attente de validation)
+        if (dossier.getStatutDossier() == null) {
+            StatutDossier statut = new StatutDossier();
+            statut.setId(1);
+            dossier.setStatutDossier(statut);
+        }
+
+        // Force la création d'un nouveau dossier
+        dossier.setId(null);
+
+        // Ajoute la date de création
+        dossier.setDateCreation(LocalDateTime.now());
+
+        return dossierDao.save(dossier);
+    }
+'
+- Faut il que je créer 2 méthodes disctinctes de création de dossier dans Dossiercontroller ?
+celle-ci étant celle qui permet à l'admin de créer le 1er dossier du stagiaire quand il créer le profil du stagiaire :
+
+'@PostMapping
+    @IsAdmin
+    @JsonView(AffichageDossier.Dossier.class)
+    public ResponseEntity<Dossier> createDossier(@Valid @RequestBody Dossier dossier,
+                                                 @AuthenticationPrincipal AppUserDetails userDetails) {
+
+        // Vérifie si l'ID de formation existe
+        if (dossier.getFormation() == null || dossier.getFormation().getId() == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // ou autre message d'erreur approprié
+        }
+
+        // Récupère la formation complète à partir de l'ID
+        Formation formation = formationDao.findById(dossier.getFormation().getId())
+                .orElseThrow(() -> new RuntimeException("Formation non trouvée avec l'id : " +
+                        dossier.getFormation().getId()));
+
+        dossier.setFormation(formation); // On associe la formation persistée
+
+        // Délègue la création au service
+        Dossier created = dossierService.createWithRequiredDocuments(
+                dossier.getStagiaire(),
+                dossier.getFormation(),
+                (Admin) userDetails.getUser()
+        )
+        return new ResponseEntity<>(created, HttpStatus.CREATED);
+    }'
+
+- il faudrait donc une méthode qui permette aussi au stagiaire de créer un dossier, une fois son compte validé.
+
+- montre moi comment et ou faire ceci : Précise bien côté service pour ne retourner que les dossiers du stagiaire courant si tu veux sécuriser.
+
+- comment tester ceci : chaque dossier créé pour une formation différente doit générer la bonne liste de documents automatiquement !
+
+-----------------------------------------------------------------------
+
+- est ce que ce code permet au stagiaire de creer son dossier de façon sécurisée et à l'admin de créer un dossier stagiaire quand c'est le premier qu'il faut créer (avec le compte/ profil du stagiaire) ?
+- explique moi ce qu'est 'caster'
+- explique moi ce qu'est un payload et pourquoi j'en aurais besoin
+
+--------------------------------------------------------------------------
+
+1. Est-ce que ce code permet… ?
+
+A. À l’admin de créer le premier dossier stagiaire ?
+
+Oui !
+
+L’admin crée un compte stagiaire ET son premier dossier via l’endpoint /dossiers (ou /dossiers/admin).
+
+Le service crée le dossier, génère la bonne liste de documents (selon la formation choisie):
+Tout est automatique.
+
+L’admin est bien enregistré comme “créateur” du dossier.
+
+B. Au stagiaire de créer lui-même un dossier pour une nouvelle formation?
+Oui, si tu ajoutes un endpoint réservé aux stagiaires.
+
+Tu ajoutes un endpoint /dossiers/self (ou similaire), sécurisé par @IsStagiaire.
+
+Dans ce cas, tu passes le userDetails du stagiaire courant: il n’y aura pas d’admin “créateur”, et le stagiaire est bien lié à son dossier.
+
+Le service reconnaît le créateur (stagiaire ou admin) selon le contexte.
+
+Donc :
+
+Oui, le code est sécurisé et adapté, à condition de bien séparer les routes et la sécurité côté contrôleur.
+
+Pense à vérifier dans le service que le stagiaire ne crée un dossier que pour lui-même:
+(exemple: comparer l’ID stagiaire du user connecté à l’ID stagiaire passé dans la requête).
+
+--------------------------------------------------------------------
+
+=> Reste liste de documents à générer
+
+--------------------------------------------------------------------
+
+2. Qu’est-ce que “caster” ?
+
+“Caste” (ou “caster” en anglais) = convertir un objet d’un type général à un type plus précis.
+
+En Java, tu as souvent des objets de type générique (Object ou une super-classe comme User),
+mais tu veux accéder aux méthodes ou attributs d’une sous-classe (Admin).
+
+Exemple de “cast” :
+
+java
+Copier
+Modifier
+User user = ...;
+Admin admin = (Admin) user; // On "caste" user en admin
+Pourquoi? Parce que toutes les méthodes/attributs de Admin ne sont pas visibles tant qu’on reste sur User.
+
+Risques: Si l’objet n’est pas vraiment du type cible, tu as une ClassCastException.
+
+Bonne pratique: Toujours vérifier avec instanceof avant de caster !
+
+----------------------------------------------------------------
+
+Besoin du code pour l’Inscription ou pour créer un stagiaire aussi ?
+Ou tu veux le endpoint pour ajouter la liste des documents obligatoires à une formation ?
+
+----------------------
+
+pertinence de la conservation du DTO si j'utilise Json et donc garder Mapper ou non ? (mapper utiles pour conversion entité/dto)
+
+----------------------------------------------
+
+3. Ce qui est bien et à garder:
+
+Utilisation d’un Mapper pour faire DTO <-> Entité (très propre pour l’API, évite d’exposer les entités brutes)
+
+Méthodes utiles et réutilisables (findAll, existsByEmail, etc.)
+
+Logique d’inscription (inscrireStagiaire) bien factorisée.
+
+----------------------------
+
+- j'aimerais savoir si je peux me passer de DTO pour le stagiaire puisque je compte travailler avec du json. d'ailleurs j'aimerais que tu m'expliques comment ça fonctionne exactement avec le json.
+- ensuite, si je n'ai pas de dto ça veut dire que le mapper n'est plus utile non plus non ?
+- je veux que tu me donne le code ppur StagiaireService.java et StagiaireServiceImpl.java
+
+---------------------------------
+
+1. Peux-tu te passer de DTO pour Stagiaire ?
+
+Oui, tu peux !
+Si:
+
+Tu es à l’aise avec le fait que ton entité JPA (Stagiaire) est exposée telle quelle à ton front (ou Postman).
+
+Tu maîtrises les éventuels problèmes de sécurité ou de gestion des champs non voulus (tu peux cacher avec @JsonIgnore sur certains champs si besoin).
+
+Tu simplifies ainsi la gestion: tu reçois et retournes des objets Stagiaire, sans conversion.
+
+Spring Boot/Jackson va (dé)sérialiser automatiquement le JSON de la requête/réponse en objets Stagiaire.
+
+---------------------------------
+
+dans StagiaireService :
+
+ces méthodes ne sont pas utiles ?
+    List<Stagiaire> findByStatutInscription(StatutInscription statut);
+    List<Stagiaire> findInscritsEntre(LocalDate debut, LocalDate fin);
+    Inscription inscrireStagiaire(Stagiaire stagiaire, Formation formation);
+
+-----------------
+
+Répartition de la logique métier
+
+AuthController
+ ├─ /inscription         --> Création de compte stagiaire (Appelle StagiaireService.save)
+ ├─ /validate-email      --> Validation du compte par token
+ ├─ /connexion           --> Login
+ ├─ /change-password     --> Changement mdp (1ère co ou reset)
+
+StagiaireController
+ ├─ /stagiaires          --> CRUD Stagiaire (list, get, update, delete)
+ ├─ /stagiaires/{id}     --> Accès individuel au profil
+ ├─ /stagiaires/{id}/inscriptions  --> Voir les inscriptions/dossiers du stagiaire
+...
+
+------------------------
+
+Le code d’un AuthController “propre” qui appelle le service
+
+Un exemple de route d’inscription qui gère tout, envoie le mail, etc.
+
+---------------------------
+
+AuthController
+ ├─ /inscription
+ ├─ /connexion
+ ├─ /validate-email
+ ├─ /forgot-password
+ ├─ /reset-password      <-- ici !
+ └─ /change-password
+
+UserController
+ ├─ /users        (CRUD, gestion de profil, recherches)
+ ├─ /users/{id}
+ └─ ...
+
+------------------------
+
+public boolean isEnabled() {
+        return true;
+    }
+
+public void setEnabled(boolean b) {
+    }
+
+methode utilisée dans AuthController que l'ide demande de créer dans User mais qui existe dans AppUserDetails :
+
+@Override
+    public boolean isEnabled() {
+        return user.getJetonVerificationEmail() == null; // tu peux ajouter un champ dans User si besoin
+    }
+
+- Est ce que ça n'est pas UserDao et non UserService que je devrais injecter dans le AuthController ?
+
+- Est ce que je peux garder cette ligne là 'stagiaire.setPremiereConnexion(true);' dans la méthode Inscription du AuthController ?
+
+- est ce que je dois forcement créer cette méthode 'public void sendActivationEmail(String email, String tokenValidationEmail) {}'dans EmailService ?
+
+-----------------
+
+dans mon authController il m'a été demandé d'ajouter ces 2 méthodes dans UserService.java :
+
+void requestPasswordReset(String email);
+
+void resetPassword(String token, String newPassword);
+
+et j'ai aussi cette erreur :
+
+C:\Users\helen\OneDrive\Bureau\Metz Numeric School\MNS - CDA\Titre\ADMIN_MNS_Helene_Rizzon_local\backend\admin_mns\src\main\java\com\hrizzon2\demotest\service\UserServiceImpl.java:13:8
+java: com.hrizzon2.demotest.service.User.UserServiceImpl is not abstract and does not override abstract method resetPassword(java.lang.String,java.lang.String) in com.hrizzon2.demotest.service.User.UserService
+
+// Code corrigé
+-----------------------------------
+
+# Flow logique des étapes :
+
+ADMIN                BACKEND                    EMAIL                STAGIAIRE
+
+  |                    |                          |                      |
+1 |-- Crée compte ---->|                          |                      |
+  |                    |-- Save user -----------→ |                      |
+  |                    |-- Génère token          |                      |
+  |                    |-- Envoie mail --------→ |                      |
+  |                    |                          |--- Mail reçu ------> |
+  |                    |                          |                      |
+2 |                    |<---- Validation email -- | <----- Clique lien --|
+  |                    |-- Valide token           |                      |
+  |                    |-- Active user            |                      |
+  |                    |-- Demande modif mdp?     |                      |
+  |                    |                          |                      |
+3 |                    |<---- Changement mdp ---- | <--- Form front ---- |
+  |                    |-- Vérifie flag           |                      |
+  |                    |-- Update password        |                      |
+  |                    |-- Fin flag premièreConn. |                      |
+  |                    |                          |                      |
+4 |<------------------ Login / Connexion ------------------------------>|
+  |                    |-- Génère JWT             |                      |
+  |<------------------- Token envoyé ------------>|                      |
+  |                    |                          |                      |
+5 |<- Reset password-->|<-- demande front ------- |                      |
+  |                    |-- Génère resetToken      |                      |
+  |                    |-- Envoie mail reset ---->|                      |
+  |                    |                          |--- Mail reçu ------> |
+  |                    |<-- Lien reset mdp ------ | <--- Clique lien --- |
+  |                    |-- Update password        |                      |
+  |                    |-- Reset token invalidé   |                      |
+
+--------------------------------------
+
+# Diagramme de séquence UML :
+
+@startuml
+actor Admin
+actor Stagiaire
+participant "API Backend" as API
+participant "Email (MailTrap...)" as Mail
+
+== Création de compte ==
+Admin -> API : POST /auth/stagiaire (infos stagiaire)
+API -> API : Enregistre le stagiaire (enabled=false, jeton, password encodé)
+API -> Mail : sendActivationEmail(email, token)
+Mail -> Stagiaire : Reçoit le mail avec lien activation
+
+== Activation de compte ==
+Stagiaire -> API : POST /auth/validate-email (token)
+API -> API : Vérifie token, active user, reset jeton
+API -> Stagiaire : Renvoie succès (premiereConnexion=true si stagiaire)
+
+== Changement mot de passe première connexion ==
+Stagiaire -> API : POST /auth/change-password (email, mdp)
+API -> API : Vérifie flag, met à jour password, premiereConnexion=false
+API -> Stagiaire : Succès
+
+== Connexion ==
+Stagiaire -> API : POST /auth/connexion (email, mdp)
+API -> API : Vérifie enabled/password
+API -> API : Génère JWT
+API -> Stagiaire : Retourne le token
+
+== Reset password ==
+Stagiaire -> API : POST /auth/forgot-password (email)
+API -> API : Génère resetToken, enregistre
+API -> Mail : sendResetPasswordEmail(email, resetToken)
+Mail -> Stagiaire : Reçoit mail reset
+Stagiaire -> API : POST /auth/reset-password (token, nouveau mdp)
+API -> API : Vérifie token, update password, reset token
+API -> Stagiaire : Succès
+@enduml
+
+----------------------------
+
+# Schéma dessiné :
+
+┌──────────────┐      ┌─────────────────────┐       ┌───────────────┐
+│    Admin     │──►──▶│  POST /auth/stagiaire │──►──▶│    Backend    │
+└──────────────┘      └─────────────────────┘       │ (save user,   │
+                                                    │ gen token,    │
+                                                    │ send mail)    │
+                                                    └─────┬─────────┘
+                                                          │
+                                                          ▼
+                                          ┌───────────────┐
+                                          │    Email      │
+                                          └─────┬─────────┘
+                                                │
+                                                ▼
+                                       ┌───────────────┐
+                                       │  Stagiaire    │
+                                       │  (reçoit mail)│
+                                       └─────┬─────────┘
+                                                │
+                         ┌──────────────────────┴─────────────────────┐
+                         ▼                                            ▼
+        ┌────────────────────────────────┐     ┌───────────────────────────────────────┐
+        │  Clique lien validation email  │     │   Oubli mot de passe (front)         │
+        │  POST /auth/validate-email     │     │   POST /auth/forgot-password         │
+        └─────────────┬──────────────────┘     └─────────────────┬────────────────────┘
+                      │                                        │
+                      ▼                                        ▼
+        ┌────────────────────────────┐              ┌───────────────────────────┐
+        │ Validation token / Activate│              │  Gen resetToken / Send mail│
+        └─────────────┬──────────────┘              └─────────────┬─────────────┘
+                      │                                          │
+                      ▼                                          ▼
+        ┌────────────────────────────┐              ┌───────────────────────────┐
+        │ POST /auth/change-password │              │  Clique lien /auth/reset  │
+        └─────────────┬──────────────┘              └─────────────┬─────────────┘
+                      │                                          │
+                      ▼                                          ▼
+                Mot de passe changé                  Mot de passe réinitialisé
+                      │                                          │
+                      ▼                                          ▼
+        ┌────────────────────────────┐              ┌───────────────────────────┐
+        │        Connexion           │              │        Connexion          │
+        │ POST /auth/connexion       │              │ POST /auth/connexion      │
+        └────────────────────────────┘              └───────────────────────────┘
+
+----------------------
+
+C:\Users\helen\OneDrive\Bureau\Metz Numeric School\MNS - CDA\Titre\ADMIN_MNS_Helene_Rizzon_local\backend\admin_mns\src\main\java\com\hrizzon2\demotest\controller\StagiaireController.java:104:63
+java: incompatible types: com.hrizzon2.demotest.model.Stagiaire cannot be converted to com.hrizzon2.demotest.dto.stagiaire.StagiaireDTO
+
+=> enlever tous les DTO => FAIT
+
+-----------------------
+
+Suite à suppression DTO Stagiaire -> penser à vérifier front :
+
+6. Vérifie le front !
+Si ton front envoie un objet au format DTO (champs différents de ton entity !), il faudra soit:
+
+Adapter le front pour envoyer exactement la structure de l’entité Stagiaire
+
+Ou alors tu es obligée de garder au moins un DTO côté backend… (Mais je comprends que tu veux simplifier, donc adapte le front !)
+
+---------
+
+verification json view - annotations entité Stagiaire
+
+-----------------------
+
+Fais bien hériter tes vues si tu veux éviter les répétitions.
+
+Si certaines données doivent rester strictement privées (tokens, mot de passe, etc.), ne les expose jamais en JsonView par défaut et préfère une vue vraiment dédiée (ou @JsonIgnore pour les champs qui ne doivent jamais être exposés).
+
+Sur le front, ajuste tes modèles Typescript à la structure réellement reçue.
+
+
+           +----------------+           +-----------------------+
+           |    Controller  |----[JsonView]---->|    Stagiaire Entity    |
+           +----------------+           +-----------------------+
+                        |                   |     @JsonView sur chaque champ !
+             ResponseEntity<List<Stagiaire>> |     Contrôle granulaire.
+                        |
+                  [sérialisation]
+                        |
+                 => réponse JSON au front (Angular)
+
+---------------------------------
+
+j'ai un TypeDocument mais c'est un enum, est ce que je le laisse en enum ? et pour reconnaitre un document obligatoire est ce qu'il est conseillé de donner un code de niveau pour les formations afin de simplifier la lecture ?
+en parallèle propose moi un contenu JSON pour les formations de niveau A, B et C en me montrant comment faire mes requetes dans JetClient. j'ai déjà un dossier Formation dans JetClient avec des méthodes Get, Get all, create, delete et update.
+Montre moi comment associer les documents obligatoires demandés avec les documents envoyés par le stagiaire dans l'application, cote back pour le moment, nous nous occuperons du front apres.
+
+-----------------------------------
+
+La logique métier pour croiser les documents attendus et les documents transmis par un stagiaire se met dans un service.
+Tu as deux options:
+
+Dans DocumentStagiaireService (le plus cohérent)
+→ Car il va manipuler les documents réels transmis, et peut avoir besoin d’accéder à la liste des attendus via un autre service ou le DAO.
+
+Tu peux aussi créer un service métier “DossierService” si tu veux isoler la logique de vérification de complétude, mais pour l’instant, le plus simple est dans DocumentStagiaireService.
+
+=> A voir plus tard avec logique de Dossier pour gérer complétion du dossier
+
+-----------------------------
+
+En effet, je souhaite gérer à terme la complétude du dossier avec la transmission de tous les documents demandés.
+pour rappel, un document envoyé par le stagiaire est soumis à vérification et validation de l'Admin avant de compléter la liste des documents obligatoires. ça n'est qu'un fois la totalité des documents demandés, transmis, vérifiés et validés que le dossier peut être déterminé comme complet. Est ce que ça change quelque chose dans la gestion de la logique métier, est ce que dans ce cas là ça nécessite la création d'un DTO ?
+pour l'affichage de la liste de documents obligatoires et les documents transmis par le stagiaire, un DTO est il nécessaire pour faire le lien entre les deux et gérer l'affichage dans le front ?
+
+ensuite pour ce qui est de cette requête 'Lister tous les documents d’un stagiaire pour une formation', est ce que c'est un  mettre dans un dossier stagiaire ou dans un dossier formation dans jet client ?
+Et pour supprimer un document, c'est le stagiaire qui peut supprimer un document envoyé ?
+
+pour finir, je veux bien voir la logique de comparaison(attendus vs transmis)
+
+=======================
+
+REPONSE :
+
+ Complétude du dossier et validation par l’admin — Faut-il un DTO?
+Oui!
+Dès que tu veux présenter la situation de complétude d’un dossier (pour l’admin, le stagiaire, le front, etc.),
+il te FAUT un DTO spécifique.
+Pourquoi? Parce que tu dois assembler:
+
+- Les documents attendus,
+- Les documents transmis,
+- Leur statut de validation (Validé, Refusé, En attente…),
+- Et calculer si la complétude est atteinte.
+
+Ton DTO doit donc comporter pour chaque document attendu:
+
+- Le type de document attendu (TypeDocument)
+- Si le document a été transmis
+- Si oui: statut (Validé, En attente, etc.)
+- URL ou nom du fichier transmis
+- Un booléen “est-ce que tout est complet?” (pour le dossier en entier)
+
+--------------------
+
+Liste des requêtes documents
+
+| Dossier        | Requête (Verbe + URL)                                                              | But                                          |
+| -------------- | ---------------------------------------------------------------------------------- | -------------------------------------------- |
+| Stagiaire      | GET `/stagiaires/{stagiaireId}/formations/{formationId}/statut-documents`          | Lister la progression sur les documents      |
+| Stagiaire      | GET `/stagiaires/{stagiaireId}/formations/{formationId}/documents`                 | Lister documents transmis                    |
+| Stagiaire      | POST `/stagiaires/{stagiaireId}/formations/{formationId}/documents`                | Ajouter un document transmis                 |
+| Stagiaire      | DELETE `/stagiaires/{stagiaireId}/formations/{formationId}/documents/{documentId}` | Supprimer un document transmis               |
+| Formation      | GET `/formations/{formationId}/documents-obligatoires`                             | Lister documents obligatoires pour formation |
+| Formation      | POST `/formations/{formationId}/documents-obligatoires`                            | Ajouter un document obligatoire              |
+| StatutDocument | GET `/statut-document`                                                             | Lister tous les statuts                      |
+| StatutDocument | POST `/statut-document`                                                            | Créer un statut                              |
+| Dossier        | GET `/dossier/{id}`                                                                | Récupérer un dossier                         |
+| Dossier        | GET `/dossier/stagiaire/{stagiaireId}`                                             | Tous les dossiers d’un stagiaire             |
+| Dossier        | GET `/dossier/formation/{formationId}`                                             | Tous les dossiers d’une formation            |
+
+---------------------
+Schéma synthtique -> Qui appelle Quoi ?
+
++-----------------------------------------+
+|                Frontend                 |
+|  (ex : JetClient, appli Angular)        |
++-----------------------------------------+
+                 |
+                 v
++----------------+--------------------------------------+
+|            API (Spring Boot)                          |
++-------------------------------------------------------+
+| FormationController                                   |
+|    - CRUD formations                                  |
+|    - GET /formations/{id}/documents-obligatoires      |
+|                                                       |
+| ListeDocumentsObligatoiresController                  |
+|    - Associe documents obligatoires à une formation   |
+|                                                       |
+| DocumentStagiaireController                           |
+|    - POST /stagiaires/{id}/documents                  |
+|    - GET /stagiaires/{id}/documents                   |
+|    - GET /stagiaires/{stagiaireId}/formations/        |
+|         {formationId}/statut-documents                |
+|      (croise attendus / transmis + statut)            |
+|                                                       |
+| DossierController (si tu gères la complétude globale) |
+|    - GET /dossier/{id}                                |
+|                                                       |
+| StatutDocumentController                              |
+|    - Liste/ajout des statuts de doc                   |
++-------------------------------------------------------+
+
+--------------------------
+
+Schéma du flow envoi/chargement d'un doc
+
+[Front : Formulaire d'upload]
+         │
+         ▼
+[Controller Spring Boot : reçoit fichier, valide, check droits]
+         │
+         ▼
+[FichierService : nettoie nom, stocke fichier, enregistre en base]
+         │
+         ▼
+[Disque dur (stockage)  +  Base de données (meta : chemin, statut, id...)]
+
+------------------
+
+3️⃣ Résumé du parcours (“gymnastique”) lors d’un upload
+
+
+- Front: L’utilisateur envoie un fichier via le formulaire.
+-
+- DocumentController reçoit le fichier, valide l’accès, appelle le DocumentService.
+-
+- DocumentService:
+-
+- Nettoie le nom du fichier.
+-
+- Appelle FichierService pour écrire le fichier sur disque.
+-
+- Crée et sauvegarde un objet Document (meta : id stagiaire, nom, type, statut EN_ATTENTE…).
+-
+- FichierService écrit le fichier sur le disque, dans le bon dossier.
+-
+- DocumentDao sauvegarde les infos du fichier en base.
+
+------------------
+
+POST /stagiaires/{id}/documents
+      │
+      ▼
+[DocumentController]
+      │
+      ▼
+[DocumentService.uploadDocument()]
+      │
+      ├──> [FichierService.uploadToLocalFileSystem()]
+      │
+      └──> [DocumentDao.save(document)]
+
+-----------------
+
+  etapes à poursuivre :
+
+  continuer code et verif DocumentService.java + voir le reste
+
+-------------------------
+
+FLOW DE CREATION DOCUMENT
+
+- Le controller reçoit le fichier, le type, et l’id du dossier ou du stagiaire.
+- Le service stocke le fichier sur le disque.
+- Le service récupère le statut "EN_ATTENTE" depuis la base et l’associe à l’entité Document.
+- Le service associe le bon dossier au Document.
+- Le service sauvegarde le Document.
+
+-------------------------
+
+->> DocumentService.java -> on n'implémente pas FichierService ?
+
+StatutDocument est une entité, PAS un enum, tu dois la récupérer en base. -> qu'est ce que ça veut dire ?
+
+TypeDocument est un enum, tu peux utiliser .valueOf(...). -> où ?
+
+Les setters générés par Lombok (@Setter) doivent correspondre aux noms de champs de ton entité. -> de quoi tu parles ?
+
+je n'ai pas compris ça : Crée le StatutDocumentDao (si pas déjà fait)
+
+                         Ajoute la table et les lignes nécessaires dans la base (EN_ATTENTE, VALIDE, REFUSE).
+
+et explique moi ça : Mets à jour le service pour chercher le statut "EN_ATTENTE" avant de l’affecter à un document.
+
+                     Si besoin, crée ou adapte le DossierDao pour récupérer le dossier associé.
+
+---------------
+
+je ne vois toujours pas où ceci se passe :
+
+'Dans le code, là où tu reçois le type du document en String (par exemple, "JUSTIFICATIF_DOMICILE").
+Tu dois faire:
+document.setType(TypeDocument.valueOf(typeDocument));'
+
+ça se passe dans quel fichier ? :
+Mais il faut que tu utilises le bon nom de champ dans ton code.
+
+Par exemple, si dans Document tu as private String nomFichier; tu appelleras document.setNomFichier(...).
+
+Si tu écris document.setCheminFichier(...) mais que le champ s’appelle nomFichier, ça plantera.
+
+---------------------------
+
+[Front]
+  │
+  ▼
+[DocumentController]
+  │
+  ▼
+[DocumentService] ---(utilise)---> [FichierService] (stocke le fichier)
+  │
+  ├─> [StatutDocumentDao] (statut "EN_ATTENTE" récupéré en base)
+  ├─> [DossierDao] (dossier du stagiaire)
+  └─> [DocumentDao] (sauvegarde Document)
+
+ Bonus: Checklist “Prêt à déployer”
+
+ J’ai un StatutDocumentDao
+
+ Ma table statut_document a bien les lignes EN_ATTENTE, VALIDE, REFUSE
+
+ Mon DocumentService fait bien le lien avec le statut et le dossier existants (jamais en “dur”)
+
+ Mon FichierService ne gère QUE le stockage physique
+
+ Le front envoie le bon typeDocument (conforme à l’enum)
+
+ J’ai testé l’upload et la sauvegarde du Document (vérifié en base et sur disque)
+
+-------------------
+
+[Stagiaire → Frontend]
+     ↓
+POST /stagiaires/{stagiaireId}/documents
+     ↓
+[DocumentStagiaireController]
+     ↓
+[DocumentStagiaireService.upload(...)]
+     ↓
+[FichierService.uploadToLocalFileSystem()]
+     ↓
+[DocumentStagiaireDao.save()]
+     ↓
+[Base de données, Dossier à jour, Fichier stocké]
+
+
+-------------
+
+
+                                  ================
+                                  =  05/06/2025  =
+                                  ================
+
+QUESTIONS :
+
+* Dans la classe User (table users) :
+
+    - est ce que je doiis afficher une colonne jetonVerificationEmail ?
+    - comment doit apparaitre la colonne reset_password_token dans la table ? quelle value ?
+
+* protected StatutDossier statutDossier :
+
+    - je dois annoter comme une relation mais comment ? est ce que je dois rajouter une annotation à celles déjà existantes ou changer l'ordre ?
+    @NotNull
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(nullable = false)
+        @JsonView(AffichageDossier.Dossier.class)
+        protected StatutDossier statutDossier;
+
+* // private StatutDocument statutDocument;
+
+    - est ce que tu veux dire qu'il faut que je décommente ou je j'enlève ce code de l'entité Dossier ?
+
+* StatutDossier et StatutDocument :
+
+    - Ce sont pour le moment des entités,
+    Est ce qu'il vaut mieux les passer en enum pour plus de clarté ?
+
+* Document ou PieceJointeStagiaire :
+
+    - 1. Choisir une seule entité pour représenter l’envoi de fichier :
+    soit fusionner Document et PieceJointeStagiaire en une seule classe (ex. PieceJointe),
+    soit justifier pourquoi elles coexistent (ex. Document = prévu pour notifications,
+    PieceJointeStagiaire = prévu pour dossiers).
+    Si fusion, mettre à jour la relation “Dossier–>Document” et supprimer PieceJointeStagiaire ou rediriger tous les services vers la nouvelle classe.
+    2. Supprimez (ou archivez) la classe dupliquée pour éviter la confusion.
+    Veillez à migrer les annotations, tests et contrôleurs liés à l’entité que vous conservez. |
+
+    - dans la mesure où Document concerne les documents attendus (ListeDocumentsObligatoires)
+    et permet de gérer les doucments envoyés pour justifier d'un retard ou une absence du stagiaire,
+    et que PieceJointeStagiaire gère les documents envoyés par un stagiaire pour compléter le dossier,
+    est ce qu'il n'est pas pertinent de conserver les deux entités ?
+
+* Doublon @ManyToOne(optional=false) private Stagiaire stagiaire; dans PieceJointeStagiaire.java, Dossier et Inscription :
+
+    - Un Stagiaire envoie un document (entité Document ou PieceJointeStagiaire) et a un ou plusieurs Dossier,
+    le Dossier, lorsqu'il passe à l'état complet, valide l'Inscription
+
+* Motif :
+
+    - Pour que les motifs s'affichent dans le front (liste déroulante)
+    est ce que les afficher dans data-donnees-test suffit
+    ou il vaut mieux les avoir en dur dans le code, au travers d'un enum par exemple ?
+
+* Dossier :
+
+    - La ligne INSERT INTO dossier (…) existe déjà dans data-donnees-test.sql
+
+* Inscription :
+
+    - J'envisage de supprimer l'entité Inscription pour conserver l'enum StatutInscription
+    et je pense modifier StatutInscription pour conserver seulement un boolean pour dire si StatutInscription est valide ou non.
+    ou faire une liste de 3 possibilités : valide/invalide/en cours
+
+================
+
+A FAIRE au 05-06 :
+
+* DossierService -> méthode de recalcul du StatutDossier selon mise à jour document
+
+* Document et/ou PieceJointeStagiaire :
+    Voir si nécessité des deux entités
+    -> | Document.java vs PieceJointeStagiaire.java |
+    - Il existe deux entités qui couvrent sensiblement la même fonction (gestion d’un fichier) :
+    Document et PieceJointeStagiaire.
+    Cette redondance risque d’introduire des comportements incohérents
+    (l’une se trouve dans model.Document, l’autre dans model.PieceJointeStagiaire).
+
+* Entités / Model :
+    Faire le tour des entités pour s'assurer qu'elles sont correctement mappées pour apparaitre dans les données tests
+
+* Inscription :
+    Est-ce qu'il est vraiment pertinent de conserver toutes les données dans cette entité ? Dossier peut gérer ça
+    Et Inscription sera juste un statut_inscription (deja existant) pour dire si valide ou non.
+
+---------------
+
+Refacto à opérer 06/06
+
+=> Fusion PieceJointeStagiaire + Document
+-> Conserver 2 controllers pour :
+    * gestion Doc - Evenement -> JustificatifController
+    * gestion complétude Dossier -> CompletudeDossierController
+
+Voir gestion des services
+
+----------------
+
+11/06
+
+Quelles méthodes ?
+-> MotifDao
+-> EvenementDao
+-> FormationDao
+-> VilleDao
+
+------------------------
+
+Diagramme d'architecture :
+
+ +---------------------+        +---------------------+        +---------------------+
+ |  Controller Layer    | <----> |   Service Layer     | <----> |    DAO Layer        |
+ +---------------------+        +---------------------+        +---------------------+
+ |                     |        |                     |        |                     |
+ | - StagiaireController|        | - StagiaireService  |        | - StagiaireDao      |
+ | - DocumentController |        | - DocumentService   |        | - DocumentDao       |
+ | - ValidationDocumentController| - ValidationDocumentService | - StatutDocumentDao  |
+ | - DossierController  |        | - DossierService    |        | - DossierDao        |
+ | - EvenementController|        | - EvenementService  |        | - EvenementDao      |
+ | - InscriptionController|      | - InscriptionService|        | - InscriptionDao    |
+ | - AdminController    |        | - AdminService      |        | - AdminDao (si besoin)|
+ | - NotificationController|     | - NotificationService|       | - NotificationDao (optionnel)|
+ +---------------------+        +---------------------+        +---------------------+
+
+ => Motifs != selon type d'évènement
+
+---------------------
+
+Diagramme de séquences - "Validation document" et "Seuils Absences/Retards"
+
+Utilisateur(Administrateur)        NotificationTriggerService          NotificationService         AdminService        DossierService
+
+        |                                  |                                  |                       |                    |
+        |--- Valide/Rejette Document ----->|                                  |                       |                    |
+        |                                  |--- onDocumentValidation() ------>|                       |                    |
+        |                                  |                                  |--- Crée notif stagiaire ---> Save en BD            |
+        |                                  |                                  |                       |                    |
+
+        |                                  |                                  |                       |                    |
+        |--- Déclare Absence/Retard ------>|                                  |                       |                    |
+        |                                  |--- checkSeuilsAbsenceRetard() --->|                       |                    |
+        |                                  |                                  |                       |                    |
+        |                                  |                                  |<-- dossierService.countAbsences()                  |
+        |                                  |                                  |<-- dossierService.countRetards()                    |
+        |                                  |                                  |                       |                    |
+        |                                  |                                  |-- notif stagiaire si seuil atteint ou proche ----> Save en BD
+        |                                  |                                  |                       |                    |
+        |                                  |                                  |-- demande admins concernés via adminService ----> |
+        |                                  |                                  |                       |                    |
+        |                                  |                                  |-- notif admins seuil atteint/proche ------------> Save en BD
+
+-----------------------------
+
+ok donc on reprend à 0.
+je conserve DocumentController pour la gestion des documents et je vire PieceJointeStagiaireController.
+je garde DossierDocumentService pour la gestion des documents qui complètent le dossier
+et EvenementDocumentService pour la gestion documentaire pour justifier les évènements ?
+ValidationDocumentController pour gérer la validation d'un document envoyé par un stagiaire, coté admin.
+et ListeDocumentsObligatoires pour comparer les documents envoyés via DocumentController .
+c'est ça ?

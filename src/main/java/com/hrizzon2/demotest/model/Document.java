@@ -1,8 +1,13 @@
 package com.hrizzon2.demotest.model;
 
+import com.hrizzon2.demotest.model.enums.TypeDocument;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
+
+// ingrédient apporté
 
 @Getter
 @Setter
@@ -11,17 +16,49 @@ public class Document {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
-    private String name;
+    private String nomFichier;
 
     @Enumerated(EnumType.STRING)
     private TypeDocument type;
 
-    @Enumerated(EnumType.STRING)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "statut_document_id", nullable = false)
     private StatutDocument statut;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dossier_id")
     private Dossier dossier;
+
+    /**
+     * Association vers le stagiaire qui a soumis ce document
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "stagiaire_id", nullable = false)
+    private Stagiaire stagiaire;
+
+    /**
+     * Association optionnelle vers l'évènement justifié par ce document
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "evenement_id", nullable = true)
+    private Evenement evenement;
+
+    /**
+     * Pour stocker un éventuel commentaire en cas de refus
+     */
+    @Column(length = 500)
+    private String commentaire;
+
+    /**
+     * Date et heure du dépôt du document
+     */
+    private LocalDateTime dateDepot;
+
+    /**
+     * URL ou chemin vers le fichier, selon votre implémentation
+     */
+    private String urlFichier;
+    
 }
