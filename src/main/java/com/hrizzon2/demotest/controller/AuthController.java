@@ -91,6 +91,8 @@ public class AuthController {
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
+    // TODO à revoir pour garder passwordEncoder mais fusionner avec méthode du meme nom dans AdminController
+
     /**
      * Création d'un Stagiaire (admin only)
      */

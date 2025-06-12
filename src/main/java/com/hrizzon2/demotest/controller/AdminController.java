@@ -25,7 +25,6 @@ import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
-@RequestMapping("/api/admin")
 public class AdminController {
 
     private final AdminService adminService;
@@ -77,7 +76,7 @@ public class AdminController {
      * Récupère tous les stagiaires (vue complète) SEULEMENT ADMINS.
      */
     @IsAdmin
-    @GetMapping("/complet")
+    @GetMapping("/stagiaires-complets")
     @JsonView(AffichageDossier.Complet.class)
     public ResponseEntity<List<Stagiaire>> getAllStagiairesComplet() {
         return ResponseEntity.ok(stagiaireService.findAll());
@@ -103,7 +102,7 @@ public class AdminController {
      * @return Stagiaire selon son statut
      */
     @IsAdmin
-    @GetMapping("/statut")
+    @GetMapping("/stagiaires-statut")
     public ResponseEntity<List<Stagiaire>> getStagiairesByStatut(
             @RequestParam StatutInscription statut) {
         return ResponseEntity.ok(stagiaireService.findByStatutInscription(statut));
@@ -118,7 +117,7 @@ public class AdminController {
      * @return
      */
     @IsAdmin
-    @GetMapping("/inscrits")
+    @GetMapping("/stagiaires-inscrits")
     public ResponseEntity<List<Stagiaire>> getStagiairesInscritsEntre(
             @RequestParam LocalDate debut,
             @RequestParam LocalDate fin) {
