@@ -31,6 +31,8 @@ public interface DocumentDao extends JpaRepository<Document, Integer> {
      */
     List<Document> findByStatutNom(String nom);
 
+    List<Document> findByEvenementId(Integer evenementId);
+
 //    Optional<Document> findDocumentByName(String name);
 //
 //    List<Document> findByStagiaireId(Long stagiaireId);

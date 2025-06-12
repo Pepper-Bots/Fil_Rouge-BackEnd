@@ -98,4 +98,6 @@ public class FichierService {
         return Paths.get(privateUploadFolder, nomImage);
     }
 
+    public void deleteFile(String nomFichier) {
+    }
 }

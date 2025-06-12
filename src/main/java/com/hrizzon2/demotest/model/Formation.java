@@ -2,6 +2,7 @@ package com.hrizzon2.demotest.model;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.hrizzon2.demotest.model.enums.NiveauFormation;
+import com.hrizzon2.demotest.model.enums.TypeDocument;
 import com.hrizzon2.demotest.view.AffichageDossier;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -53,4 +54,17 @@ public class Formation {
     public String getTitre() {
         return this.nom;
     }
+
+    @OneToMany(mappedBy = "formation", fetch = FetchType.LAZY)
+    private List<ListeDocumentsObligatoires> listeDocumentsObligatoires;
+
+    @Transient
+    public List<TypeDocument> getListeDocumentsObligatoires() {
+        if (listeDocumentsObligatoires == null) return List.of();
+
+        return listeDocumentsObligatoires.stream()
+                .map(ListeDocumentsObligatoires::getTypeDocument) // méthode à adapter
+                .toList();
+    }
+
 }
