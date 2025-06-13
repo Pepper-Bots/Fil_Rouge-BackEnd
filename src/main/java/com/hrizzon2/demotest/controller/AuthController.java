@@ -41,7 +41,7 @@ import java.util.UUID;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 
     protected UserService userService;

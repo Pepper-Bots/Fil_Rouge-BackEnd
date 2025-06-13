@@ -9,7 +9,7 @@ public interface EvenementDao extends JpaRepository<Evenement, Integer> {
 
 
     List<Evenement> findByStagiaireId(Integer stagiaireId);
-    
+
     // Par exemple, récupérer évènements par date, statut, etc.
 }
 // TODO **Conserver** :
