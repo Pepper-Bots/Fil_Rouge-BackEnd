@@ -66,4 +66,16 @@ public class AppUserDetails implements UserDetails {
     public boolean isEnabled() {
         return user.isEnabled(); // tu peux ajouter un champ dans User si besoin
     }
+
+    public boolean isPremiereConnexion() {
+        if (this.user instanceof Stagiaire stagiaire) {
+            return stagiaire.isPremiereConnexion();
+        }
+        return false;
+    }
+
+    public String getRole() {
+        return ((User) this.getUser()).getNomRole(); // ou .getNomRole().toString()
+    }
+
 }

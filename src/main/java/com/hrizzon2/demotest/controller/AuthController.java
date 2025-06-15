@@ -157,7 +157,7 @@ public class AuthController {
      * Connexion (login)
      */
     @PostMapping("/connexion")
-    public ResponseEntity<String> connexion(@RequestBody @Valid User user) {
+    public ResponseEntity<?> connexion(@RequestBody @Valid User user) {
 
         // Optionnel : Vérifier si le compte est activé (enabled)
         Optional<User> userOpt = userService.findByEmail(user.getEmail());
@@ -174,7 +174,12 @@ public class AuthController {
                                     user.getPassword()))
                     .getPrincipal();
 
-            return new ResponseEntity<>(securityUtils.generateToken(userDetails), HttpStatus.OK);
+            return ResponseEntity.ok(Map.of(
+                    "token", securityUtils.generateToken(userDetails),
+                    "email", userDetails.getUsername(),
+                    "role", userDetails.getRole(), // ou getAuthorities().toString()
+                    "premiereConnexion", userDetails.isPremiereConnexion()
+            ));
 
         } catch (AuthenticationException e) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);

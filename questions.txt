@@ -1,3 +1,4 @@
+
 faut il créer un ValidationAdmin ? -> DTO ?
 
 entités StatutDocument + StatutDossier existent -> bien faites ? les 2 sont elles nécessaires ? le Statut du Doc si validé et si tous les Doc fournis viennent modifier auto le Statut du Dossier
