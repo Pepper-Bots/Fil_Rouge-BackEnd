@@ -35,9 +35,6 @@ import java.util.List;
 public class User {
 
 
-    public void setActive(boolean b) {
-    }
-
 //// VOIR GESTION DES DROITS AVEC UN BOOLEEN - PAGE 415 SLIDE SPRING
 
 

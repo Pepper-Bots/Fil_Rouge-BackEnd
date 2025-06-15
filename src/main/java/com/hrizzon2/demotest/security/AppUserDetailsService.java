@@ -2,17 +2,12 @@
 
 package com.hrizzon2.demotest.security;
 
-import com.hrizzon2.demotest.dao.AdminDao;
-import com.hrizzon2.demotest.dao.StagiaireDao;
-import com.hrizzon2.demotest.model.Admin;
-import com.hrizzon2.demotest.model.Stagiaire;
+import com.hrizzon2.demotest.dao.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 /**
  * Service chargé de charger les détails de l'utilisateur
@@ -22,13 +17,12 @@ import java.util.Optional;
 @Service
 public class AppUserDetailsService implements UserDetailsService {
 
-    protected StagiaireDao stagiaireDao;
-    protected AdminDao adminDao;
+    private final UserDao userDao;
+
 
     @Autowired
-    public AppUserDetailsService(StagiaireDao stagiaireDao, AdminDao adminDao) {
-        this.stagiaireDao = stagiaireDao;
-        this.adminDao = adminDao;
+    public AppUserDetailsService(UserDao userDao) {
+        this.userDao = userDao;
     }
 
     /**
@@ -42,21 +36,23 @@ public class AppUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        System.out.println("Recherche stagiaire par email : " + email);
-        Optional<Stagiaire> optionalStagiaire = stagiaireDao.findByEmail(email);
-        System.out.println("Résultat stagiaire : " + optionalStagiaire);
+        System.out.println("Recherche utilisateur par email : " + email);
 
-
-        if (optionalStagiaire.isPresent()) {
-            return new AppUserDetails(optionalStagiaire.get());
-        }
-
-        Optional<Admin> optionalAdmin = adminDao.findByEmail(email);
-
-        if (optionalAdmin.isPresent()) {
-            return new AppUserDetails(optionalAdmin.get());
-        }
-
-        throw new UsernameNotFoundException("Aucun utilisateur trouvé avec l'email : " + email);
+        return userDao.findByEmail(email)
+                .map(AppUserDetails::new)
+                .orElseThrow(() -> new UsernameNotFoundException("Aucun utilisateur trouvé avec l'email : " + email));
     }
+
+//        if (optionalStagiaire.isPresent()) {
+//            return new AppUserDetails(optionalStagiaire.get());
+//        }
+//
+//        Optional<Admin> optionalAdmin = adminDao.findByEmail(email);
+//
+//        if (optionalAdmin.isPresent()) {
+//            return new AppUserDetails(optionalAdmin.get());
+//        }
+//
+//        throw new UsernameNotFoundException("Aucun utilisateur trouvé avec l'email : " + email);
+//    }
 }

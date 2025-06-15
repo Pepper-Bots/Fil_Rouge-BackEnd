@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
         if (userOpt.isPresent()) {
             User user = userOpt.get();
             user.setJetonVerificationEmail(null);  // Invalide le token
-            user.setActive(true);                  // Active le compte (assure-toi d’avoir un champ "active" ou "enabled")
+            user.setEnabled(true); // Active le compte (assure-toi d’avoir un champ "active" ou "enabled")
             userDao.save(user);
             return true;
         }
@@ -40,7 +40,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void changePasswordFirstLogin(String email, CharSequence newPassword) {
-        User user = userDao.findByEmail(email).orElseThrow(() -> new RuntimeException("Aucun utilisateur avec cet email"));
+        User user = userDao.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Aucun utilisateur avec cet email"));
 
         // Si user est Stagiaire, check premiereConnexion
         if (user instanceof Stagiaire stagiaire) {
@@ -48,7 +49,7 @@ public class UserServiceImpl implements UserService {
                 throw new RuntimeException("Vous devez vous connecter pour changer votre mot de passe");
             }
             stagiaire.setPremiereConnexion(false);
-            user = stagiaire;
+            
         }
         user.setPassword(passwordEncoder.encode(newPassword));
         userDao.save(user);

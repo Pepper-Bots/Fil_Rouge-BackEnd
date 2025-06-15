@@ -68,13 +68,13 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // Endpoints publics (ex: login, inscription)
-                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
 
                         // Endpoints accessibles uniquement aux stagiaires
-                        .requestMatchers("/stagiaire/**").hasRole("STAGIAIRE")
+                        .requestMatchers("/api/stagiaire/**").hasRole("STAGIAIRE")
 
                         // Endpoints accessibles uniquement aux admins
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
                         // Toute autre requête doit être authentifiée
                         .anyRequest().authenticated()
@@ -93,4 +93,10 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", corsConfiguration);
         return source;
     }
+
+//    @Bean
+//    public PasswordEncoder passwordEncoder() {
+//        return new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
+//    }
+
 }

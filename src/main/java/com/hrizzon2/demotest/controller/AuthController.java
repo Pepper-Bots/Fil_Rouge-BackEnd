@@ -5,7 +5,6 @@ import com.hrizzon2.demotest.dto.ChangePasswordDto;
 import com.hrizzon2.demotest.dto.ValidationEmailDto;
 import com.hrizzon2.demotest.model.Stagiaire;
 import com.hrizzon2.demotest.model.User;
-import com.hrizzon2.demotest.security.AppUserDetails;
 import com.hrizzon2.demotest.security.ISecurityUtils;
 import com.hrizzon2.demotest.security.IsAdmin;
 import com.hrizzon2.demotest.service.EmailService;
@@ -15,8 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -166,24 +163,40 @@ public class AuthController {
                     .body("Compte non activé. Merci de valider votre email.");
         }
 
-        try {
-            AppUserDetails userDetails = (AppUserDetails) authenticationProvider
-                    .authenticate(
-                            new UsernamePasswordAuthenticationToken(
-                                    user.getEmail(),
-                                    user.getPassword()))
-                    .getPrincipal();
+        User userEntity = userOpt.get();
+        System.out.println("Mot de passe reçu: " + user.getPassword());
+        System.out.println("Mot de passe attendu: " + userEntity.getPassword());
+        System.out.println("Résultat encodeur: " + passwordEncoder.matches(user.getPassword(), userEntity.getPassword()));
 
-            return ResponseEntity.ok(Map.of(
-                    "token", securityUtils.generateToken(userDetails),
-                    "email", userDetails.getUsername(),
-                    "role", userDetails.getRole(), // ou getAuthorities().toString()
-                    "premiereConnexion", userDetails.isPremiereConnexion()
-            ));
-
-        } catch (AuthenticationException e) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if (passwordEncoder.matches(user.getPassword(), userEntity.getPassword())) {
+            return ResponseEntity.ok("SUCCESS!");
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Mauvais mot de passe");
         }
+        
+//        try {
+//            System.out.println("Tentative de connexion pour : " + user.getEmail());
+//            System.out.println("Mot de passe en base : " + userService.findByEmail(user.getEmail()).get().getPassword());
+//            System.out.println("Enabled ? " + userOpt.get().isEnabled());
+//
+//            AppUserDetails userDetails = (AppUserDetails) authenticationProvider
+//                    .authenticate(
+//                            new UsernamePasswordAuthenticationToken(
+//                                    user.getEmail(),
+//                                    user.getPassword()))
+//                    .getPrincipal();
+//
+//            return ResponseEntity.ok(Map.of(
+//                    "token", securityUtils.generateToken(userDetails),
+//                    "email", userDetails.getUsername(),
+//                    "role", userDetails.getRole(), // ou getAuthorities().toString()
+//                    "premiereConnexion", userDetails.isPremiereConnexion()
+//            ));
+//
+//        } catch (AuthenticationException e) {
+//            System.out.println("Échec d'authentification : " + e.getMessage());
+//            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+//        }
     }
 
     /**
