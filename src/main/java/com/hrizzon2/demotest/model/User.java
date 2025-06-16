@@ -48,7 +48,7 @@ public class User {
 
 
     @Column(name = "enabled", nullable = false)
-    private boolean enabled = false;
+    private Boolean enabled = false;
 
     /**
      * Nom de famille de l'utilisateur.

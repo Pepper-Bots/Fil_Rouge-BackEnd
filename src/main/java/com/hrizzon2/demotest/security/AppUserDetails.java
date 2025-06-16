@@ -64,7 +64,7 @@ public class AppUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return user.isEnabled(); // tu peux ajouter un champ dans User si besoin
+        return user.getEnabled(); // tu peux ajouter un champ dans User si besoin
     }
 
     public boolean isPremiereConnexion() {

@@ -314,3 +314,7 @@ WHERE LOWER(email) = 'test1@example.com';
 UPDATE user
 SET password = '$2a$10$uDcN81kQoUSbZ6Inyga.dOoM5RI1Ihi.lSAJg54qlG3Z5sfI4ax/S'
 WHERE email = 'alice@example.com';
+
+UPDATE user SET enabled = true WHERE email = 'bruno@example.com';
+
+SELECT * FROM user WHERE email = 'bruno@example.com';

@@ -1,0 +1,25 @@
+### 1. Connecter un utilisateur (POST)
+POST http://localhost:8080/api/auth/connexion
+Content-Type:  application/json
+
+{
+  "email": "bruno@example.com",
+  "password": "root"
+}
+
+### 2. Inscrire un utilisateur (POST)
+POST http://localhost:8080/api/auth/inscription
+Content-Type: application/json
+
+{
+  "email": "nouveau@stagiaire.com",
+  "password": "MotDePasse123!",
+  "firstName": "Dupont",
+  "lastName": "Alice",
+  "role": "STAGIAIRE"
+}
+
+### 3. Valider Email (POST)
+POST http://localhost:8080/api/auth/validate-email
+content-type: application/json
+

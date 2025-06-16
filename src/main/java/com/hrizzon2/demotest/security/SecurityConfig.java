@@ -72,7 +72,7 @@ public class SecurityConfig {
 
                         // Endpoints accessibles uniquement aux stagiaires
                         .requestMatchers("/api/stagiaire/**").hasRole("STAGIAIRE")
-
+                        
                         // Endpoints accessibles uniquement aux admins
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
