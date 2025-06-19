@@ -1,9 +1,6 @@
 package com.hrizzon2.demotest.service;
 
-import com.hrizzon2.demotest.dao.DocumentDao;
-import com.hrizzon2.demotest.dao.FormationDao;
-import com.hrizzon2.demotest.dao.InscriptionDao;
-import com.hrizzon2.demotest.dao.StagiaireDao;
+import com.hrizzon2.demotest.dao.*;
 import com.hrizzon2.demotest.dto.AdminDashboardDto;
 import com.hrizzon2.demotest.dto.DocumentAttenteDto;
 import com.hrizzon2.demotest.dto.InscriptionAttenteDto;
@@ -53,7 +50,7 @@ public class DashboardService {
                     InscriptionAttenteDto att = new InscriptionAttenteDto();
                     att.setStagiaireNom(stagiaire.getFirstName() + " " + stagiaire.getLastName());
                     att.setFormationNom(inscription.getFormation().getNom());
-                    att.setStatutDossier(inscription.getStatutDossier());
+                    att.setStatutDossier(inscription.getStatut().toString());
                     return att;
                 })
                 .collect(Collectors.toList());
@@ -61,7 +58,7 @@ public class DashboardService {
 
         // 4. Liste des documents à vérifier
         List<DocumentAttenteDto> docsAttente = documentDao
-                .findByStatut("EN_ATTENTE")
+                .findByStatutNom("EN_ATTENTE")// doit retourner List<Document>
                 .stream()
                 .map(document -> {
                     DocumentAttenteDto doc = new DocumentAttenteDto();
@@ -82,3 +79,7 @@ public class DashboardService {
         return dto;
     }
 }
+
+// PAS OBLIGÉ de créer un contrôleur spécifique pour Intervenant
+// si je passe par un service qui va requêter directement le nombre d’intervenants pour le dashboard
+// (genre dans DashboardService).

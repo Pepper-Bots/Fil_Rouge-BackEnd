@@ -1016,3 +1016,18 @@ Résumé express :
 - Plan de tests: tableau avec scénarios, étapes, résultats attendus
 
 => Cf template plan de test dans Obsidian
+
+----------------------------------
+
+GESTION STOCKAGE DOCUMENTS
+
+- /dao/
+    - DocumentDao (JPA, SQL)
+    - DocumentMongoRepository (MongoDB, extends MongoRepository)
+- /models/
+    - Document (entité SQL)
+    - DocumentMongo (entité MongoDB)
+    - AuditAction (classe embarquée MongoDB)
+- /services/
+    - DocumentService (gère le SQL, la complétude, etc.)
+    - DocumentStorageService (gère GridFS si tu veux tester)
