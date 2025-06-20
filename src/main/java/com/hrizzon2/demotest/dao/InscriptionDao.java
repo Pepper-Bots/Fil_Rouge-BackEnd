@@ -11,7 +11,7 @@ public interface InscriptionDao extends JpaRepository<Inscription, Integer> {
 
     Optional<Inscription> findByStagiaireIdAndStatut(Integer stagiaireId, StatutInscription statut);
 
-    List<Inscription> findByStatutDossier(String statut);
+    List<Inscription> findByStatut(StatutInscription statut);
 }
 
 // TODO **Conserver** :

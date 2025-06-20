@@ -49,7 +49,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest
 @Import(MockConfig.class)
-public class NotificationServiceTest {
+public class NotificationServiceApplicationTests {
 
     @Mock
     private NotificationDao notificationDao;

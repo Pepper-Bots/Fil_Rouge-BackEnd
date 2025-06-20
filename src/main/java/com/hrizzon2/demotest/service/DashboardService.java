@@ -6,6 +6,7 @@ import com.hrizzon2.demotest.dto.DocumentAttenteDto;
 import com.hrizzon2.demotest.dto.InscriptionAttenteDto;
 import com.hrizzon2.demotest.dto.StagiaireDashboardDto;
 import com.hrizzon2.demotest.model.Stagiaire;
+import com.hrizzon2.demotest.model.enums.StatutInscription;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +44,7 @@ public class DashboardService {
 
         // 3. Liste des inscriptions en attente (ex: dossiers incomplets)
         List<InscriptionAttenteDto> inscriptionsEnAttente = inscriptionDao
-                .findByStatutDossier("EN_ATTENTE")
+                .findByStatut(StatutInscription.valueOf("EN_ATTENTE"))
                 .stream()
                 .map(inscription -> {
                     Stagiaire stagiaire = inscription.getStagiaire();
