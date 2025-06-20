@@ -1,5 +1,3 @@
-package com.hrizzon.demo2;
-
 import jakarta.validation.ConstraintViolation;
 
 import java.util.Set;

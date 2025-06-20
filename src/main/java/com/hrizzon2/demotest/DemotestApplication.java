@@ -29,6 +29,16 @@ public class DemotestApplication {
     @Value("${email.password}")
     String emailPassword;
 
+    public static void main(String[] args) {
+        SpringApplication.run(DemotestApplication.class, args);
+    }
+
+    @PostConstruct
+    public void init() {
+
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+    }
+
     @Bean
     public JavaMailSender getJavaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
@@ -45,16 +55,6 @@ public class DemotestApplication {
         props.put("mail.debug", "true");
 
         return mailSender;
-    }
-
-    public static void main(String[] args) {
-
-        SpringApplication.run(DemotestApplication.class, args);
-    }
-
-    @PostConstruct
-    public void init() {
-        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
     }
 
     // On met la dépendance ici plutot que dans l'application sinon ça fait une dépendance récursive

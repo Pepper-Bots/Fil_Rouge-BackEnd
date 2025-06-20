@@ -32,7 +32,7 @@ public class ValidationDocumentController {
      * @param documentId id du document à valider
      * @return document mis à jour
      */
-    @PreAuthorize("hasRole('ADMINISTRATEUR') or hasRole('RESPONSABLE')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('RESPONSABLE')")
     @PostMapping("/{documentId}/valider")
     public ResponseEntity<Document> validerDocument(@PathVariable @NotNull Integer documentId) {
         Document docValide = validationDocumentService.validerDocument(Long.valueOf((documentId)));
@@ -45,7 +45,7 @@ public class ValidationDocumentController {
      * @param documentId id du document à rejeter
      * @return document mis à jour
      */
-    @PreAuthorize("hasRole('ADMINISTRATEUR') or hasRole('RESPONSABLE')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('RESPONSABLE')")
     @PostMapping("/{documentId}/rejeter")
     public ResponseEntity<Document> rejeterDocument(@PathVariable @NotNull Integer documentId) {
         Document docRejete = validationDocumentService.rejeterDocument(Long.valueOf(documentId));

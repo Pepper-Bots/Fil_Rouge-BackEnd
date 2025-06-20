@@ -17,7 +17,7 @@ import java.util.List;
 
 import static org.mockito.Mockito.*;
 
-public class NotificationTriggerServiceTest {
+public class NotificationTriggerServiceApplicationTests {
 
     @Mock
     private NotificationService notificationService;

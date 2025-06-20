@@ -1,6 +1,7 @@
 package com.hrizzon2.demotest.controller;
 
 
+import com.hrizzon2.demotest.dto.AuthResponse;
 import com.hrizzon2.demotest.dto.ChangePasswordDto;
 import com.hrizzon2.demotest.dto.ValidationEmailDto;
 import com.hrizzon2.demotest.model.Stagiaire;
@@ -23,7 +24,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -41,7 +41,7 @@ import java.util.UUID;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 
     protected UserService userService;
@@ -155,18 +155,8 @@ public class AuthController {
         }
     }
 
-    /**
-     * Connexion (login)
-     */
     @PostMapping("/connexion")
-    public ResponseEntity<String> connexion(@RequestBody @Valid User user) {
-
-        // Optionnel : Vérifier si le compte est activé (enabled)
-        Optional<User> userOpt = userService.findByEmail(user.getEmail());
-        if (userOpt.isEmpty() || !userOpt.get().isEnabled()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body("Compte non activé. Merci de valider votre email.");
-        }
+    public ResponseEntity<AuthResponse> connexion(@RequestBody @Valid User user) {
 
         try {
             AppUserDetails userDetails = (AppUserDetails) authenticationProvider
@@ -176,12 +166,68 @@ public class AuthController {
                                     user.getPassword()))
                     .getPrincipal();
 
-            return new ResponseEntity<>(securityUtils.generateToken(userDetails), HttpStatus.OK);
+            String token = securityUtils.generateToken(userDetails);
+
+            // 💡 À adapter selon ton système :
+            boolean premiereConnexion = userDetails.isPremiereConnexion(); // ou tout autre moyen de récupérer ce flag
+
+            return ResponseEntity.ok(new AuthResponse(token, premiereConnexion));
+
+//            return new ResponseEntity<>(securityUtils.generateToken(userDetails), HttpStatus.OK);
 
         } catch (AuthenticationException e) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
+
+    /**
+     * Connexion (login)
+     */
+//    @PostMapping("/connexion")
+//    public ResponseEntity<?> connexion(@RequestBody @Valid User user) {
+//
+//        // Optionnel : Vérifier si le compte est activé (enabled)
+//        Optional<User> userOpt = userService.findByEmail(user.getEmail());
+//        System.out.println(userOpt.get().getEmail());
+//        if (userOpt.isEmpty() || !userOpt.get().getEnabled()) {
+//            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+//                    .body("Compte non activé. Merci de valider votre email.");
+//        }
+//
+//        User userEntity = userOpt.get();
+//        System.out.println("Mot de passe reçu: " + user.getPassword());
+//        System.out.println("Mot de passe attendu: " + userEntity.getPassword());
+//        System.out.println("Résultat encodeur: " + passwordEncoder.matches(user.getPassword(), userEntity.getPassword()));
+//
+//        if (passwordEncoder.matches(user.getPassword(), userEntity.getPassword())) {
+//            return new ResponseEntity<>(securityUtils.generateToken(userDetails), HttpStatus.OK);
+//        } else {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Mauvais mot de passe");
+//        }
+
+//        try {
+//            System.out.println("Tentative de connexion pour : " + user.getEmail());
+//            System.out.println("Mot de passe en base : " + userService.findByEmail(user.getEmail()).get().getPassword());
+//            System.out.println("Enabled ? " + userOpt.get().isEnabled());
+//
+//            AppUserDetails userDetails = (AppUserDetails) authenticationProvider
+//                    .authenticate(
+//                            new UsernamePasswordAuthenticationToken(
+//                                    user.getEmail(),
+//                                    user.getPassword()))
+//                    .getPrincipal();
+//
+//            return ResponseEntity.ok(Map.of(
+//                    "token", securityUtils.generateToken(userDetails),
+//                    "email", userDetails.getUsername(),
+//                    "role", userDetails.getRole(), // ou getAuthorities().toString()
+//                    "premiereConnexion", userDetails.isPremiereConnexion()
+//            ));
+//
+//        } catch (AuthenticationException e) {
+//            System.out.println("Échec d'authentification : " + e.getMessage());
+//            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+//        }
 
     /**
      * Demande de reset password (forgot password)

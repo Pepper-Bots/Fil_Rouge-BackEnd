@@ -1,3 +1,4 @@
+
 faut il créer un ValidationAdmin ? -> DTO ?
 
 entités StatutDocument + StatutDossier existent -> bien faites ? les 2 sont elles nécessaires ? le Statut du Doc si validé et si tous les Doc fournis viennent modifier auto le Statut du Dossier
@@ -910,3 +911,123 @@ et EvenementDocumentService pour la gestion documentaire pour justifier les év�
 ValidationDocumentController pour gérer la validation d'un document envoyé par un stagiaire, coté admin.
 et ListeDocumentsObligatoires pour comparer les documents envoyés via DocumentController .
 c'est ça ?
+
+---------------------------------
+---------------------------------
+
+OUTILS API
+
+🚀 Pour votre projet
+
+STACK COMPLETE :
+
+- Swagger pour modéliser l’API et générer la doc/SDK.
+
+- JetClient (ou Postman si hors JetBrains) pour tester et valider, intégrable dans un pipeline CI.
+
+- Lunalytics pour monitorer en production l’uptime et prévenir automatiquement en cas de problème.
+
+-------------
+
+=> ✅ Conclusion :
+
+   Utilisez Lunalytics pour la surveillance et l’alerte de production.
+
+   Utilisez OpenAPI/Swagger pour définir et documenter l’API.
+
+   Utilisez un client comme JetClient ou Postman pour tester votre API de façon robuste.
+
+   Ces outils sont complémentaires et ensemble, ils couvrent tout le cycle de vie de vos API : conception, tests, documentation et monitoring.
+
+-------------
+
+OUTILS :
+
+- LUNALYTICS (open-source) :
+Lunalytics fonctionne avec n’importe quelle techno tant que tu exposes un service réseau (HTTP, HTTPS, TCP).
+Tu déclares simplement l’URL ou l’IP/port à surveiller, et il s’occupe du reste.
+
+
+Dév → Recette/Test → Préproduction (staging) → Production
+           ↑                ↑                   ↑
+         Postman         Postman            Lunalytics
+         Swagger         Swagger            Lunalytics
+
+-------
+Swagger ne remplace pas les tests unitaires côté code:
+
+- Les tests unitaires vérifient la logique de tes fonctions, classes, contrôleurs, etc. dans ton code backend (ex: méthode Java, méthode de service Spring…).
+- Les tests Swagger testent la conformité de ton API et peuvent t’aider à valider que le contrat (les routes, schémas de données) est bien respecté.
+
+À tester avec Swagger ou Postman:
+- Les requêtes API (endpoints, params, retours)
+- Mais les vrais tests unitaires se font dans le code, avec JUnit (Java), Pytest (Python), Jest (JS/TS), etc.
+
+------------------------
+PIPELINE CI/CD :
+
+Code → CI/CD → Build Docker image → Test (via Docker) → Docker Hub → Déploiement
+
+---------------------------
+Exemple ultra simple de plan de tests pour une appli web :
+
+
+| ID   | Fonctionnalité       | Pré-requis         | Étapes à suivre                                                 | Résultat attendu               | Statut |
+| ---- | -------------------- | ------------------ | --------------------------------------------------------------- | ------------------------------ | ------ |
+| T-01 | Connexion            | Utilisateur existe | 1. Aller page login<br>2. Saisir email/mdp<br>3. Valider        | Accès au dashboard             | OK/NOK |
+| T-02 | Ajout article panier | Être connecté      | 1. Ouvrir page produit<br>2. Ajouter au panier                  | Article affiché dans le panier | OK/NOK |
+| T-03 | Déconnexion          | Être connecté      | 1. Cliquer sur “Déconnexion”                                    | Retour à la page login         | OK/NOK |
+| T-04 | Création de compte   | -                  | 1. Aller sur inscription<br>2. Remplir formulaire<br>3. Valider | Compte créé, email reçu        | OK/NOK |
+
+----------------- Pour faire plan de tests :
+
+- Lister toutes les fonctionnalités importantes à tester (connexion, CRUD, navigation…)
+- Détailler pour chacune :
+    * Dans quelles conditions commencer le test?
+    * Quelles actions faire (clics, saisies, etc.)?
+    * Quel résultat on attend?
+    * (Facultatif) Qui réalise le test, quand, sur quel environnement?
+- On exécute chaque scénario et on note le statut
+
+
+Schéma global de l’organisation moderne:
+
+[Dev1, Dev2, ...]
+     |
+   (Code sur GitHub/GitLab)
+     |
+[Pipeline CI/CD automatique]
+     |      |      |
+ [Build] [Test] [Analyse]
+     |
+[Images stockées sur Docker Hub]
+     |
+[Déploiement sur des serveurs, via Docker Compose]
+
+------------------------
+
+Résumé express :
+
+- Serveur d’intégration: machine qui exécute les tests automatiquement
+- Partage du code: via Git (GitHub, GitLab…)
+- Déploiement/test multi-services: Docker/Docker Compose
+- Stockage d’images: Docker Hub
+- Pipeline CI/CD: scénario automatisé de build/test/deploy à chaque changement de code
+- Plan de tests: tableau avec scénarios, étapes, résultats attendus
+
+=> Cf template plan de test dans Obsidian
+
+----------------------------------
+
+GESTION STOCKAGE DOCUMENTS
+
+- /dao/
+    - DocumentDao (JPA, SQL)
+    - DocumentMongoRepository (MongoDB, extends MongoRepository)
+- /models/
+    - Document (entité SQL)
+    - DocumentMongo (entité MongoDB)
+    - AuditAction (classe embarquée MongoDB)
+- /services/
+    - DocumentService (gère le SQL, la complétude, etc.)
+    - DocumentStorageService (gère GridFS si tu veux tester)

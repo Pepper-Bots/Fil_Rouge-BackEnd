@@ -60,5 +60,5 @@ public class Document {
      * URL ou chemin vers le fichier, selon votre implémentation
      */
     private String urlFichier;
-    
+
 }

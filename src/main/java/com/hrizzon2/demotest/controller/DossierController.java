@@ -36,7 +36,7 @@ import java.util.List;
 @CrossOrigin(origins = "${app.cors.origins}", maxAge = 3600)
 // Permet les requêtes Cross-Origin (utile pour le frontend séparé du backend)
 @RestController // Indique que cette classe est un contrôleur REST
-@RequestMapping("/dossiers") // Toutes les routes commenceront par /dossiers
+@RequestMapping("/api/dossiers") // Toutes les routes commenceront par /dossiers
 public class DossierController {
 
     private final DossierService dossierService;

@@ -1,6 +1,10 @@
 package com.hrizzon2.demotest.model;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,25 +34,9 @@ import java.util.List;
 @DiscriminatorColumn(name = "nom_role", discriminatorType = DiscriminatorType.STRING)
 public class User {
 
-//    public boolean isEnabled() {
-//        return enabled;
-//    }
-//
-//    public void setEnabled(boolean enabled) {
-//        this.enabled = enabled;
-//    }
-
-
-    public void setActive(boolean b) {
-    }
 
 //// VOIR GESTION DES DROITS AVEC UN BOOLEEN - PAGE 415 SLIDE SPRING
-//
-//    public interface ValidInscription {
-//    }
-//
-//    public interface ValidModification {
-//    }
+
 
     /**
      * Identifiant unique de l'utilisateur.
@@ -58,8 +46,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Integer id;
 
+
     @Column(name = "enabled", nullable = false)
-    private boolean enabled = false;
+    private Boolean enabled = false;
 
     /**
      * Nom de famille de l'utilisateur.
@@ -79,6 +68,13 @@ public class User {
      * Adresse email de l'utilisateur.
      * Ce champ ne peut pas être nul.
      */
+    @NotNull(message = "L'email ne peut pas être null.")
+    @NotBlank(message = "L'email ne peut pas être vide.")
+
+    @Pattern(
+            regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$",
+            message = "L'adresse email n'est pas valide.")
+
     @Column(nullable = false, unique = true)
     protected String email;
 
@@ -86,7 +82,9 @@ public class User {
      * Mot de passe de l'utilisateur.
      * Ce champ ne peut pas être nul.
      */
+    @NotBlank
     @Column(nullable = false)
+    @JsonView()
     protected String password;
 
     @OneToMany(mappedBy = "destinataire", fetch = FetchType.LAZY)
@@ -100,4 +98,5 @@ public class User {
 
     @Column(name = "reset_password_token")
     private String resetPasswordToken;
+
 }

@@ -7,6 +7,10 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+// Tu continues à utiliser MySQL/PostgreSQL pour ta gestion “métier” des dossiers/documents (logique métier, liens avec Stagiaire, Dossier, Statut, etc).
+// DocumentDao va continuer à gérer tout ce qui concerne la logique relationnelle, la validation, la complétude, etc.
+// DocumentDao (JPA) = logique métier “structurée”, tout ce qui a besoin d’être en SQL/transactionnel/lié à d’autres entités.
+
 @Repository
 public interface DocumentDao extends JpaRepository<Document, Integer> {
 
@@ -32,6 +36,9 @@ public interface DocumentDao extends JpaRepository<Document, Integer> {
     List<Document> findByStatutNom(String nom);
 
     List<Document> findByEvenementId(Integer evenementId);
+
+    int countByStatut(String enAttente);
+
 
 //    Optional<Document> findDocumentByName(String name);
 //

@@ -1,0 +1,26 @@
+services:
+  back:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    volumes:
+      - ${PUBLIC_UPLOAD_FOLDER}:/public-upload
+      - ${PRIVATE_UPLOAD_FOLDER}:/private-upload
+    environment:
+      - PUBLIC_UPLOAD_FOLDER=${PUBLIC_UPLOAD_FOLDER}
+      - PRIVATE_UPLOAD_VOLUME=${PRIVATE_UPLOAD_FOLDER}
+
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 'root'
+    expose:
+      - "3306"
+    volumes:
+      - data:/var/lib/mysql
+
+volumes:
+  data:

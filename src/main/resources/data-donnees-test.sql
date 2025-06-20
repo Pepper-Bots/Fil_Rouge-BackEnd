@@ -23,7 +23,7 @@ INSERT INTO `user` (last_name,
                     reset_password_token)
 VALUES
 -- 1. Administrateurs
-('Dupont', 'Alice', 'alice@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
+('Dupont', 'Alice', 'alice@example.com', '$2y$10$flLWd64/eosC6TAY0r2CgehFD.EJEYcSu7LqC5rWsKTa9S7PqUWja', TRUE,
  'token-verif-123', 'ADMINISTRATEUR', NULL),
 ('Durand', 'Bruno', 'bruno@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
  'ADMINISTRATEUR', NULL),
@@ -301,7 +301,20 @@ VALUES (1, 5, 1, 'CV', 'cv_roman_dupont.pdf', 1),
 #        (27, 4, 19),
 #        (28, 4, 20);
 
+SELECT email, enabled
+FROM user
+# WHERE email = 'ton.email@test.com';
+
+SELECT *
+FROM user
+WHERE LOWER(email) = 'test1@example.com';
 
 
 
+UPDATE user
+SET password = '$2a$10$uDcN81kQoUSbZ6Inyga.dOoM5RI1Ihi.lSAJg54qlG3Z5sfI4ax/S'
+WHERE email = 'alice@example.com';
 
+UPDATE user SET enabled = true WHERE email = 'bruno@example.com';
+
+SELECT * FROM user WHERE email = 'bruno@example.com';

@@ -62,7 +62,7 @@ public class NotificationTriggerService {
      * @param stagiaireId identifiant du stagiaire à analyser
      */
     public void checkSeuilsAbsenceRetard(int stagiaireId) {
-        
+
         // Récupération des compteurs d'absence et de retard
         int nbAbsences = dossierService.countAbsences(stagiaireId);
         int nbRetards = dossierService.countRetards(stagiaireId);

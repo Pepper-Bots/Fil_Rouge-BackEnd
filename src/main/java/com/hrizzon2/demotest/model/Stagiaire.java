@@ -36,7 +36,7 @@ import java.util.List;
 @DiscriminatorValue("STAGIAIRE")
 public class Stagiaire extends User {
 
-
+    @Column(name = "premiere_connexion")
     @JsonView({AffichageDossier.Stagiaire.class, AffichageDossier.Complet.class})
     private boolean premiereConnexion = true;
 
