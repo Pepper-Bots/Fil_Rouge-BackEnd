@@ -1,8 +1,24 @@
 services:
-  back:
-    build: .
+  proxy:
+    image: nginx:latest
     ports:
-      - "8080:8080"
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx-proxy.conf:/etc/nginx/nginx.conf
+      - ./certs:/etc/nginx/certs
+    depends_on:
+      - front
+      - back
+      - static
+    networks:
+      - proxy-network
+
+  back:
+    build: ./backend
+    #    image: hrizzon/admin_mns-back-1
+    expose:
+      - "8080"
     depends_on:
       - db
     volumes:
@@ -11,6 +27,9 @@ services:
     environment:
       - PUBLIC_UPLOAD_FOLDER=${PUBLIC_UPLOAD_FOLDER}
       - PRIVATE_UPLOAD_VOLUME=${PRIVATE_UPLOAD_FOLDER}
+    networks:
+      - proxy -network
+      - backend -network
 
   db:
     image: mysql:5.7
@@ -22,5 +41,23 @@ services:
     volumes:
       - data:/var/lib/mysql
 
+    networks:
+      - backend -network
+  static:
+    image: nginx:latest
+    expose:
+      - "80"
+    volumes:
+      - ${PUBLIC_UPLOAD_FOLDER}:/usr/share/nginx/html/images
+      - ./nginx-static.conf:/etc/nginx/conf.d/default.conf
+    environment:
+      - PUBLIC_UPLOAD_FOLDER=${PUBLIC_UPLOAD_FOLDER}
+    networks:
+      - proxy -network
+
 volumes:
   data:
+
+networks:
+  proxy-network:
+  backend-network:
