@@ -4,7 +4,8 @@ on:
   push:
     branches:
       - main  # Déclencher le workflow sur les pushes vers la branche main
-
+      - dev
+      
 jobs:
   build:
     runs-on: ubuntu-latest
