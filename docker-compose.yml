@@ -21,10 +21,13 @@ services:
       - "8080"
     depends_on:
       - db
+      - mongo
+
     volumes:
       - ${PUBLIC_UPLOAD_FOLDER}:/public-upload
       - ${PRIVATE_UPLOAD_FOLDER}:/private-upload
     environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo:27017/${MONGO_DB_NAME}?authSource=admin
       - PUBLIC_UPLOAD_FOLDER=${PUBLIC_UPLOAD_FOLDER}
       - PRIVATE_UPLOAD_VOLUME=${PRIVATE_UPLOAD_FOLDER}
     networks:
@@ -43,6 +46,21 @@ services:
 
     networks:
       - backend -network
+  mongo:
+    image: mongo:7
+    restart: always
+    container_name: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DB_NAME}
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - backend-network
+
   static:
     image: nginx:latest
     expose:
@@ -57,6 +75,7 @@ services:
 
 volumes:
   data:
+  mongo_data:
 
 networks:
   proxy-network:
