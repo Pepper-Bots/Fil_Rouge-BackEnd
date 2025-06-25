@@ -15,3 +15,7 @@ EXPOSE 8080
 
 # Commande pour exécuter l'application
 ENTRYPOINT ["java", "-jar", "app.jar"]
+
+COPY wait-for.sh /wait-for.sh
+RUN chmod +x /wait-for.sh
+CMD /wait-for.sh mongo:27017 -- java -jar app.jar

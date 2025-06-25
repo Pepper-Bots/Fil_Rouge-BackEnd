@@ -1031,3 +1031,11 @@ GESTION STOCKAGE DOCUMENTS
 - /services/
     - DocumentService (gère le SQL, la complétude, etc.)
     - DocumentStorageService (gère GridFS si tu veux tester)
+
+------------------
+
+Pour CI / Prod
+
+=> dans DataGrip :
+
+- Mettre

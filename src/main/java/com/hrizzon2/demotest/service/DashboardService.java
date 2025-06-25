@@ -6,30 +6,39 @@ import com.hrizzon2.demotest.dto.DocumentAttenteDto;
 import com.hrizzon2.demotest.dto.InscriptionAttenteDto;
 import com.hrizzon2.demotest.dto.StagiaireDashboardDto;
 import com.hrizzon2.demotest.model.Stagiaire;
+import com.hrizzon2.demotest.model.StatutDocument;
 import com.hrizzon2.demotest.model.enums.StatutInscription;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class DashboardService {
 
-    @Autowired
-    private StagiaireDao stagiaireDao;
+    private final StagiaireDao stagiaireDao;
+    private final FormationDao formationDao;
+    private final IntervenantDao intervenantDao;
+    private final DocumentDao documentDao;
+    private final InscriptionDao inscriptionDao;
+    private final StatutDocumentDao statutDocumentDao;
 
     @Autowired
-    private FormationDao formationDao;
-
-    @Autowired
-    private IntervenantDao intervenantDao;
-
-    @Autowired
-    private DocumentDao documentDao;
-
-    @Autowired
-    private InscriptionDao inscriptionDao;
+    public DashboardService(StagiaireDao stagiaireDao,
+                            FormationDao formationDao,
+                            IntervenantDao intervenantDao,
+                            DocumentDao documentDao,
+                            InscriptionDao inscriptionDao,
+                            StatutDocumentDao statutDocumentDao) {
+        this.stagiaireDao = stagiaireDao;
+        this.formationDao = formationDao;
+        this.intervenantDao = intervenantDao;
+        this.documentDao = documentDao;
+        this.inscriptionDao = inscriptionDao;
+        this.statutDocumentDao = statutDocumentDao;
+    }
 
     public AdminDashboardDto getAdminDashboardStats() {
         AdminDashboardDto dto = new AdminDashboardDto();
@@ -39,8 +48,14 @@ public class DashboardService {
         dto.setNbFormations((int) formationDao.count());
         dto.setNbIntervenants((int) intervenantDao.count());
 
-        // 2. Nombre de documents en attente (statut à adapter à ta base)
-        dto.setNbDocsAttente(documentDao.countByStatut("EN_ATTENTE"));
+        // 2. Nombre de documents en attente
+        Optional<StatutDocument> enAttenteOpt = statutDocumentDao.findByNom("EN_ATTENTE");
+
+        int nbDocsAttente = enAttenteOpt
+                .map(documentDao::countByStatut) // Si trouvé, compte les docs avec ce statut
+                .orElse(0);                // Sinon, retourne 0
+
+        dto.setNbDocsAttente(nbDocsAttente);
 
         // 3. Liste des inscriptions en attente (ex: dossiers incomplets)
         List<InscriptionAttenteDto> inscriptionsEnAttente = inscriptionDao

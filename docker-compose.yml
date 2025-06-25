@@ -14,9 +14,18 @@ services:
     networks:
       - proxy-network
 
+  front:
+    build: ../../Front/admin-mns-front
+    image: heleneriz/admin_mns_front
+    expose:
+      - "80"
+    networks:
+      - proxy-network
+
   back:
-    build: ./backend
-    #    image: hrizzon/admin_mns-back-1
+    build: .
+    image: heleneriz/admin_mns_back
+    restart: always
     expose:
       - "8080"
     depends_on:
@@ -30,22 +39,29 @@ services:
       - SPRING_DATA_MONGODB_URI=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo:27017/${MONGO_DB_NAME}?authSource=admin
       - PUBLIC_UPLOAD_FOLDER=${PUBLIC_UPLOAD_FOLDER}
       - PRIVATE_UPLOAD_VOLUME=${PRIVATE_UPLOAD_FOLDER}
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=root
+      - DB_NAME=spring_td
     networks:
-      - proxy -network
-      - backend -network
+      - proxy-network
+      - backend-network
 
   db:
     image: mysql:5.7
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: 'root'
-    expose:
-      - "3306"
+    #    expose:
+    #      - "3306"
     volumes:
       - data:/var/lib/mysql
-
+    ports:
+      - "3306:3306" # decommentez pour accéder a distance à la bdd
     networks:
-      - backend -network
+      - backend-network
+
   mongo:
     image: mongo:7
     restart: always
@@ -71,7 +87,7 @@ services:
     environment:
       - PUBLIC_UPLOAD_FOLDER=${PUBLIC_UPLOAD_FOLDER}
     networks:
-      - proxy -network
+      - proxy-network
 
 volumes:
   data:
