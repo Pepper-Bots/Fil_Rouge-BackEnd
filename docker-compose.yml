@@ -25,7 +25,7 @@ services:
   back:
     build: .
     image: heleneriz/admin_mns_back
-    restart: always
+    restart: "no"
     expose:
       - "8080"
     depends_on:
@@ -50,7 +50,7 @@ services:
 
   db:
     image: mysql:5.7
-    restart: always
+    restart: "no"
     environment:
       MYSQL_ROOT_PASSWORD: 'root'
     #    expose:
@@ -64,7 +64,7 @@ services:
 
   mongo:
     image: mongo:7
-    restart: always
+    restart: "no"
     container_name: mongo
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
