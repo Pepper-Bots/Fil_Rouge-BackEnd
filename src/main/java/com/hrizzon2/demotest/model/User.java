@@ -1,6 +1,7 @@
 package com.hrizzon2.demotest.model;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.hrizzon2.demotest.notification.Notification;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

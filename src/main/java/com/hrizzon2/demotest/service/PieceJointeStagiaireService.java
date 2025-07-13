@@ -11,6 +11,7 @@ import com.hrizzon2.demotest.dto.DocumentStatutUpdateDto;
 import com.hrizzon2.demotest.dto.DocumentSummaryDto;
 import com.hrizzon2.demotest.model.*;
 import com.hrizzon2.demotest.model.enums.TypeDocument;
+import com.hrizzon2.demotest.notification.NotificationService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
