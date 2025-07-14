@@ -19,7 +19,8 @@ import java.util.List;
 @RequestMapping("/documents")
 public class DocumentUploadController {
 
-    @Autowired
+    // Injection optionnelle
+    @Autowired(required = false)
     private DocumentMongoDao documentMongoDao;
 
     @PostMapping("/upload")
@@ -27,33 +28,41 @@ public class DocumentUploadController {
                                              @RequestParam("stagiaireId") String stagiaireId,
                                              @RequestParam("nomStagiaire") String nomStagiaire) {
         try {
-            // 1. Sauvegarde sur le disque (exemple basique)
+            // 1. Sauvegarde sur le disque (toujours active)
             String dossier = "uploads/";
             String cheminComplet = dossier + file.getOriginalFilename();
             file.transferTo(new File(cheminComplet));
 
-            // 2. Création des métadonnées Mongo
-            DocumentMongo doc = new DocumentMongo();
-            doc.setNomFichier(file.getOriginalFilename());
-            doc.setType(file.getContentType());
-            doc.setTaille(file.getSize());
-            doc.setDateUpload(new Date());
-            doc.setStagiaireId(stagiaireId);
-            doc.setNomStagiaire(nomStagiaire);
-            doc.setStatut("EN_ATTENTE");
-            doc.setCommentaire("En attente de validation par l’admin.");
-            doc.setCheminStorage(cheminComplet);
+            // 2. MongoDB optionnel
+            if (documentMongoDao != null) {
+                // ✅ MongoDB activé - sauvegarde métadonnées
+                // 2. Création des métadonnées Mongo
+                DocumentMongo doc = new DocumentMongo();
+                doc.setNomFichier(file.getOriginalFilename());
+                doc.setType(file.getContentType());
+                doc.setTaille(file.getSize());
+                doc.setDateUpload(new Date());
+                doc.setStagiaireId(stagiaireId);
+                doc.setNomStagiaire(nomStagiaire);
+                doc.setStatut("EN_ATTENTE");
+                doc.setCommentaire("En attente de validation par l’admin.");
+                doc.setCheminStorage(cheminComplet);
 
-            AuditAction audit = new AuditAction();
-            audit.setAction("upload");
-            audit.setDate(new Date());
-            audit.setPar(nomStagiaire);
-            doc.setAudit(List.of(audit));
+                AuditAction audit = new AuditAction();
+                audit.setAction("upload");
+                audit.setDate(new Date());
+                audit.setPar(nomStagiaire);
+                doc.setAudit(List.of(audit));
 
-            // 3. Enregistrement dans MongoDB
-            documentMongoDao.save(doc);
+                // 3. Enregistrement dans MongoDB
+                documentMongoDao.save(doc);
 
-            return ResponseEntity.ok("Fichier uploadé et métadonnées enregistrées !");
+                return ResponseEntity.ok("Fichier uploadé et métadonnées MongoDB enregistrées !");
+            } else {
+                // MongoDB désactivé - fonctionnement dégradé
+                return ResponseEntity.ok("Fichier uploadé (MongoDB désactivé - pas de métadonnées)");
+            }
+
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Erreur lors de l'upload : " + e.getMessage());
         }

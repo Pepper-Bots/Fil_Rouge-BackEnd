@@ -6,6 +6,7 @@ import com.hrizzon2.demotest.dto.DocumentAttenteDto;
 import com.hrizzon2.demotest.dto.InscriptionAttenteDto;
 import com.hrizzon2.demotest.dto.StagiaireDashboardDto;
 import com.hrizzon2.demotest.model.Stagiaire;
+import com.hrizzon2.demotest.model.StatutDocument;
 import com.hrizzon2.demotest.model.enums.StatutInscription;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,16 +32,23 @@ public class DashboardService {
     @Autowired
     private InscriptionDao inscriptionDao;
 
+    @Autowired
+    private StatutDocumentDao statutDocumentDao;
+
     public AdminDashboardDto getAdminDashboardStats() {
         AdminDashboardDto dto = new AdminDashboardDto();
+
+        // Récupérer ET extraire l'entité StatutDocument
+        StatutDocument statutEnAttente = statutDocumentDao.findByNom("EN_ATTENTE")
+                .orElseThrow(() -> new RuntimeException("Statut EN_ATTENTE non trouvé en base"));
 
         // 1. Compteurs principaux
         dto.setNbStagiaires((int) stagiaireDao.count());
         dto.setNbFormations((int) formationDao.count());
         dto.setNbIntervenants((int) intervenantDao.count());
 
-        // 2. Nombre de documents en attente (statut à adapter à ta base)
-        dto.setNbDocsAttente(documentDao.countByStatut("EN_ATTENTE"));
+        // 2. Nombre de documents en attente - MAINTENANT ça marche
+        dto.setNbDocsAttente(documentDao.countByStatut(statutEnAttente));
 
         // 3. Liste des inscriptions en attente (ex: dossiers incomplets)
         List<InscriptionAttenteDto> inscriptionsEnAttente = inscriptionDao
@@ -59,7 +67,7 @@ public class DashboardService {
 
         // 4. Liste des documents à vérifier
         List<DocumentAttenteDto> docsAttente = documentDao
-                .findByStatutNom("EN_ATTENTE")// doit retourner List<Document>
+                .findByStatut(statutEnAttente)// doit retourner List<Document>
                 .stream()
                 .map(document -> {
                     DocumentAttenteDto doc = new DocumentAttenteDto();

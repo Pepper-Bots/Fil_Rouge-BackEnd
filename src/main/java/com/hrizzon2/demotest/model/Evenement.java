@@ -22,8 +22,7 @@ public class Evenement {
 
     @Column(name = "date_fin")
     private LocalDate dateFin;
-
-
+    
     /**
      * Par défaut false, indique si l’événement est signalé en retard.
      */

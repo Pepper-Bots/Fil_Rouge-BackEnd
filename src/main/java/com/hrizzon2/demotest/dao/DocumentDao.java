@@ -1,6 +1,7 @@
 package com.hrizzon2.demotest.dao;
 
 import com.hrizzon2.demotest.model.Document;
+import com.hrizzon2.demotest.model.StatutDocument;
 import com.hrizzon2.demotest.model.enums.TypeDocument;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -37,7 +38,9 @@ public interface DocumentDao extends JpaRepository<Document, Integer> {
 
     List<Document> findByEvenementId(Integer evenementId);
 
-    int countByStatut(String enAttente);
+    int countByStatut(StatutDocument statut);
+
+    List<Document> findByStatut(StatutDocument statut);
 
 
 //    Optional<Document> findDocumentByName(String name);

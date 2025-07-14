@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface FormationDao extends JpaRepository<Formation, Integer> {
 
     // Exemple : compter stagiaires par formation
-    long countStagiairesById(Integer formationId);
+    int countStagiairesById(Integer formationId);
 }

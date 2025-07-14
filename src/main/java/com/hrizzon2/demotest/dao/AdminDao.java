@@ -23,8 +23,6 @@ public interface AdminDao extends JpaRepository<Admin, Integer> {
     // Méthode pour récupérer les admins par type et niveau de droit
     List<Admin> findByTypeAdminAndNiveauDroit(TypeAdmin typeAdmin, NiveauDroit niveauDroit);
 
-    TypeAdmin typeAdmin(TypeAdmin typeAdmin);
-
 
     // Pour récupérer tous les Admins sans filtrer :
     // List<Admin> findAll();

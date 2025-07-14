@@ -1,3 +1,8 @@
+INSERT INTO motif (id, libelle)
+VALUES (1, 'RETRAIT_DOSSIER'),
+       (2, 'JUSTIFICATIF_INFIRMITÉ');
+
+
 -- 14. Insertions exemples (statuts)
 INSERT INTO statut_document (nom)
 VALUES ('EN_ATTENTE'),
@@ -222,9 +227,6 @@ INSERT INTO inscription (id_inscription, date_inscription, date_modification, da
 VALUES (1, CURDATE(), NULL, NULL, 'EN_ATTENTE', 5, 1, 1);
 
 
-INSERT INTO motif (id, libelle)
-VALUES (1, 'RETRAIT_DOSSIER'),
-       (2, 'JUSTIFICATIF_INFIRMITÉ');
 
 
 INSERT INTO evenement (id_evenement, date_debut, date_fin, est_retard, stagiaire_id, motif_id, document_id)
