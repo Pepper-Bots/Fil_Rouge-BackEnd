@@ -1,9 +1,9 @@
-package com.hrizzon2.demotest.service;
+package com.hrizzon2.demotest.inscription.service;
 
-import com.hrizzon2.demotest.dao.InscriptionDao;
 import com.hrizzon2.demotest.formation.model.Formation;
-import com.hrizzon2.demotest.model.Inscription;
-import com.hrizzon2.demotest.model.enums.StatutInscription;
+import com.hrizzon2.demotest.inscription.dao.InscriptionDao;
+import com.hrizzon2.demotest.inscription.model.Inscription;
+import com.hrizzon2.demotest.inscription.model.enums.StatutInscription;
 import com.hrizzon2.demotest.user.model.Stagiaire;
 import com.hrizzon2.demotest.user.service.Stagiaire.StagiaireService;
 import org.springframework.beans.factory.annotation.Autowired;

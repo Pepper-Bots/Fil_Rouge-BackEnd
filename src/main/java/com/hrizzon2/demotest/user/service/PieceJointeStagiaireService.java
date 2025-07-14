@@ -7,15 +7,15 @@ package com.hrizzon2.demotest.user.service;
 
 import com.hrizzon2.demotest.document.dao.StatutDocumentDao;
 import com.hrizzon2.demotest.document.dto.DocumentStatutUpdateDto;
+import com.hrizzon2.demotest.document.dto.DocumentSummaryDto;
 import com.hrizzon2.demotest.document.model.StatutDocument;
 import com.hrizzon2.demotest.document.model.enums.TypeDocument;
-import com.hrizzon2.demotest.dto.DocumentSummaryDto;
 import com.hrizzon2.demotest.formation.model.Formation;
 import com.hrizzon2.demotest.formation.model.ListeDocumentsObligatoires;
 import com.hrizzon2.demotest.formation.service.ListeDocumentsObligatoiresService;
-import com.hrizzon2.demotest.model.PieceJointeStagiaire;
 import com.hrizzon2.demotest.notification.service.NotificationService;
 import com.hrizzon2.demotest.user.dao.PieceJointeStagiaireDao;
+import com.hrizzon2.demotest.user.model.PieceJointeStagiaire;
 import com.hrizzon2.demotest.user.model.Stagiaire;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;

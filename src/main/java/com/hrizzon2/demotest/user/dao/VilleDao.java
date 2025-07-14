@@ -1,4 +1,4 @@
-package com.hrizzon2.demotest.dao;
+package com.hrizzon2.demotest.user.dao;
 
 import com.hrizzon2.demotest.user.model.Ville;
 import org.springframework.data.jpa.repository.JpaRepository;

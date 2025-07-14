@@ -1,6 +1,6 @@
-package com.hrizzon2.demotest.service.Inscription;
+package com.hrizzon2.demotest.inscription.service.Inscription;
 
-import com.hrizzon2.demotest.model.Inscription;
+import com.hrizzon2.demotest.inscription.model.Inscription;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

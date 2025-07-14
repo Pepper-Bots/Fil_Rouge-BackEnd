@@ -1,7 +1,7 @@
-package com.hrizzon2.demotest.dao;
+package com.hrizzon2.demotest.inscription.dao;
 // accès BDD (repository)
 
-import com.hrizzon2.demotest.model.Dossier;
+import com.hrizzon2.demotest.inscription.model.Dossier;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

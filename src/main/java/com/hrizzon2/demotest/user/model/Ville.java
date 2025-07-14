@@ -1,6 +1,5 @@
 package com.hrizzon2.demotest.user.model;
 
-import com.hrizzon2.demotest.model.Region;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

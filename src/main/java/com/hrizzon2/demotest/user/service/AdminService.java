@@ -1,8 +1,8 @@
 package com.hrizzon2.demotest.user.service;
 
-import com.hrizzon2.demotest.model.enums.NiveauDroit;
 import com.hrizzon2.demotest.user.dao.AdminDao;
 import com.hrizzon2.demotest.user.model.Admin;
+import com.hrizzon2.demotest.user.model.enums.NiveauDroit;
 import com.hrizzon2.demotest.user.model.enums.TypeAdmin;
 import org.springframework.stereotype.Service;
 

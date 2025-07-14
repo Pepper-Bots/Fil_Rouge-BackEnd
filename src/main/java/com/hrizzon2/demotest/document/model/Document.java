@@ -2,7 +2,7 @@ package com.hrizzon2.demotest.document.model;
 
 import com.hrizzon2.demotest.document.model.enums.TypeDocument;
 import com.hrizzon2.demotest.evenement.model.Evenement;
-import com.hrizzon2.demotest.model.Dossier;
+import com.hrizzon2.demotest.inscription.model.Dossier;
 import com.hrizzon2.demotest.user.model.Stagiaire;
 import jakarta.persistence.*;
 import lombok.Getter;

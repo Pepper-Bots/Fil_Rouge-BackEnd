@@ -1,13 +1,13 @@
-package com.hrizzon2.demotest.service.Inscription;
+package com.hrizzon2.demotest.inscription.service.Inscription;
 
-import com.hrizzon2.demotest.dao.InscriptionDao;
-import com.hrizzon2.demotest.dao.StatutDossierDao;
 import com.hrizzon2.demotest.formation.dao.FormationDao;
 import com.hrizzon2.demotest.formation.model.Formation;
-import com.hrizzon2.demotest.model.Dossier;
-import com.hrizzon2.demotest.model.Inscription;
-import com.hrizzon2.demotest.model.StatutDossier;
-import com.hrizzon2.demotest.model.enums.StatutInscription;
+import com.hrizzon2.demotest.inscription.dao.InscriptionDao;
+import com.hrizzon2.demotest.inscription.dao.StatutDossierDao;
+import com.hrizzon2.demotest.inscription.model.Dossier;
+import com.hrizzon2.demotest.inscription.model.Inscription;
+import com.hrizzon2.demotest.inscription.model.StatutDossier;
+import com.hrizzon2.demotest.inscription.model.enums.StatutInscription;
 import com.hrizzon2.demotest.user.dao.AdminDao;
 import com.hrizzon2.demotest.user.dao.StagiaireDao;
 import com.hrizzon2.demotest.user.model.Stagiaire;

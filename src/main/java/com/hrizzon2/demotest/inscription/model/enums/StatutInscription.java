@@ -1,4 +1,4 @@
-package com.hrizzon2.demotest.model.enums;
+package com.hrizzon2.demotest.inscription.model.enums;
 
 import lombok.Getter;
 

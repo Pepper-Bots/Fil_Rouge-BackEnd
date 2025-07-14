@@ -1,9 +1,9 @@
 package com.hrizzon2.demotest;
 
-import com.hrizzon2.demotest.model.enums.NiveauDroit;
 import com.hrizzon2.demotest.notification.service.NotificationService;
 import com.hrizzon2.demotest.notification.service.NotificationTriggerService;
 import com.hrizzon2.demotest.user.model.Admin;
+import com.hrizzon2.demotest.user.model.enums.NiveauDroit;
 import com.hrizzon2.demotest.user.model.enums.TypeAdmin;
 import com.hrizzon2.demotest.user.service.AdminService;
 import org.junit.jupiter.api.BeforeEach;

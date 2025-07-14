@@ -1,7 +1,7 @@
-package com.hrizzon2.demotest.controller;
+package com.hrizzon2.demotest.inscription.controller;
 
-import com.hrizzon2.demotest.dao.StatutDossierDao;
-import com.hrizzon2.demotest.model.StatutDossier;
+import com.hrizzon2.demotest.inscription.dao.StatutDossierDao;
+import com.hrizzon2.demotest.inscription.model.StatutDossier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

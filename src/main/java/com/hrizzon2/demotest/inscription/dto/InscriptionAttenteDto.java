@@ -1,4 +1,4 @@
-package com.hrizzon2.demotest.dto;
+package com.hrizzon2.demotest.inscription.dto;
 
 import lombok.Getter;
 import lombok.Setter;

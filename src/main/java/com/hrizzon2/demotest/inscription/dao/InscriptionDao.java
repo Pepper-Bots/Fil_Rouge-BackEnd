@@ -1,7 +1,7 @@
-package com.hrizzon2.demotest.dao;
+package com.hrizzon2.demotest.inscription.dao;
 
-import com.hrizzon2.demotest.model.Inscription;
-import com.hrizzon2.demotest.model.enums.StatutInscription;
+import com.hrizzon2.demotest.inscription.model.Inscription;
+import com.hrizzon2.demotest.inscription.model.enums.StatutInscription;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

@@ -1,7 +1,7 @@
 package com.hrizzon2.demotest.user.dto;
 
 import com.hrizzon2.demotest.document.dto.DocumentAttenteDto;
-import com.hrizzon2.demotest.dto.InscriptionAttenteDto;
+import com.hrizzon2.demotest.inscription.dto.InscriptionAttenteDto;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -1,7 +1,7 @@
 package com.hrizzon2.demotest.mock;
 
-import com.hrizzon2.demotest.dao.NotificationTemplateDao;
 import com.hrizzon2.demotest.notification.dao.NotificationDao;
+import com.hrizzon2.demotest.notification.dao.NotificationTemplateDao;
 import com.hrizzon2.demotest.user.dao.UserDao;
 import com.hrizzon2.demotest.user.service.AdminService;
 import com.hrizzon2.demotest.user.service.Stagiaire.StagiaireService;

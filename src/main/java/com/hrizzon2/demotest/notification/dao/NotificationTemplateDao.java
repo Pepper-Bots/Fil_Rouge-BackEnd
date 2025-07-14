@@ -1,4 +1,4 @@
-package com.hrizzon2.demotest.dao;
+package com.hrizzon2.demotest.notification.dao;
 
 import com.hrizzon2.demotest.notification.model.NotificationTemplate;
 import com.hrizzon2.demotest.notification.model.enums.TypeNotification;

@@ -1,6 +1,6 @@
 package com.hrizzon2.demotest.user.dao;
 
-import com.hrizzon2.demotest.model.PieceJointeStagiaire;
+import com.hrizzon2.demotest.user.model.PieceJointeStagiaire;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

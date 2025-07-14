@@ -1,4 +1,4 @@
-package com.hrizzon2.demotest.dto;
+package com.hrizzon2.demotest.document.dto;
 
 import com.hrizzon2.demotest.document.model.enums.TypeDocument;
 import lombok.Getter;

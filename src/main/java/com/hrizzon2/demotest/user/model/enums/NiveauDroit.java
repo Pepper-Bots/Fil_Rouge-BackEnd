@@ -1,4 +1,4 @@
-package com.hrizzon2.demotest.model.enums;
+package com.hrizzon2.demotest.user.model.enums;
 
 public enum NiveauDroit {
 

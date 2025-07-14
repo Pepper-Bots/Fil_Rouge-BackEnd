@@ -1,9 +1,9 @@
 package com.hrizzon2.demotest.user.service.Stagiaire;
 
-import com.hrizzon2.demotest.dao.InscriptionDao;
 import com.hrizzon2.demotest.formation.model.Formation;
-import com.hrizzon2.demotest.model.Inscription;
-import com.hrizzon2.demotest.model.enums.StatutInscription;
+import com.hrizzon2.demotest.inscription.dao.InscriptionDao;
+import com.hrizzon2.demotest.inscription.model.Inscription;
+import com.hrizzon2.demotest.inscription.model.enums.StatutInscription;
 import com.hrizzon2.demotest.service.EmailService;
 import com.hrizzon2.demotest.user.dao.StagiaireDao;
 import com.hrizzon2.demotest.user.model.Stagiaire;
