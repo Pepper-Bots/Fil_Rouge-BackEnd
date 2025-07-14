@@ -1,6 +1,6 @@
-package com.hrizzon2.demotest.dao;
+package com.hrizzon2.demotest.evenement.dao;
 
-import com.hrizzon2.demotest.model.Evenement;
+import com.hrizzon2.demotest.evenement.model.Evenement;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

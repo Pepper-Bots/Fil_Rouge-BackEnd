@@ -1,4 +1,4 @@
-package com.hrizzon2.demotest.service;
+package com.hrizzon2.demotest.evenement.service;
 
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,4 @@
-package com.hrizzon2.demotest.model;
+package com.hrizzon2.demotest.evenement.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

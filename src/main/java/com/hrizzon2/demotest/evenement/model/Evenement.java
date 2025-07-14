@@ -1,4 +1,4 @@
-package com.hrizzon2.demotest.model;
+package com.hrizzon2.demotest.evenement.model;
 
 import com.hrizzon2.demotest.document.model.Document;
 import com.hrizzon2.demotest.user.model.Stagiaire;

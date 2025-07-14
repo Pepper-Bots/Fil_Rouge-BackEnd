@@ -1,6 +1,6 @@
-package com.hrizzon2.demotest.dao;
+package com.hrizzon2.demotest.evenement.dao;
 
-import com.hrizzon2.demotest.model.Motif;
+import com.hrizzon2.demotest.evenement.model.Motif;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

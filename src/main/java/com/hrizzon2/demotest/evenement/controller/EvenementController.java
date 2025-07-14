@@ -1,4 +1,4 @@
-package com.hrizzon2.demotest.controller;
+package com.hrizzon2.demotest.evenement.controller;
 
 public class EvenementController {
 
