@@ -1,6 +1,5 @@
 package com.hrizzon2.demotest.document.model;
 
-import com.hrizzon2.demotest.model.AuditAction;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;

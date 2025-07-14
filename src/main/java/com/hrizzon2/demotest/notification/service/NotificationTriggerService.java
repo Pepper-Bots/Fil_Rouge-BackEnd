@@ -1,4 +1,4 @@
-package com.hrizzon2.demotest.notification;
+package com.hrizzon2.demotest.notification.service;
 
 import com.hrizzon2.demotest.model.enums.NiveauDroit;
 import com.hrizzon2.demotest.service.DossierService;

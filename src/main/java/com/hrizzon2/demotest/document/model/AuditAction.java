@@ -1,4 +1,4 @@
-package com.hrizzon2.demotest.model;
+package com.hrizzon2.demotest.document.model;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -14,7 +14,7 @@ import com.hrizzon2.demotest.formation.model.Formation;
 import com.hrizzon2.demotest.formation.model.ListeDocumentsObligatoires;
 import com.hrizzon2.demotest.formation.service.ListeDocumentsObligatoiresService;
 import com.hrizzon2.demotest.model.PieceJointeStagiaire;
-import com.hrizzon2.demotest.notification.NotificationService;
+import com.hrizzon2.demotest.notification.service.NotificationService;
 import com.hrizzon2.demotest.user.dao.PieceJointeStagiaireDao;
 import com.hrizzon2.demotest.user.model.Stagiaire;
 import jakarta.persistence.EntityNotFoundException;

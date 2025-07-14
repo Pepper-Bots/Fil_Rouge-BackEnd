@@ -5,7 +5,7 @@ import com.hrizzon2.demotest.document.dao.StatutDocumentDao;
 import com.hrizzon2.demotest.document.model.Document;
 import com.hrizzon2.demotest.document.model.StatutDocument;
 import com.hrizzon2.demotest.evenement.service.EvenementService;
-import com.hrizzon2.demotest.notification.NotificationService;
+import com.hrizzon2.demotest.notification.service.NotificationService;
 import com.hrizzon2.demotest.service.DossierService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;

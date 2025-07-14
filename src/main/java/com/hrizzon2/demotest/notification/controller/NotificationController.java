@@ -1,7 +1,9 @@
-package com.hrizzon2.demotest.notification;
+package com.hrizzon2.demotest.notification.controller;
 
 import com.hrizzon2.demotest.model.enums.NiveauDroit;
-import com.hrizzon2.demotest.model.enums.TypeNotification;
+import com.hrizzon2.demotest.notification.model.Notification;
+import com.hrizzon2.demotest.notification.model.enums.TypeNotification;
+import com.hrizzon2.demotest.notification.service.NotificationService;
 import com.hrizzon2.demotest.user.model.enums.TypeAdmin;
 import org.springframework.web.bind.annotation.*;
 
