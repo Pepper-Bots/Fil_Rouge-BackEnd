@@ -1,7 +1,7 @@
-package com.hrizzon2.demotest.controller;
+package com.hrizzon2.demotest.formation.controller;
 
-import com.hrizzon2.demotest.model.Formation;
-import com.hrizzon2.demotest.service.FormationService;
+import com.hrizzon2.demotest.formation.model.Formation;
+import com.hrizzon2.demotest.formation.service.FormationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

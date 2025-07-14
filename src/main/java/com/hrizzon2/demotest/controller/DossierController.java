@@ -2,14 +2,14 @@ package com.hrizzon2.demotest.controller;
 // Contient les endpoints REST
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.hrizzon2.demotest.dao.FormationDao;
+import com.hrizzon2.demotest.formation.dao.FormationDao;
+import com.hrizzon2.demotest.formation.model.Formation;
 import com.hrizzon2.demotest.model.Dossier;
-import com.hrizzon2.demotest.model.Formation;
-import com.hrizzon2.demotest.user.model.Stagiaire;
 import com.hrizzon2.demotest.security.AppUserDetails;
 import com.hrizzon2.demotest.security.IsAdmin;
 import com.hrizzon2.demotest.security.IsStagiaire;
 import com.hrizzon2.demotest.service.DossierService;
+import com.hrizzon2.demotest.user.model.Stagiaire;
 import com.hrizzon2.demotest.view.AffichageDossier;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;

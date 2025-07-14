@@ -3,11 +3,11 @@
 //import com.hrizzon2.demotest.annotation.ValidFile;
 //import com.hrizzon2.demotest.dto.DocumentStatutUpdateDto;
 //import com.hrizzon2.demotest.dto.DocumentSummaryDto;
-//import com.hrizzon2.demotest.model.Formation;
+//import com.hrizzon2.demotest.formation.model.Formation;
 //import com.hrizzon2.demotest.model.PieceJointeStagiaire;
 //import com.hrizzon2.demotest.user.model.Stagiaire;
 //import com.hrizzon2.demotest.model.enums.TypeDocument;
-//import com.hrizzon2.demotest.service.FormationService;
+//import com.hrizzon2.demotest.formation.service.FormationService;
 //import com.hrizzon2.demotest.user.service.PieceJointeStagiaireService;
 //import com.hrizzon2.demotest.user.service.Stagiaire.Stagiaire.StagiaireService;
 //import jakarta.persistence.EntityNotFoundException;

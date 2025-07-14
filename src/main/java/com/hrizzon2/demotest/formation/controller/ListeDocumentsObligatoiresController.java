@@ -1,11 +1,11 @@
-package com.hrizzon2.demotest.controller;
+package com.hrizzon2.demotest.formation.controller;
 
-import com.hrizzon2.demotest.dao.FormationDao;
-import com.hrizzon2.demotest.model.Formation;
-import com.hrizzon2.demotest.model.ListeDocumentsObligatoires;
+import com.hrizzon2.demotest.formation.dao.FormationDao;
+import com.hrizzon2.demotest.formation.model.Formation;
+import com.hrizzon2.demotest.formation.model.ListeDocumentsObligatoires;
+import com.hrizzon2.demotest.formation.service.ListeDocumentsObligatoiresService;
 import com.hrizzon2.demotest.model.enums.TypeDocument;
 import com.hrizzon2.demotest.security.IsAdmin;
-import com.hrizzon2.demotest.service.ListeDocumentsObligatoiresService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -2,10 +2,15 @@ package com.hrizzon2.demotest.service;
 // Logique métier
 
 import com.hrizzon2.demotest.dao.DossierDao;
-import com.hrizzon2.demotest.dao.ListeDocumentsObligatoiresDao;
 import com.hrizzon2.demotest.dao.StatutDocumentDao;
 import com.hrizzon2.demotest.dao.StatutDossierDao;
-import com.hrizzon2.demotest.model.*;
+import com.hrizzon2.demotest.formation.dao.ListeDocumentsObligatoiresDao;
+import com.hrizzon2.demotest.formation.model.Formation;
+import com.hrizzon2.demotest.formation.model.ListeDocumentsObligatoires;
+import com.hrizzon2.demotest.model.Document;
+import com.hrizzon2.demotest.model.Dossier;
+import com.hrizzon2.demotest.model.StatutDocument;
+import com.hrizzon2.demotest.model.StatutDossier;
 import com.hrizzon2.demotest.security.AppUserDetails;
 import com.hrizzon2.demotest.security.ISecurityUtils;
 import com.hrizzon2.demotest.user.model.Admin;

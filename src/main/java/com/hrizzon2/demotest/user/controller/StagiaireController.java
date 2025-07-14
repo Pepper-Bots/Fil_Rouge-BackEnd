@@ -2,12 +2,12 @@ package com.hrizzon2.demotest.user.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.hrizzon2.demotest.annotation.ValidFile;
+import com.hrizzon2.demotest.formation.service.FormationService;
 import com.hrizzon2.demotest.model.Document;
 import com.hrizzon2.demotest.model.Dossier;
 import com.hrizzon2.demotest.service.DossierDocumentService;
 import com.hrizzon2.demotest.service.EvenementDocumentService;
 import com.hrizzon2.demotest.service.FichierService;
-import com.hrizzon2.demotest.service.FormationService;
 import com.hrizzon2.demotest.user.model.Stagiaire;
 import com.hrizzon2.demotest.user.service.Stagiaire.StagiaireService;
 import com.hrizzon2.demotest.view.AffichageDossier;

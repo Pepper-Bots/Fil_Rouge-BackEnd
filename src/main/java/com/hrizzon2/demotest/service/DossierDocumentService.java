@@ -2,6 +2,7 @@ package com.hrizzon2.demotest.service;
 
 import com.hrizzon2.demotest.dao.*;
 import com.hrizzon2.demotest.dto.DocumentSummaryDto;
+import com.hrizzon2.demotest.formation.model.Formation;
 import com.hrizzon2.demotest.model.*;
 import com.hrizzon2.demotest.model.enums.StatutInscription;
 import com.hrizzon2.demotest.model.enums.TypeDocument;

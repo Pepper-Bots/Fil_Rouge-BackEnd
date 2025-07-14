@@ -1,6 +1,6 @@
 package com.hrizzon2.demotest.user.service.Stagiaire;
 
-import com.hrizzon2.demotest.model.Formation;
+import com.hrizzon2.demotest.formation.model.Formation;
 import com.hrizzon2.demotest.model.Inscription;
 import com.hrizzon2.demotest.model.enums.StatutInscription;
 import com.hrizzon2.demotest.user.model.Stagiaire;

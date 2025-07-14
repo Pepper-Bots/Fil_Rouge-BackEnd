@@ -1,4 +1,4 @@
-package com.hrizzon2.demotest.model.enums;
+package com.hrizzon2.demotest.formation.model.enums;
 
 public enum NiveauFormation {
 

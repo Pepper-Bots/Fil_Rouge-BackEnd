@@ -1,8 +1,8 @@
 //Service pour gérer les formations et vérifier la disponibilité, les horaires, etc.
-package com.hrizzon2.demotest.service;
+package com.hrizzon2.demotest.formation.service;
 
-import com.hrizzon2.demotest.dao.FormationDao;
-import com.hrizzon2.demotest.model.Formation;
+import com.hrizzon2.demotest.formation.dao.FormationDao;
+import com.hrizzon2.demotest.formation.model.Formation;
 import com.hrizzon2.demotest.user.model.Stagiaire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
