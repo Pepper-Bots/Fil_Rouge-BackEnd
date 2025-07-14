@@ -1,8 +1,16 @@
 package com.hrizzon2.demotest.service.Inscription;
 
-import com.hrizzon2.demotest.dao.*;
-import com.hrizzon2.demotest.model.*;
+import com.hrizzon2.demotest.dao.FormationDao;
+import com.hrizzon2.demotest.dao.InscriptionDao;
+import com.hrizzon2.demotest.dao.StatutDossierDao;
+import com.hrizzon2.demotest.model.Dossier;
+import com.hrizzon2.demotest.model.Formation;
+import com.hrizzon2.demotest.model.Inscription;
+import com.hrizzon2.demotest.model.StatutDossier;
 import com.hrizzon2.demotest.model.enums.StatutInscription;
+import com.hrizzon2.demotest.user.dao.AdminDao;
+import com.hrizzon2.demotest.user.dao.StagiaireDao;
+import com.hrizzon2.demotest.user.model.Stagiaire;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

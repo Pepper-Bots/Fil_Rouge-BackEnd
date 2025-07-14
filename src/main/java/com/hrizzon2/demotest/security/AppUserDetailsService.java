@@ -2,7 +2,7 @@
 
 package com.hrizzon2.demotest.security;
 
-import com.hrizzon2.demotest.dao.UserDao;
+import com.hrizzon2.demotest.user.dao.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

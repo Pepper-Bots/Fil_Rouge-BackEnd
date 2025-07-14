@@ -1,6 +1,6 @@
 package com.hrizzon2.demotest;
 
-import com.hrizzon2.demotest.controller.StagiaireController;
+import com.hrizzon2.demotest.user.controller.StagiaireController;
 
 class StagiaireControllerTest {
 

@@ -1,5 +1,6 @@
 package com.hrizzon2.demotest.model;
 
+import com.hrizzon2.demotest.user.model.Ville;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;

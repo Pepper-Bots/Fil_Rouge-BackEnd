@@ -3,7 +3,7 @@ package com.hrizzon2.demotest.controller;
 import com.hrizzon2.demotest.model.Inscription;
 import com.hrizzon2.demotest.model.enums.StatutInscription;
 import com.hrizzon2.demotest.service.Inscription.InscriptionService;
-import com.hrizzon2.demotest.service.Stagiaire.StagiaireService;
+import com.hrizzon2.demotest.user.service.Stagiaire.StagiaireService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

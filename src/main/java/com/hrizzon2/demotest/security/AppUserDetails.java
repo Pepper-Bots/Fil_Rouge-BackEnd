@@ -1,9 +1,9 @@
 package com.hrizzon2.demotest.security;
 // Sécurité Spring Security
 
-import com.hrizzon2.demotest.model.Admin;
-import com.hrizzon2.demotest.model.Stagiaire;
-import com.hrizzon2.demotest.model.User;
+import com.hrizzon2.demotest.user.model.Admin;
+import com.hrizzon2.demotest.user.model.Stagiaire;
+import com.hrizzon2.demotest.user.model.User;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

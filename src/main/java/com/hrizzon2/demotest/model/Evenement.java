@@ -1,5 +1,6 @@
 package com.hrizzon2.demotest.model;
 
+import com.hrizzon2.demotest.user.model.Stagiaire;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,7 +23,7 @@ public class Evenement {
 
     @Column(name = "date_fin")
     private LocalDate dateFin;
-    
+
     /**
      * Par défaut false, indique si l’événement est signalé en retard.
      */

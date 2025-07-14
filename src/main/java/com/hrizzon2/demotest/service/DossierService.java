@@ -8,6 +8,8 @@ import com.hrizzon2.demotest.dao.StatutDossierDao;
 import com.hrizzon2.demotest.model.*;
 import com.hrizzon2.demotest.security.AppUserDetails;
 import com.hrizzon2.demotest.security.ISecurityUtils;
+import com.hrizzon2.demotest.user.model.Admin;
+import com.hrizzon2.demotest.user.model.Stagiaire;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;

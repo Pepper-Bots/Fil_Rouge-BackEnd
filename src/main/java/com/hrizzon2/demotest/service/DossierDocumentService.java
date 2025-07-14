@@ -5,6 +5,7 @@ import com.hrizzon2.demotest.dto.DocumentSummaryDto;
 import com.hrizzon2.demotest.model.*;
 import com.hrizzon2.demotest.model.enums.StatutInscription;
 import com.hrizzon2.demotest.model.enums.TypeDocument;
+import com.hrizzon2.demotest.user.model.Stagiaire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

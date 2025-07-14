@@ -1,14 +1,14 @@
 package com.hrizzon2.demotest.notification;
 
 import com.hrizzon2.demotest.dao.NotificationTemplateDao;
-import com.hrizzon2.demotest.dao.UserDao;
-import com.hrizzon2.demotest.model.Admin;
 import com.hrizzon2.demotest.model.NotificationTemplate;
-import com.hrizzon2.demotest.model.User;
 import com.hrizzon2.demotest.model.enums.NiveauDroit;
-import com.hrizzon2.demotest.model.enums.TypeAdmin;
 import com.hrizzon2.demotest.model.enums.TypeNotification;
-import com.hrizzon2.demotest.service.AdminService;
+import com.hrizzon2.demotest.user.service.AdminService;
+import com.hrizzon2.demotest.user.dao.UserDao;
+import com.hrizzon2.demotest.user.model.Admin;
+import com.hrizzon2.demotest.user.model.User;
+import com.hrizzon2.demotest.user.model.enums.TypeAdmin;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

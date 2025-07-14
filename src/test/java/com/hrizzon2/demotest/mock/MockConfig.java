@@ -1,10 +1,10 @@
 package com.hrizzon2.demotest.mock;
 
 import com.hrizzon2.demotest.dao.NotificationTemplateDao;
-import com.hrizzon2.demotest.dao.UserDao;
 import com.hrizzon2.demotest.notification.NotificationDao;
-import com.hrizzon2.demotest.service.AdminService;
-import com.hrizzon2.demotest.service.Stagiaire.StagiaireService;
+import com.hrizzon2.demotest.user.dao.UserDao;
+import com.hrizzon2.demotest.user.service.AdminService;
+import com.hrizzon2.demotest.user.service.Stagiaire.StagiaireService;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

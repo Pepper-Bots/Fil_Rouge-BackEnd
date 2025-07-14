@@ -3,7 +3,7 @@ package com.hrizzon2.demotest.service;
 
 import com.hrizzon2.demotest.dao.FormationDao;
 import com.hrizzon2.demotest.model.Formation;
-import com.hrizzon2.demotest.model.Stagiaire;
+import com.hrizzon2.demotest.user.model.Stagiaire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

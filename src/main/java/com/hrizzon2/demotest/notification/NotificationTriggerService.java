@@ -1,10 +1,10 @@
 package com.hrizzon2.demotest.notification;
 
-import com.hrizzon2.demotest.model.Admin;
 import com.hrizzon2.demotest.model.enums.NiveauDroit;
-import com.hrizzon2.demotest.model.enums.TypeAdmin;
-import com.hrizzon2.demotest.service.AdminService;
 import com.hrizzon2.demotest.service.DossierService;
+import com.hrizzon2.demotest.user.model.Admin;
+import com.hrizzon2.demotest.user.model.enums.TypeAdmin;
+import com.hrizzon2.demotest.user.service.AdminService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

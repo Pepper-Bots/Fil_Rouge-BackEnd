@@ -1,7 +1,7 @@
 package com.hrizzon2.demotest.notification;
 
 import com.hrizzon2.demotest.model.NotificationTemplate;
-import com.hrizzon2.demotest.model.User;
+import com.hrizzon2.demotest.user.model.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
