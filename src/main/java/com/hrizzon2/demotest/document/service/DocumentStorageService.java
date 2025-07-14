@@ -1,4 +1,4 @@
-package com.hrizzon2.demotest.service;
+package com.hrizzon2.demotest.document.service;
 
 import com.mongodb.client.gridfs.model.GridFSFile;
 import org.bson.types.ObjectId;

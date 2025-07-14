@@ -1,14 +1,14 @@
 package com.hrizzon2.demotest.user.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.hrizzon2.demotest.document.model.Document;
+import com.hrizzon2.demotest.document.service.ValidationDocumentService;
 import com.hrizzon2.demotest.formation.model.Formation;
 import com.hrizzon2.demotest.formation.service.FormationService;
-import com.hrizzon2.demotest.document.model.Document;
 import com.hrizzon2.demotest.model.enums.StatutInscription;
 import com.hrizzon2.demotest.security.IsAdmin;
 import com.hrizzon2.demotest.service.DossierDocumentService;
 import com.hrizzon2.demotest.service.EvenementDocumentService;
-import com.hrizzon2.demotest.service.ValidationDocumentService;
 import com.hrizzon2.demotest.user.model.Admin;
 import com.hrizzon2.demotest.user.model.Stagiaire;
 import com.hrizzon2.demotest.user.service.AdminService;

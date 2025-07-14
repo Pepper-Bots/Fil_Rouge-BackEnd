@@ -1,4 +1,4 @@
-package com.hrizzon2.demotest.dto;
+package com.hrizzon2.demotest.document.dto;
 
 import lombok.Getter;
 import lombok.Setter;

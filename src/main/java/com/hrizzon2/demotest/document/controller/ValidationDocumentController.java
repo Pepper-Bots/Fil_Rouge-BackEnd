@@ -1,7 +1,7 @@
-package com.hrizzon2.demotest.controller;
+package com.hrizzon2.demotest.document.controller;
 
 import com.hrizzon2.demotest.document.model.Document;
-import com.hrizzon2.demotest.service.ValidationDocumentService;
+import com.hrizzon2.demotest.document.service.ValidationDocumentService;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

@@ -1,6 +1,6 @@
 package com.hrizzon2.demotest.user.dto;
 
-import com.hrizzon2.demotest.dto.DocumentStatutDto;
+import com.hrizzon2.demotest.document.dto.DocumentStatutDto;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -1,10 +1,12 @@
-package com.hrizzon2.demotest.service;
+package com.hrizzon2.demotest.document.service;
 
 import com.hrizzon2.demotest.document.dao.DocumentDao;
 import com.hrizzon2.demotest.document.dao.StatutDocumentDao;
 import com.hrizzon2.demotest.document.model.Document;
 import com.hrizzon2.demotest.document.model.StatutDocument;
 import com.hrizzon2.demotest.notification.NotificationService;
+import com.hrizzon2.demotest.service.DossierService;
+import com.hrizzon2.demotest.service.EvenementService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
