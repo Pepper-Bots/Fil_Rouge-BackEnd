@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.hrizzon2.demotest.formation.model.enums.NiveauFormation;
 import com.hrizzon2.demotest.model.Dossier;
 import com.hrizzon2.demotest.model.Inscription;
-import com.hrizzon2.demotest.model.enums.TypeDocument;
+import com.hrizzon2.demotest.document.model.enums.TypeDocument;
 import com.hrizzon2.demotest.view.AffichageDossier;
 import jakarta.persistence.*;
 import lombok.Getter;

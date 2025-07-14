@@ -5,7 +5,7 @@ import com.hrizzon2.demotest.dto.DocumentSummaryDto;
 import com.hrizzon2.demotest.formation.model.Formation;
 import com.hrizzon2.demotest.formation.service.FormationService;
 import com.hrizzon2.demotest.model.Dossier;
-import com.hrizzon2.demotest.model.enums.TypeDocument;
+import com.hrizzon2.demotest.document.model.enums.TypeDocument;
 import com.hrizzon2.demotest.service.DossierDocumentService;
 import com.hrizzon2.demotest.service.DossierService;
 import com.hrizzon2.demotest.service.EvenementDocumentService;

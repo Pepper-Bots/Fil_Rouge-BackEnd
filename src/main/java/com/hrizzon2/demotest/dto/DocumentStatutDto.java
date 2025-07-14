@@ -3,6 +3,8 @@ package com.hrizzon2.demotest.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+// TODO DTO pas utilisé !!!
+
 @Getter
 @Setter
 public class DocumentStatutDto {

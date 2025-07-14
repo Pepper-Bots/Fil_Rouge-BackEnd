@@ -3,6 +3,7 @@ package com.hrizzon2.demotest.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.hrizzon2.demotest.document.model.Document;
 import com.hrizzon2.demotest.formation.model.Formation;
 import com.hrizzon2.demotest.user.model.Admin;
 import com.hrizzon2.demotest.user.model.Stagiaire;

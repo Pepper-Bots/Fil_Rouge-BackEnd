@@ -1,12 +1,12 @@
 package com.hrizzon2.demotest.service;
 
-import com.hrizzon2.demotest.dao.DocumentDao;
 import com.hrizzon2.demotest.dao.EvenementDao;
-import com.hrizzon2.demotest.dao.StatutDocumentDao;
-import com.hrizzon2.demotest.model.Document;
+import com.hrizzon2.demotest.document.dao.DocumentDao;
+import com.hrizzon2.demotest.document.dao.StatutDocumentDao;
+import com.hrizzon2.demotest.document.model.Document;
+import com.hrizzon2.demotest.document.model.StatutDocument;
+import com.hrizzon2.demotest.document.model.enums.TypeDocument;
 import com.hrizzon2.demotest.model.Evenement;
-import com.hrizzon2.demotest.model.StatutDocument;
-import com.hrizzon2.demotest.model.enums.TypeDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

@@ -1,4 +1,4 @@
-package com.hrizzon2.demotest.model;
+package com.hrizzon2.demotest.document.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;

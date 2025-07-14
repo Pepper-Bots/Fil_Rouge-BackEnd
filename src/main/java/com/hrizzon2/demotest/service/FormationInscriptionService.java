@@ -3,14 +3,16 @@ package com.hrizzon2.demotest.service;
 import com.hrizzon2.demotest.dao.InscriptionDao;
 import com.hrizzon2.demotest.formation.model.Formation;
 import com.hrizzon2.demotest.model.Inscription;
-import com.hrizzon2.demotest.user.model.Stagiaire;
 import com.hrizzon2.demotest.model.enums.StatutInscription;
+import com.hrizzon2.demotest.user.model.Stagiaire;
 import com.hrizzon2.demotest.user.service.Stagiaire.StagiaireService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.time.LocalDate;
+
+// TODO Service pas utilisé !!!
 
 @Service
 public class FormationInscriptionService {

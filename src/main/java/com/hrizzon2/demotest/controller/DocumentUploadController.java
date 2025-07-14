@@ -1,8 +1,8 @@
 package com.hrizzon2.demotest.controller;
 
-import com.hrizzon2.demotest.dao.DocumentMongoDao;
+import com.hrizzon2.demotest.document.dao.DocumentMongoDao;
+import com.hrizzon2.demotest.document.model.DocumentMongo;
 import com.hrizzon2.demotest.model.AuditAction;
-import com.hrizzon2.demotest.model.DocumentMongo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

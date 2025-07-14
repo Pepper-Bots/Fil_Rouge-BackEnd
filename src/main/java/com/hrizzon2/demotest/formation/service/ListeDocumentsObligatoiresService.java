@@ -3,7 +3,7 @@ package com.hrizzon2.demotest.formation.service;
 import com.hrizzon2.demotest.formation.dao.ListeDocumentsObligatoiresDao;
 import com.hrizzon2.demotest.formation.model.Formation;
 import com.hrizzon2.demotest.formation.model.ListeDocumentsObligatoires;
-import com.hrizzon2.demotest.model.enums.TypeDocument;
+import com.hrizzon2.demotest.document.model.enums.TypeDocument;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 

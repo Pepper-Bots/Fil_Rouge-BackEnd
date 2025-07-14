@@ -1,11 +1,18 @@
 package com.hrizzon2.demotest.service;
 
-import com.hrizzon2.demotest.dao.*;
+import com.hrizzon2.demotest.dao.DossierDao;
+import com.hrizzon2.demotest.dao.InscriptionDao;
+import com.hrizzon2.demotest.dao.StatutDossierDao;
+import com.hrizzon2.demotest.document.dao.DocumentDao;
+import com.hrizzon2.demotest.document.dao.StatutDocumentDao;
+import com.hrizzon2.demotest.document.model.Document;
+import com.hrizzon2.demotest.document.model.StatutDocument;
+import com.hrizzon2.demotest.document.model.enums.TypeDocument;
 import com.hrizzon2.demotest.dto.DocumentSummaryDto;
 import com.hrizzon2.demotest.formation.model.Formation;
-import com.hrizzon2.demotest.model.*;
+import com.hrizzon2.demotest.model.Dossier;
+import com.hrizzon2.demotest.model.StatutDossier;
 import com.hrizzon2.demotest.model.enums.StatutInscription;
-import com.hrizzon2.demotest.model.enums.TypeDocument;
 import com.hrizzon2.demotest.user.model.Stagiaire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -3,7 +3,7 @@
 //import com.hrizzon2.demotest.dao.*;
 //import com.hrizzon2.demotest.model.*;
 //import com.hrizzon2.demotest.model.enums.StatutInscription;
-//import com.hrizzon2.demotest.model.enums.TypeDocument;
+//import com.hrizzon2.demotest.document.model.enums.TypeDocument;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.stereotype.Service;
 //import org.springframework.web.multipart.MultipartFile;

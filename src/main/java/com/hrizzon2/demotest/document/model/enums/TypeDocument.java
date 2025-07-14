@@ -1,4 +1,4 @@
-package com.hrizzon2.demotest.model.enums;
+package com.hrizzon2.demotest.document.model.enums;
 
 public enum TypeDocument {
 

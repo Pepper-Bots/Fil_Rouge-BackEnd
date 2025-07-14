@@ -1,6 +1,6 @@
-package com.hrizzon2.demotest.dao;
+package com.hrizzon2.demotest.document.dao;
 
-import com.hrizzon2.demotest.model.DocumentMongo;
+import com.hrizzon2.demotest.document.model.DocumentMongo;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

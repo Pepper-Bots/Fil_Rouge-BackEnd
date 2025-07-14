@@ -1,7 +1,7 @@
 package com.hrizzon2.demotest.formation.model;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.hrizzon2.demotest.model.enums.TypeDocument;
+import com.hrizzon2.demotest.document.model.enums.TypeDocument;
 import com.hrizzon2.demotest.view.AffichageListeDocumentsObligatoires;
 import jakarta.persistence.*;
 import lombok.Getter;

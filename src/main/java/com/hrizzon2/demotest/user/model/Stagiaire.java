@@ -1,6 +1,7 @@
 package com.hrizzon2.demotest.user.model;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.hrizzon2.demotest.document.model.Document;
 import com.hrizzon2.demotest.model.*;
 import com.hrizzon2.demotest.model.enums.StatutInscription;
 import com.hrizzon2.demotest.view.AffichageDossier;

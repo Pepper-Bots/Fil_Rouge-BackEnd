@@ -1,9 +1,9 @@
 package com.hrizzon2.demotest.service;
 
-import com.hrizzon2.demotest.dao.DocumentDao;
-import com.hrizzon2.demotest.dao.StatutDocumentDao;
-import com.hrizzon2.demotest.model.Document;
-import com.hrizzon2.demotest.model.StatutDocument;
+import com.hrizzon2.demotest.document.dao.DocumentDao;
+import com.hrizzon2.demotest.document.dao.StatutDocumentDao;
+import com.hrizzon2.demotest.document.model.Document;
+import com.hrizzon2.demotest.document.model.StatutDocument;
 import com.hrizzon2.demotest.notification.NotificationService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;

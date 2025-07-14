@@ -5,15 +5,15 @@ package com.hrizzon2.demotest.user.service;
 // → Car il va manipuler les documents réels transmis,
 // et peut avoir besoin d’accéder à la liste des attendus via un autre service ou le DAO.
 
-import com.hrizzon2.demotest.dao.StatutDocumentDao;
-import com.hrizzon2.demotest.dto.DocumentStatutUpdateDto;
+import com.hrizzon2.demotest.document.dao.StatutDocumentDao;
+import com.hrizzon2.demotest.document.dto.DocumentStatutUpdateDto;
+import com.hrizzon2.demotest.document.model.StatutDocument;
+import com.hrizzon2.demotest.document.model.enums.TypeDocument;
 import com.hrizzon2.demotest.dto.DocumentSummaryDto;
 import com.hrizzon2.demotest.formation.model.Formation;
 import com.hrizzon2.demotest.formation.model.ListeDocumentsObligatoires;
 import com.hrizzon2.demotest.formation.service.ListeDocumentsObligatoiresService;
 import com.hrizzon2.demotest.model.PieceJointeStagiaire;
-import com.hrizzon2.demotest.model.StatutDocument;
-import com.hrizzon2.demotest.model.enums.TypeDocument;
 import com.hrizzon2.demotest.notification.NotificationService;
 import com.hrizzon2.demotest.user.dao.PieceJointeStagiaireDao;
 import com.hrizzon2.demotest.user.model.Stagiaire;

@@ -1,6 +1,8 @@
-package com.hrizzon2.demotest.model;
+package com.hrizzon2.demotest.document.model;
 
-import com.hrizzon2.demotest.model.enums.TypeDocument;
+import com.hrizzon2.demotest.model.Dossier;
+import com.hrizzon2.demotest.model.Evenement;
+import com.hrizzon2.demotest.document.model.enums.TypeDocument;
 import com.hrizzon2.demotest.user.model.Stagiaire;
 import jakarta.persistence.*;
 import lombok.Getter;
