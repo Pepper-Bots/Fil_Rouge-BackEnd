@@ -1,5 +1,6 @@
 package com.hrizzon2.demotest.inscription.service;
 
+import com.hrizzon2.demotest.common.service.FichierService;
 import com.hrizzon2.demotest.document.dao.DocumentDao;
 import com.hrizzon2.demotest.document.dao.StatutDocumentDao;
 import com.hrizzon2.demotest.document.dto.DocumentSummaryDto;
@@ -13,7 +14,6 @@ import com.hrizzon2.demotest.inscription.dao.StatutDossierDao;
 import com.hrizzon2.demotest.inscription.model.Dossier;
 import com.hrizzon2.demotest.inscription.model.StatutDossier;
 import com.hrizzon2.demotest.inscription.model.enums.StatutInscription;
-import com.hrizzon2.demotest.service.FichierService;
 import com.hrizzon2.demotest.user.model.Stagiaire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

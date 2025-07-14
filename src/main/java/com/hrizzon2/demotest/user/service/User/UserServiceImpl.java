@@ -1,6 +1,6 @@
 package com.hrizzon2.demotest.user.service.User;
 
-import com.hrizzon2.demotest.service.EmailService;
+import com.hrizzon2.demotest.common.service.EmailService;
 import com.hrizzon2.demotest.user.dao.UserDao;
 import com.hrizzon2.demotest.user.model.Stagiaire;
 import com.hrizzon2.demotest.user.model.User;

@@ -1,4 +1,4 @@
-package com.hrizzon2.demotest.controller;
+package com.hrizzon2.demotest.common.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

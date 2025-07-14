@@ -1,4 +1,4 @@
-package com.hrizzon2.demotest.service;
+package com.hrizzon2.demotest.common.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;

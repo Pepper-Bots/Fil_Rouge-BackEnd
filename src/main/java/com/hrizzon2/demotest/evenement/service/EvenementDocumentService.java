@@ -1,5 +1,6 @@
-package com.hrizzon2.demotest.service;
+package com.hrizzon2.demotest.evenement.service;
 
+import com.hrizzon2.demotest.common.service.FichierService;
 import com.hrizzon2.demotest.document.dao.DocumentDao;
 import com.hrizzon2.demotest.document.dao.StatutDocumentDao;
 import com.hrizzon2.demotest.document.model.Document;

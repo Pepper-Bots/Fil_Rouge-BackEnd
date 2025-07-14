@@ -1,15 +1,15 @@
 package com.hrizzon2.demotest.document.controller;
 
 import com.hrizzon2.demotest.annotation.ValidFile;
+import com.hrizzon2.demotest.common.service.FichierService;
 import com.hrizzon2.demotest.document.dto.DocumentSummaryDto;
 import com.hrizzon2.demotest.document.model.enums.TypeDocument;
+import com.hrizzon2.demotest.evenement.service.EvenementDocumentService;
 import com.hrizzon2.demotest.formation.model.Formation;
 import com.hrizzon2.demotest.formation.service.FormationService;
 import com.hrizzon2.demotest.inscription.model.Dossier;
 import com.hrizzon2.demotest.inscription.service.DossierDocumentService;
 import com.hrizzon2.demotest.inscription.service.DossierService;
-import com.hrizzon2.demotest.service.EvenementDocumentService;
-import com.hrizzon2.demotest.service.FichierService;
 import com.hrizzon2.demotest.user.model.Stagiaire;
 import com.hrizzon2.demotest.user.service.Stagiaire.StagiaireService;
 import jakarta.persistence.EntityNotFoundException;

@@ -1,10 +1,10 @@
 package com.hrizzon2.demotest.user.controller;
 
 
+import com.hrizzon2.demotest.common.service.EmailService;
 import com.hrizzon2.demotest.security.AppUserDetails;
 import com.hrizzon2.demotest.security.ISecurityUtils;
 import com.hrizzon2.demotest.security.IsAdmin;
-import com.hrizzon2.demotest.service.EmailService;
 import com.hrizzon2.demotest.user.dto.AuthResponse;
 import com.hrizzon2.demotest.user.dto.ChangePasswordDto;
 import com.hrizzon2.demotest.user.dto.ValidationEmailDto;
