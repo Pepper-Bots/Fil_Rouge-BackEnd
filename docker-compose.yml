@@ -1,26 +1,126 @@
+#services:
+#  back:
+#    build: .
+#    ports:
+#      - "8080:8080"
+#    depends_on:
+#      - db
+#    volumes:
+#      - ${PUBLIC_UPLOAD_FOLDER}:/public-upload
+#      - ${PRIVATE_UPLOAD_FOLDER}:/private-upload
+#    environment:
+#      - PUBLIC_UPLOAD_FOLDER=${PUBLIC_UPLOAD_FOLDER}
+#      - PRIVATE_UPLOAD_VOLUME=${PRIVATE_UPLOAD_FOLDER}
+#
+#  db:
+#    image: mysql:5.7
+#    restart: always
+#    environment:
+#      MYSQL_ROOT_PASSWORD: 'root'
+#    expose:
+#      - "3306"
+#    volumes:
+#      - data:/var/lib/mysql
+#
+#volumes:
+#  data:
+
+
 services:
+  proxy:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx-proxy.conf:/etc/nginx/nginx.conf
+      - ./certs:/etc/nginx/certs
+    depends_on:
+      - front
+      - back
+      - static
+    networks:
+      - proxy-network
+
+  front:
+    build: ../../Front/admin-mns-front
+    image: heleneriz/admin_mns_front
+    expose:
+      - "80"
+    networks:
+      - proxy-network
+
   back:
     build: .
-    ports:
-      - "8080:8080"
+    image: heleneriz/admin_mns_back
+    restart: "no"
+    expose:
+      - "8080"
     depends_on:
       - db
+      - mongo
+
     volumes:
       - ${PUBLIC_UPLOAD_FOLDER}:/public-upload
       - ${PRIVATE_UPLOAD_FOLDER}:/private-upload
     environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo:27017/${MONGO_DB_NAME}?authSource=admin
       - PUBLIC_UPLOAD_FOLDER=${PUBLIC_UPLOAD_FOLDER}
       - PRIVATE_UPLOAD_VOLUME=${PRIVATE_UPLOAD_FOLDER}
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=root
+      - DB_NAME=spring_td
+    networks:
+      - proxy-network
+      - backend-network
 
   db:
     image: mysql:5.7
-    restart: always
+    restart: "no"
     environment:
       MYSQL_ROOT_PASSWORD: 'root'
-    expose:
-      - "3306"
+    #    expose:
+    #      - "3306"
     volumes:
       - data:/var/lib/mysql
+    ports:
+      - "3306:3306" # decommentez pour accéder a distance à la bdd
+    networks:
+      - backend-network
+
+  mongo:
+    image: mongo:7
+    restart: "no"
+    container_name: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DB_NAME}
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - backend-network
+
+  static:
+    image: nginx:latest
+    expose:
+      - "80"
+    volumes:
+      - ${PUBLIC_UPLOAD_FOLDER}:/usr/share/nginx/html/images
+      - ./nginx-static.conf:/etc/nginx/conf.d/default.conf
+    environment:
+      - PUBLIC_UPLOAD_FOLDER=${PUBLIC_UPLOAD_FOLDER}
+    networks:
+      - proxy-network
 
 volumes:
   data:
+  mongo_data:
+
+networks:
+  proxy-network:
+  backend-network:
