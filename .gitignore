@@ -1,4 +1,7 @@
 .local.env
+certs/
+*.crt
+
 /uploads
 
 HELP.md

@@ -10,16 +10,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      APP_NAME: admin_mns_back
+      CERT_OWNER: Admin MNS
+      CERT_DOMAIN: localhost
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
+      # Création du fichier application.properties pour la CI
       - name: Create application.properties for CI
         run: |
           cat > src/main/resources/application.properties << EOF
@@ -33,73 +33,90 @@ jobs:
           spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
           EOF
 
-      - name: Set APP_NAME
-        run: echo "APP_NAME=admin_mns_back" >> $GITHUB_ENV
+      # Set up JDK 17
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
-      - name: Build with Maven
+      # Build back-end Java (Spring Boot)
+      - name: Build back-end with Maven
         run: mvn clean package -DskipTests
 
-      - name: Extract version from pom.xml
-        id: extract_version
-        run: echo "VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+      # (optionnel) Build front-end (Angular)
+      # - name: Build front-end
+      #   run: |
+      #     cd ../../Front/admin-mns-front
+      #     npm ci
+      #     npm run build
 
+      # Générer les certificats SSL pour NGINX (pour les tests et le build du proxy)
+      - name: Generate SSL certs for NGINX
+        run: |
+          mkdir -p certs
+          openssl req -x509 -nodes -days 1 -newkey rsa:2048 \
+            -keyout certs/privkey.crt \
+            -out certs/fullchain.crt \
+            -subj "/C=FR/ST=France/L=Metz/O=${CERT_OWNER}/CN=${CERT_DOMAIN}"
+
+      # Optionnel : Vérification de la config Docker Compose
+      - name: Check docker-compose config
+        run: docker-compose config
+
+      # Connexion à Docker Hub (pour pouvoir push les images)
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push Docker image
-        run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ env.APP_NAME }}:${{ env.VERSION }} .
-          docker push ${{ secrets.DOCKER_USERNAME }}/${{ env.APP_NAME }}:${{ env.VERSION }}
+      # Build toutes les images via docker-compose (build front, back, proxy, static, etc.)
+      - name: Build Docker Compose services
+        run: docker-compose build
 
-#name: Build and Push Docker Image
+      # Push des images customisées (back et front, éventuellement static ou proxy)
+      - name: Push Back image to Docker Hub
+        run: |
+          docker tag heleneriz/admin_mns_back:latest ${{ secrets.DOCKER_USERNAME }}/admin_mns_back:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/admin_mns_back:${{ github.sha }}
+
+      # Tag et push l'image front
+      - name: Push Front image to Docker Hub
+        run: |
+          docker tag heleneriz/admin_mns_front:latest ${{ secrets.DOCKER_USERNAME }}/admin_mns_front:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/admin_mns_front:${{ github.sha }}
+
+      # Optionnel : Lancer les containers pour des tests d'intégration (API, front, etc.)
+      #- name: Run tests with docker-compose
+      #  run: |
+      #    docker-compose up -d
+      #    # ici tu peux lancer des tests e2e, api, etc.
+      #    docker-compose down -v
+
+      # Optionnel mais recommandé: Nettoyage Docker après les jobs
+      - name: Clean up Docker
+        run: docker system prune -af
+
+
+#L’ordre recommandé:
 #
-#on:
-#  push:
-#    branches:
-#      - main  # Déclencher le workflow sur les pushes vers la branche main
-#      - dev
+#  1.Checkout
 #
-#jobs:
-#  build:
-#    runs-on: ubuntu-latest
+#  2.Créer application.properties
 #
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v2
+#  3.Build Maven (backend)
 #
-#      - name: Load .env file
-#        run: |
-#          set -a
-#          source .env
-#          set +a
-#          echo "APP_NAME=${APP_NAME}" >> $GITHUB_ENV
+#  4.(Optionnel) Build front Angular
 #
-#      - name: Set up JDK 17
-#        uses: actions/setup-java@v4
-#        with:
-#          java-version: '17'
-#          distribution: 'adopt'
+#  5.Générer les certificats SSL
 #
-#      - name: Update JWT Secret in application.properties
-#        run: sed -i 's/${JWT_SECRET}/${{ secrets.JWT_SECRET }}/' src/main/resources/application.properties
+#  6.Vérifier Docker Compose
 #
-#      - name: Build with Maven
-#        run: mvn clean package
+#  7.Login Docker Hub
 #
-#      - name: Extract version from pom.xml
-#        id: extract_version
-#        run: echo "VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+#  8.Build Docker Compose
 #
-#      - name: Log in to Docker Hub
-#        uses: docker/login-action@v2
-#        with:
-#          username: ${{ secrets.DOCKER_USERNAME }}
-#          password: ${{ secrets.DOCKER_PASSWORD }}
+#  9.Tag/push images
 #
-#      - name: Build and push Docker image
-#        run: |
-#          docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ env.APP_NAME }}:${{ env.VERSION }} .
-#          docker push ${{ secrets.DOCKER_USERNAME }}/${{ env.APP_NAME }}:${{ env.VERSION }}
+#  10.Nettoyage
