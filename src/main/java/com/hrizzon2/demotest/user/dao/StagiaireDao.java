@@ -14,7 +14,7 @@ import java.util.Optional;
 
 /**
  * DAO pour la gestion des entités Stagiaire.
- * Fournit des méthodes CRUD et une méthode de recherche par email.
+ * Toutes les requêtes sont sécurisées via paramètres bindés (JPQL ou Spring Data).
  */
 @Repository
 public interface StagiaireDao extends JpaRepository<Stagiaire, Integer> {

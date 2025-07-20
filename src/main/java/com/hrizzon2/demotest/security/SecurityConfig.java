@@ -63,8 +63,8 @@ public class SecurityConfig {
     public SecurityFilterChain configureAuthentification(HttpSecurity http) throws Exception {
 
         return http
-                .csrf(c -> c.disable())
-                .cors(c -> c.configurationSource(corsConfigurationSource()))
+                .csrf(c -> c.disable()) //desactiver la protection de la faille CSRF (création de token de formulaire)
+                .cors(c -> c.configurationSource(corsConfigurationSource())) // definition des regles du CORS policy
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // Endpoints publics (ex: login, inscription)
@@ -72,12 +72,17 @@ public class SecurityConfig {
 
                         // Endpoints accessibles uniquement aux stagiaires
                         .requestMatchers("/api/stagiaire/**").hasRole("STAGIAIRE")
-                        
+
                         // Endpoints accessibles uniquement aux admins
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
                         // Toute autre requête doit être authentifiée
                         .anyRequest().authenticated()
+                )
+                .headers(headers -> headers
+                        .contentSecurityPolicy(csp -> csp
+                                .policyDirectives("default-src 'self'; script-src 'self'")
+                        )
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
