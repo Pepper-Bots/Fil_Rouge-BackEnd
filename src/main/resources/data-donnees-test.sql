@@ -209,12 +209,13 @@ VALUES (1, 'DSR001', 2, '2025-01-05 09:00:00', '2025-01-07 14:00:00', '2025-01-0
         2); -- Développement Web
 
 
+-- Données de test avec formation_id_formation
 INSERT INTO document (nom_fichier, type, statut_document_id, dossier_id, stagiaire_id, evenement_id, commentaire,
-                      date_depot, url_fichier)
-VALUES ('Justificatif de domicile', 'JUSTIFICATIF', 2, 1, 5, NULL, NULL, NOW(), NULL),
-       ('CV Paul', 'CV', 1, 1, 6, NULL, NULL, NOW(), NULL),
-       ('Lettre de motivation', 'LETTRE_MOTIVATION', 1, 2, 7, NULL, NULL, NOW(), NULL),
-       ('Justificatif d’identité', 'JUSTIFICATIF', 2, 2, 8, NULL, NULL, NOW(), NULL);
+                      date_depot, url_fichier, formation_id_formation)
+VALUES ('Justificatif de domicile', 'JUSTIFICATIF', 2, 1, 5, NULL, NULL, NOW(), NULL, 1),
+       ('CV Paul', 'CV', 1, 1, 6, NULL, NULL, NOW(), NULL, 1),
+       ('Lettre de motivation', 'LETTRE_MOTIVATION', 1, 2, 7, NULL, NULL, NOW(), NULL, 2),
+       ('Justificatif d’identité', 'JUSTIFICATIF', 2, 2, 8, NULL, NULL, NOW(), NULL, 2);
 
 
 -- 1) Inscription n°1 pour le stagiaire dont id = 3, sur la formation id = 5, en EN_ATTENTE,
@@ -233,18 +234,68 @@ INSERT INTO evenement (id_evenement, date_debut, date_fin, est_retard, stagiaire
 VALUES (1, '2025-10-15', '2025-10-16', FALSE, 5, 1, NULL);
 
 
--- 7. DOCUMENTS OBLIGATOIRES (type_document = enum en string, respecte la casse de l'enum)
+-- 7. DOCUMENTS OBLIGATOIRES - Complément cohérent pour chaque formation
+
+-- Formation 1 : Dév Web Front-End
 INSERT INTO liste_documents_obligatoires (id, formation_id, type_document)
-VALUES (1, 1, 'JUSTIFICATIF'),
-       (2, 2, 'LETTRE_MOTIVATION'),
-       (3, 3, 'CV'),
-       (4, 4, 'AUTRE'),
-       (5, 5, 'JUSTIFICATIF'),
-       (6, 6, 'LETTRE_MOTIVATION'),
-       (7, 7, 'CV'),
-       (8, 8, 'AUTRE'),
-       (9, 9, 'JUSTIFICATIF'),
-       (10, 10, 'LETTRE_MOTIVATION');
+VALUES (11, 1, 'CV'),
+       (12, 1, 'LETTRE_MOTIVATION'),
+       (13, 1, 'PORTFOLIO');
+
+-- Formation 2 : Dév Web Back-End
+INSERT INTO liste_documents_obligatoires (id, formation_id, type_document)
+VALUES (14, 2, 'CV'),
+       (15, 2, 'DIPLOME_BAC'),
+       (16, 2, 'PIECE_IDENTITE');
+
+-- Formation 3 : Full Stack Web
+INSERT INTO liste_documents_obligatoires (id, formation_id, type_document)
+VALUES (17, 3, 'CV'),
+       (18, 3, 'LETTRE_MOTIVATION'),
+       (19, 3, 'DIPLOME_BAC_2'),
+       (20, 3, 'PORTFOLIO');
+
+-- Formation 4 : Sécurité Réseaux
+INSERT INTO liste_documents_obligatoires (id, formation_id, type_document)
+VALUES (21, 4, 'PIECE_IDENTITE'),
+       (22, 4, 'DIPLOME_BAC'),
+       (23, 4, 'ATTEST_RESP_CIVILE');
+
+-- Formation 5 : Pentesting
+INSERT INTO liste_documents_obligatoires (id, formation_id, type_document)
+VALUES (24, 5, 'CV'),
+       (25, 5, 'JUSTIF_SITUATION'),
+       (26, 5, 'DIPLOME_BAC_3');
+
+-- Formation 6 : Java Spring
+INSERT INTO liste_documents_obligatoires (id, formation_id, type_document)
+VALUES (27, 6, 'CV'),
+       (28, 6, 'DIPLOME_BAC_2'),
+       (29, 6, 'PORTFOLIO');
+
+-- Formation 7 : Cyberdéfense et SOC
+INSERT INTO liste_documents_obligatoires (id, formation_id, type_document)
+VALUES (30, 7, 'PIECE_IDENTITE'),
+       (31, 7, 'CV'),
+       (32, 7, 'ATTEST_RESP_CIVILE');
+
+-- Formation 8 : PHP / Laravel
+INSERT INTO liste_documents_obligatoires (id, formation_id, type_document)
+VALUES (33, 8, 'CV'),
+       (34, 8, 'LETTRE_MOTIVATION'),
+       (35, 8, 'PORTFOLIO');
+
+-- Formation 9 : Sécu Applis Web
+INSERT INTO liste_documents_obligatoires (id, formation_id, type_document)
+VALUES (36, 9, 'CV'),
+       (37, 9, 'JUSTIFICATIF'),
+       (38, 9, 'ATTEST_RESP_CIVILE');
+
+-- Formation 10 : Initiation cybersécurité
+INSERT INTO liste_documents_obligatoires (id, formation_id, type_document)
+VALUES (39, 10, 'CV'),
+       (40, 10, 'PIECE_IDENTITE');
+
 
 
 

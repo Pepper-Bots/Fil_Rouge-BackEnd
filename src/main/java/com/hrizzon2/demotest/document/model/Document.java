@@ -2,6 +2,7 @@ package com.hrizzon2.demotest.document.model;
 
 import com.hrizzon2.demotest.document.model.enums.TypeDocument;
 import com.hrizzon2.demotest.evenement.model.Evenement;
+import com.hrizzon2.demotest.formation.model.Formation;
 import com.hrizzon2.demotest.inscription.model.Dossier;
 import com.hrizzon2.demotest.user.model.Stagiaire;
 import jakarta.persistence.*;
@@ -64,4 +65,7 @@ public class Document {
      */
     private String urlFichier;
 
+    @ManyToOne
+    @JoinColumn(name = "formation_id_formation")
+    public Formation formation;
 }

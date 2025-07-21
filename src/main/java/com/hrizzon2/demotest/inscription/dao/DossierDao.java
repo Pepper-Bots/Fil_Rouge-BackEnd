@@ -20,6 +20,7 @@ public interface DossierDao extends JpaRepository<Dossier, Integer> {
      */
     Optional<Dossier> findByStagiaireId(Integer stagiaireId);
 
+    Optional<Dossier> findByStagiaireIdAndFormationId(Integer stagiaire_id, Integer formation_id);
 }
 
 // TODO **Conserver** :

@@ -216,11 +216,24 @@ public class DossierService {
      *
      * @param dossierId l'identifiant du dossier à vérifier
      */
+    @Transactional
     public void verifierEtMettreAJourStatut(Integer dossierId) {
         // Implémentation :
         // - récupérer dossier + documents
         // - vérifier état des documents (validé / non validé)
         // - mettre à jour statut dossier et sauvegarder
+        Dossier dossier = getById(dossierId);
+        boolean allValid = dossier.getDocuments().stream()
+                .allMatch(doc -> doc.getStatut().getNom().equalsIgnoreCase("VALIDÉ"));
+
+        String nouveauStatut = allValid ? "COMPLET" : "INCOMPLET";
+        StatutDossier statut = statutDossierDao.findByNomStatut(nouveauStatut)
+                .orElseThrow(() -> new EntityNotFoundException("Statut '" + nouveauStatut + "' introuvable"));
+
+        dossier.setStatutDossier(statut);
+        dossier.setDerniereMiseAJour(LocalDateTime.now());
+
+        dossierDao.save(dossier);
     }
 
     /**
@@ -244,5 +257,29 @@ public class DossierService {
     public int countRetards(int stagiaireId) {
         // Implémentation : requête DAO ou calcul métier sur les évènements retards
         return 0; // placeholder
+    }
+
+    @Transactional
+    public void creerOuAssocierDossier(Document document, Integer stagiaireId) {
+        Dossier dossier = dossierDao
+                .findByStagiaireIdAndFormationId(stagiaireId, document.getFormation().getId()) // ou un champ équivalent
+                .orElseGet(() -> {
+                    Dossier nouveau = new Dossier();
+                    nouveau.setStagiaire(document.getStagiaire());
+                    nouveau.setFormation(document.getFormation());
+
+                    StatutDossier statut = statutDossierDao.findByNomStatut("EN_ATTENTE")
+                            .orElseThrow(() -> new EntityNotFoundException("Statut 'EN_ATTENTE' introuvable"));
+                    nouveau.setStatutDossier(statut);
+
+                    LocalDateTime now = LocalDateTime.now();
+                    nouveau.setDateCreation(now);
+                    nouveau.setDateModification(now);
+                    nouveau.setDerniereMiseAJour(now);
+
+                    return dossierDao.save(nouveau);
+                });
+
+        document.setDossier(dossier);
     }
 }
