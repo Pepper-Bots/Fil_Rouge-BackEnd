@@ -1,10 +1,10 @@
 package com.hrizzon2.demotest.formation.model;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.hrizzon2.demotest.document.model.enums.TypeDocument;
 import com.hrizzon2.demotest.formation.model.enums.NiveauFormation;
 import com.hrizzon2.demotest.inscription.model.Dossier;
 import com.hrizzon2.demotest.inscription.model.Inscription;
-import com.hrizzon2.demotest.document.model.enums.TypeDocument;
 import com.hrizzon2.demotest.view.AffichageDossier;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -60,7 +60,9 @@ public class Formation {
     @OneToMany(mappedBy = "formation", fetch = FetchType.LAZY)
     private List<ListeDocumentsObligatoires> listeDocumentsObligatoires;
 
+    //  une méthode utilitaire qui rend l'entité Formation facile à manipuler.
     @Transient
+    @JsonView(AffichageDossier.Formation.class)
     public List<TypeDocument> getListeDocumentsObligatoires() {
         if (listeDocumentsObligatoires == null) return List.of();
 

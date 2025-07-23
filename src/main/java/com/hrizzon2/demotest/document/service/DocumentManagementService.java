@@ -7,6 +7,7 @@ import com.hrizzon2.demotest.document.model.StatutDocument;
 import com.hrizzon2.demotest.document.model.enums.TypeDocument;
 import com.hrizzon2.demotest.document.util.TypeDocumentValidator;
 import com.hrizzon2.demotest.evenement.service.EvenementService;
+import com.hrizzon2.demotest.formation.model.Formation;
 import com.hrizzon2.demotest.inscription.service.DossierService;
 import com.hrizzon2.demotest.notification.service.NotificationService;
 import com.hrizzon2.demotest.user.dao.StagiaireDao;
@@ -53,13 +54,13 @@ public class DocumentManagementService {
     }
 
     @Transactional
-    public Document uploadDocument(Integer stagiaireId, MultipartFile fichier, TypeDocument type) throws IOException {
+    public Document uploadDocument(Integer stagiaireId, MultipartFile fichier, TypeDocument type, Formation formation) throws IOException {
 
         Stagiaire stagiaire = stagiaireDao.findById(stagiaireId)
                 .orElseThrow(() -> new IllegalArgumentException("Stagiaire introuvable"));
 
         // Valider le type
-        if (!typeDocumentValidator.isTypeAutorise(type)) {
+        if (!typeDocumentValidator.isTypeAutorise(formation, type)) {
             throw new IllegalArgumentException("Type de document non autorisé");
         }
 
