@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.hrizzon2</groupId>
     <artifactId>admin_mns_back</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.3</version>
     <name>admin_mns_back</name>
     <description>admin_mns_back</description>
     <url/>
@@ -101,10 +101,10 @@
         </dependency>
     </dependencies>
 
-
     <build>
         <finalName>${final.jar.name}</finalName>
         <plugins>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -142,8 +142,11 @@
                 </configuration>
             </plugin>
             <plugin>
+                <!-- Ce bloc permet de repackager app.jar pour qu’il soit auto-exécutable avec embedded Tomcat                -->
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>3.4.3</version>
+
                 <configuration>
                     <excludes>
                         <exclude>
@@ -151,7 +154,16 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                    <finalName>${final.jar.name}</finalName>
+
                 </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

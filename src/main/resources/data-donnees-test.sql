@@ -206,7 +206,8 @@ VALUES (1, 'DSR001', 2, '2025-01-05 09:00:00', '2025-01-07 14:00:00', '2025-01-0
        (23, 'DSR023', 1, '2025-03-20 11:30:00', '2025-04-06 15:10:00', '2025-01-07 14:00:00', 27, 3, 2),-- Développement Web
        (24, 'DSR024', 1, '2025-03-20 11:30:00', '2025-04-06 15:10:00', '2025-01-07 14:00:00', 28, 3, 2),-- Développement Web
        (25, 'DSR025', 1, '2025-03-20 11:30:00', '2025-04-06 15:10:00', '2025-01-07 14:00:00', 29, 3,
-        2); -- Développement Web
+        2);
+-- Développement Web
 
 
 -- Données de test avec formation_id_formation
@@ -226,7 +227,6 @@ INSERT INTO inscription (id_inscription, date_inscription, date_modification, da
                          stagiaire_id,
                          formation_id, dossier_id)
 VALUES (1, CURDATE(), NULL, NULL, 'EN_ATTENTE', 5, 1, 1);
-
 
 
 
@@ -298,7 +298,6 @@ VALUES (39, 10, 'CV'),
 
 
 
-
 INSERT INTO piece_jointe_stagiaire (id, stagiaire_id, formation_id, type_document, chemin_fichier, statut_document_id)
 VALUES (1, 5, 1, 'CV', 'cv_roman_dupont.pdf', 1),
        (2, 5, 1, 'JUSTIFICATIF', 'justificatif_roman_dupont.pdf', 2);
@@ -355,7 +354,7 @@ VALUES (1, 5, 1, 'CV', 'cv_roman_dupont.pdf', 1),
 #        (28, 4, 20);
 
 SELECT email, enabled
-FROM user
+FROM user;
 # WHERE email = 'ton.email@test.com';
 
 SELECT *
@@ -368,6 +367,10 @@ UPDATE user
 SET password = '$2a$10$uDcN81kQoUSbZ6Inyga.dOoM5RI1Ihi.lSAJg54qlG3Z5sfI4ax/S'
 WHERE email = 'alice@example.com';
 
-UPDATE user SET enabled = true WHERE email = 'bruno@example.com';
+UPDATE user
+SET enabled = true
+WHERE email = 'bruno@example.com';
 
-SELECT * FROM user WHERE email = 'bruno@example.com';
+SELECT *
+FROM user
+WHERE email = 'bruno@example.com';

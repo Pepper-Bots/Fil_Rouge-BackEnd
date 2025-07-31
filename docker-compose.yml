@@ -50,9 +50,10 @@ services:
 
   db:
     image: mysql:5.7
-    restart: "no"
+    restart: ""
     environment:
       MYSQL_ROOT_PASSWORD: 'root'
+      MYSQL_DATABASE: spring_td
     #    expose:
     #      - "3306"
     volumes:
