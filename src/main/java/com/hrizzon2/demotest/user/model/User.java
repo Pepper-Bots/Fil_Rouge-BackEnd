@@ -49,7 +49,7 @@ public class User {
 
 
     @Column(name = "enabled", nullable = false)
-    private Boolean enabled = false;
+    private Boolean enabled = false; // TODO garder ce type Boolean objet qui peut etre undifined ? ou preferer un boolean false || true ?
 
     /**
      * Nom de famille de l'utilisateur.

@@ -36,14 +36,23 @@ services:
       - ${PUBLIC_UPLOAD_FOLDER}:/public-upload
       - ${PRIVATE_UPLOAD_FOLDER}:/private-upload
     environment:
-      - SPRING_DATA_MONGODB_URI=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo:27017/${MONGO_DB_NAME}?authSource=admin
-      - PUBLIC_UPLOAD_FOLDER=${PUBLIC_UPLOAD_FOLDER}
-      - PRIVATE_UPLOAD_VOLUME=${PRIVATE_UPLOAD_FOLDER}
+      # Configuration MySQL (inchangée)
       - DB_HOST=db
       - DB_PORT=3306
       - DB_USER=root
       - DB_PASSWORD=root
       - DB_NAME=spring_td
+
+      # Configuration MongoDB (NOUVELLE APPROCHE - variables individuelles)
+      - MONGO_HOST=mongo
+      - MONGO_PORT=27017
+      - MONGO_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - MONGO_DATABASE=${MONGO_DB_NAME}
+
+      # Autres variables (inchangées)
+      - PUBLIC_UPLOAD_FOLDER=${PUBLIC_UPLOAD_FOLDER}
+      - PRIVATE_UPLOAD_VOLUME=${PRIVATE_UPLOAD_FOLDER}
     networks:
       - proxy-network
       - backend-network
@@ -54,12 +63,10 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: 'root'
       MYSQL_DATABASE: spring_td
-    #    expose:
-    #      - "3306"
     volumes:
       - data:/var/lib/mysql
     ports:
-      - "3306:3306" # decommenter pour accéder a distance à la bdd
+      - "3306:3306" # Penser à decommenter pour accéder a distance à la bdd
     networks:
       - backend-network
 

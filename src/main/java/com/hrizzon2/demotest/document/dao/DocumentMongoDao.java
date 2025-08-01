@@ -4,14 +4,18 @@ import com.hrizzon2.demotest.document.model.DocumentMongo;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
-//  stockage complémentaire pour certaines données : métadonnées, logs, éventuellement fichiers eux-mêmes.
+import java.util.List;
+import java.util.Optional;
+
+//  Stockage complémentaire pour certaines données : métadonnées, logs, éventuellement fichiers eux-mêmes.
 // Appeler ton repo Mongo pour stocker les métadonnées :
 
 @Repository
 public interface DocumentMongoDao extends MongoRepository<DocumentMongo, String> {
 
-    // Après l’upload et la sauvegarde fichier :
-    DocumentMongo docMongo = new DocumentMongo();
-    // ... set tous les champs
-//    documentMongoDao.save(docMongo);
+    List<DocumentMongo> findByStagiaireId(String stagiaireId);
+
+    List<DocumentMongo> findByStatut(String statut);
+
+    Optional<DocumentMongo> findByCheminStorage(String cheminStorage);
 }

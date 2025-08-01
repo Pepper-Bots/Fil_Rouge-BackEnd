@@ -1,7 +1,9 @@
 package com.hrizzon2.demotest.document.service;
 
 import com.hrizzon2.demotest.document.dao.DocumentDao;
+import com.hrizzon2.demotest.document.dao.DocumentMongoDao;
 import com.hrizzon2.demotest.document.dao.StatutDocumentDao;
+import com.hrizzon2.demotest.document.model.AuditAction;
 import com.hrizzon2.demotest.document.model.Document;
 import com.hrizzon2.demotest.document.model.StatutDocument;
 import com.hrizzon2.demotest.document.model.enums.TypeDocument;
@@ -19,6 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Date;
 
 @Service
 public class DocumentManagementService {
@@ -31,6 +35,7 @@ public class DocumentManagementService {
     private final DocumentStorageService documentStorageService;
     private final StagiaireDao stagiaireDao;
     private final TypeDocumentValidator typeDocumentValidator;
+    private final DocumentMongoDao documentMongoDao;
 
     @Autowired
     public DocumentManagementService(
@@ -41,7 +46,8 @@ public class DocumentManagementService {
             StatutDocumentDao statutDocumentDao,
             DocumentStorageService documentStorageService,
             StagiaireDao stagiaireDao,
-            TypeDocumentValidator typeDocumentValidator
+            TypeDocumentValidator typeDocumentValidator,
+            DocumentMongoDao documentMongoDao
     ) {
         this.documentDao = documentDao;
         this.dossierService = dossierService;
@@ -51,20 +57,22 @@ public class DocumentManagementService {
         this.documentStorageService = documentStorageService;
         this.stagiaireDao = stagiaireDao;
         this.typeDocumentValidator = typeDocumentValidator;
+        this.documentMongoDao = documentMongoDao;
     }
 
     @Transactional
     public Document uploadDocument(Integer stagiaireId, MultipartFile fichier, TypeDocument type, Formation formation) throws IOException {
 
+        // 1. Validation du stagiaire
         Stagiaire stagiaire = stagiaireDao.findById(stagiaireId)
                 .orElseThrow(() -> new IllegalArgumentException("Stagiaire introuvable"));
 
-        // Valider le type
+        // 2. Valider le type de document pour cette formation
         if (!typeDocumentValidator.isTypeAutorise(formation, type)) {
-            throw new IllegalArgumentException("Type de document non autorisé");
+            throw new IllegalArgumentException("Type de document non autorisé pour cette formation");
         }
 
-        // Vérifier s’il existe déjà un document de ce type non rejeté
+        // 3. Vérifier s'il existe déjà un document de ce type non rejeté
         boolean dejaSoumis = documentDao
                 .findByDossierStagiaireIdAndType(stagiaireId, type)
                 .stream()
@@ -74,22 +82,33 @@ public class DocumentManagementService {
             throw new IllegalArgumentException("Un document de ce type est déjà soumis.");
         }
 
-        // Stockage MongoDB (GridFS)
-        String fileId = documentStorageService.saveFile(fichier);
+        // 4. Stockage avec synchronisation MongoDB (GridFS + DocumentMongo)
+        String fileId = documentStorageService.saveFile(fichier, stagiaireId.toString(),
+                stagiaire.getLastName());
 
-        // Création du document
+        // 5. Création Document MySQL
         Document document = new Document();
         document.setStagiaire(stagiaire);
         document.setNomFichier(fichier.getOriginalFilename());
         document.setType(type);
         document.setStatut(getStatut("EN_ATTENTE"));
         document.setDateDepot(LocalDateTime.now());
-        document.setUrlFichier(fileId);  // <- Utilisation de GridFS
+        document.setUrlFichier(fileId);
+        document.setFormation(formation);
 
-        // Lier à un dossier
+        // 6. Lier à un dossier
         dossierService.creerOuAssocierDossier(document, stagiaireId);
 
-        return documentDao.save(document);
+        // 7. Sauvegarder dans MySQL
+        Document savedDoc = documentDao.save(document);
+
+        // 8. Mise à jour DocumentMongo avec l'ID MySQL et informations supplémentaires
+        updateDocumentMongo(fileId, savedDoc);
+
+        // 9. Audit de l'upload
+        addAuditAction(fileId, "UPLOAD", stagiaire.getLastName());
+
+        return savedDoc;
     }
 
     @Transactional
@@ -97,31 +116,54 @@ public class DocumentManagementService {
         Document document = getDocumentEnAttente(documentId);
         document.setStatut(getStatut("VALIDÉ"));
 
+        // Synchronisation MongoDB
+        updateDocumentMongoStatus(document.getUrlFichier(), "VALIDÉ");
+
+        // Logique métier existante...
         if (document.getDossier() != null)
             dossierService.verifierEtMettreAJourStatut(document.getDossier().getId());
+
+        // Audit dans MongoDB
+        addAuditAction(document.getUrlFichier(), "VALIDATION", "Système");
 
         if (document.getEvenement() != null)
             evenementService.marquerJustifie(document.getEvenement().getId());
 
         notificationService.notifyStagiaireValidationDocument(document.getStagiaire().getId(), document.getId(), true);
 
+
         return documentDao.save(document);
     }
 
-    @Transactional
-    public Document rejeterDocument(Integer documentId) {
-        Document document = getDocumentEnAttente(documentId);
-        document.setStatut(getStatut("REJETÉ"));
+    private void updateDocumentMongo(String fileId, Document document) {
+        documentMongoDao.findById(fileId).ifPresent(docMongo -> {
+            docMongo.setType(document.getType().toString());
+            docMongo.setStatut(document.getStatut().getNom());
+            documentMongoDao.save(docMongo);
+        });
+    }
 
-        if (document.getDossier() != null)
-            dossierService.verifierEtMettreAJourStatut(document.getDossier().getId());
+    private void updateDocumentMongoStatus(String fileId, String newStatus) {
+        documentMongoDao.findById(fileId).ifPresent(docMongo -> {
+            docMongo.setStatut(newStatus);
+            documentMongoDao.save(docMongo);
+        });
+    }
 
-        if (document.getEvenement() != null)
-            evenementService.marquerNonJustifie(document.getEvenement().getId());
+    private void addAuditAction(String fileId, String action, String par) {
+        documentMongoDao.findById(fileId).ifPresent(docMongo -> {
+            if (docMongo.getAudit() == null) {
+                docMongo.setAudit(new ArrayList<>());
+            }
 
-        notificationService.notifyStagiaireValidationDocument(document.getStagiaire().getId(), document.getId(), false);
+            AuditAction auditAction = new AuditAction();
+            auditAction.setAction(action);
+            auditAction.setDate(new Date());
+            auditAction.setPar(par);
 
-        return documentDao.save(document);
+            docMongo.getAudit().add(auditAction);
+            documentMongoDao.save(docMongo);
+        });
     }
 
     private Document getDocumentEnAttente(Integer id) {
@@ -136,5 +178,30 @@ public class DocumentManagementService {
         return statutDocumentDao.findByNom(nom)
                 .orElseThrow(() -> new IllegalStateException("Statut " + nom + " introuvable"));
     }
+
+    @Transactional
+    public Document rejeterDocument(Integer documentId) {
+        Document document = getDocumentEnAttente(documentId);
+        document.setStatut(getStatut("REJETÉ"));
+
+        // Synchronisation MongoDB
+        updateDocumentMongoStatus(document.getUrlFichier(), "REJETÉ");
+
+        // Logique métier
+        if (document.getDossier() != null)
+            dossierService.verifierEtMettreAJourStatut(document.getDossier().getId());
+
+        if (document.getEvenement() != null)
+            evenementService.marquerNonJustifie(document.getEvenement().getId());
+
+        // Audit dans MongoDB
+        addAuditAction(document.getUrlFichier(), "REJET", "Système");
+
+        // Notification
+        notificationService.notifyStagiaireValidationDocument(document.getStagiaire().getId(), document.getId(), false);
+
+        return documentDao.save(document);
+    }
+
 
 }
