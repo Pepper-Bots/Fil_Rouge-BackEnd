@@ -28,12 +28,13 @@ public class AppUserDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
+        // Attribution des rôles selon le type d'utilisateur
         if (user instanceof Stagiaire) {
             return List.of(new SimpleGrantedAuthority("ROLE_STAGIAIRE"));
         } else if (user instanceof Admin) {
             return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"));
         } else {
-            return List.of(); // Aucun rôle si le type est inconnu
+            return List.of(); // Aucun rôle si le type est inconnu.
         }
     }
 
@@ -62,17 +63,19 @@ public class AppUserDetails implements UserDetails {
 //        return true; // idem
 //    }
 
-    @Override
-    public boolean isEnabled() {
-        return user.getEnabled(); // tu peux ajouter un champ dans User si besoin
-    }
-
+    // Gestion spécifique pour forcer le changement de mot de passe
     public boolean isPremiereConnexion() {
         if (this.user instanceof Stagiaire stagiaire) {
             return stagiaire.isPremiereConnexion();
         }
         return false;
     }
+
+    @Override
+    public boolean isEnabled() {
+        return user.getEnabled(); // tu peux ajouter un champ dans User si besoin
+    }
+
 
     public String getRole() {
         return ((User) this.getUser()).getNomRole(); // ou .getNomRole().toString()
