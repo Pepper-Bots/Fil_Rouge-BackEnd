@@ -34,6 +34,13 @@ public class FormationController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    // À ajouter dans FormationController
+    @GetMapping("/stagiaire/{stagiaireId}/formations")
+    public ResponseEntity<List<Formation>> getFormationsStagiaire(@PathVariable Integer stagiaireId) {
+        List<Formation> formations = formationService.findFormationsByStagiaire(stagiaireId);
+        return ResponseEntity.ok(formations);
+    }
+
     @PostMapping("/formation")
     public ResponseEntity<Formation> createFormation(@RequestBody @Valid Formation formation) {
         Formation saved = formationService.save(formation);

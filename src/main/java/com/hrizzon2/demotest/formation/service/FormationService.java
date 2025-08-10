@@ -55,4 +55,8 @@ public class FormationService {
     public boolean isFormationComplete(Formation formation, int capaciteMax) {
         return countStagiairesInFormation(formation) >= capaciteMax;
     }
+
+    public List<Formation> findFormationsByStagiaire(Integer stagiaireId) {
+        return
+    }
 }

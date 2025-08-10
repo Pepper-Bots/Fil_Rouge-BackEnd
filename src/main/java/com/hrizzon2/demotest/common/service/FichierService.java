@@ -99,5 +99,14 @@ public class FichierService {
     }
 
     public void deleteFile(String nomFichier) {
+        try {
+            Path fichierPath = Paths.get(privateUploadFolder, nomFichier);
+            if (Files.exists(fichierPath)) {
+                Files.delete(fichierPath);
+            }
+        } catch (Exception e) {
+            // Log l'erreur mais ne pas faire échouer l'opération
+            e.printStackTrace();
+        }
     }
 }

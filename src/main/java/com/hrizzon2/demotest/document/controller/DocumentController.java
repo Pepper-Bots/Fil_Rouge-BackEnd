@@ -2,7 +2,9 @@ package com.hrizzon2.demotest.document.controller;
 
 import com.hrizzon2.demotest.annotation.ValidFile;
 import com.hrizzon2.demotest.common.service.FichierService;
+import com.hrizzon2.demotest.document.dto.DocumentStatutUpdateDto;
 import com.hrizzon2.demotest.document.dto.DocumentSummaryDto;
+import com.hrizzon2.demotest.document.model.Document;
 import com.hrizzon2.demotest.document.model.enums.TypeDocument;
 import com.hrizzon2.demotest.evenement.service.EvenementDocumentService;
 import com.hrizzon2.demotest.formation.model.Formation;
@@ -13,11 +15,14 @@ import com.hrizzon2.demotest.inscription.service.DossierService;
 import com.hrizzon2.demotest.user.model.Stagiaire;
 import com.hrizzon2.demotest.user.service.Stagiaire.StagiaireService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,6 +30,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Contrôleur REST pour la gestion des documents rattachés à un dossier.
@@ -156,6 +162,61 @@ public class DocumentController {
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    // À ajouter dans DocumentController
+    @GetMapping("/download/{documentId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('RESPONSABLE')")
+    public ResponseEntity<ByteArrayResource> downloadDocument(@PathVariable Integer documentId) {
+        try {
+            // Récupérer le document
+            Optional<Document> documentOpt = dossierDocumentService.findDocumentById(documentId);
+            if (documentOpt.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            Document document = documentOpt.get();
+
+            // Charger le fichier
+            byte[] fileContent = fichierService.getImageByName(document.getNomFichier());
+            ByteArrayResource resource = new ByteArrayResource(fileContent);
+
+            // Déterminer le type MIME
+            Path filePath = fichierService.getImagePath(document.getNomFichier());
+            String mimeType = Files.probeContentType(filePath);
+            if (mimeType == null) mimeType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(mimeType))
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"" + document.getNomFichier() + "\"")
+                    .body(resource);
+
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    /**
+     * Validation d'un document par un administrateur
+     */
+    @PutMapping("/valider/{documentId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> validerDocument(
+            @PathVariable Integer documentId,
+            @RequestBody @Valid DocumentStatutUpdateDto validationDto) {
+
+        try {
+            dossierDocumentService.validerDocument(documentId,
+                    validationDto.getStatut(),
+                    validationDto.getCommentaire());
+            return ResponseEntity.ok("Document validé avec succès");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erreur lors de la validation : " + e.getMessage());
         }
     }
 }

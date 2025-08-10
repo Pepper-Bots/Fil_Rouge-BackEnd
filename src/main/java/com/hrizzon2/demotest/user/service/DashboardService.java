@@ -62,7 +62,7 @@ public class DashboardService {
                 .map(inscription -> {
                     Stagiaire stagiaire = inscription.getStagiaire();
                     InscriptionAttenteDto att = new InscriptionAttenteDto();
-                    att.setStagiaireNom(stagiaire.getFirstName() + " " + stagiaire.getLastName());
+                    att.setNomStagiaire(stagiaire.getFirstName() + " " + stagiaire.getLastName());
                     att.setFormationNom(inscription.getFormation().getNom());
                     att.setStatutDossier(inscription.getStatut().toString());
                     return att;
@@ -77,7 +77,7 @@ public class DashboardService {
                 .map(document -> {
                     DocumentAttenteDto doc = new DocumentAttenteDto();
                     doc.setNomFichier(document.getNomFichier());
-                    doc.setStagiaireNom(document.getStagiaire().getFirstName() + " " + document.getStagiaire().getLastName());
+                    doc.setNomStagiaire(document.getStagiaire().getFirstName() + " " + document.getStagiaire().getLastName());
                     doc.setUrlFichier(document.getUrlFichier());
                     return doc;
                 })

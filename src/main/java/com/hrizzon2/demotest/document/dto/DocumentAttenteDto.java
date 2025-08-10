@@ -8,6 +8,6 @@ import lombok.Setter;
 public class DocumentAttenteDto {
 
     private String nomFichier;
-    private String stagiaireNom;
+    private String nomStagiaire;
     private String urlFichier;
 }

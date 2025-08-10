@@ -9,4 +9,7 @@ public interface FormationDao extends JpaRepository<Formation, Integer> {
 
     // Exemple : compter stagiaires par formation
     int countStagiairesById(Integer formationId);
+
+//    findAll() pour la dropdown des formations
+//    findById() pour récupérer une formation spécifique
 }

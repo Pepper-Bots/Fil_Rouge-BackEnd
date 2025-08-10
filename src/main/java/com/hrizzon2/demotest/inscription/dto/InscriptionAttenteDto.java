@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class InscriptionAttenteDto {
-    private String stagiaireNom;
+    private String nomStagiaire;
     private String formationNom;
     private String statutDossier;
 }

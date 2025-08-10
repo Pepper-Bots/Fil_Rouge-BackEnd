@@ -3,7 +3,7 @@ package com.hrizzon2.demotest.document.dto;
 import lombok.Getter;
 import lombok.Setter;
 
-// TODO DTO pas utilisé !!!
+// TODO utilisé dans StagiaireDashboardDto
 
 @Getter
 @Setter

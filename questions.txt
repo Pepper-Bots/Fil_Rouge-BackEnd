@@ -1031,3 +1031,13 @@ GESTION STOCKAGE DOCUMENTS
 - /services/
     - DocumentService (gère le SQL, la complétude, etc.)
     - DocumentStorageService (gère GridFS si tu veux tester)
+
+-----------------------
+
+LOGIQUE DE PROGRESSION - UPLAOD DOCUMENT :
+
+// Pseudo-code côté service
+1. Récupérer ListeDocumentsObligatoires pour la formation
+2. Récupérer Documents déjà envoyés par le stagiaire
+3. Compter documents avec statut "VALIDE"
+4. Progression = documentsValides / documentsRequis * 100

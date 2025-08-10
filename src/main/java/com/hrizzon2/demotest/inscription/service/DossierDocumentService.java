@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DossierDocumentService {
@@ -222,4 +223,11 @@ public class DossierDocumentService {
     }
 
 
+    public Optional<Document> findById(Integer documentId) {
+        return documentDao.findById(documentId);
+    }
+
+    public Optional<Document> findDocumentById(Integer documentId) {
+        return documentDao.findById(documentId);
+    }
 }
