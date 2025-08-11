@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 // Ce DTO n’est pas directement le statut d’un document,
 // mais plutôt la vue d’un document transmis pour l’UI (statut, obligatoire, fichier, etc.)
 
+// Affichage liste de documents ✅
+
 @Getter
 @Setter
 public class DocumentSummaryDto {

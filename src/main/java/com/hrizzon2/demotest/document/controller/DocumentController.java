@@ -32,6 +32,10 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
+//✅ Gestion MySQL - Intégration avec vos entités JPA
+//✅ Upload via services - Utilise DossierDocumentService et FichierService
+//✅ Logique métier - Intégré au système de dossiers et formations
+
 /**
  * Contrôleur REST pour la gestion des documents rattachés à un dossier.
  * À privilégier : la nouvelle mécanique "PieceJointeStagiaire".
@@ -218,6 +222,16 @@ public class DocumentController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Erreur lors de la validation : " + e.getMessage());
         }
+    }
+
+    /**
+     * Liste des documents en attente de validation (pour les admins)
+     */
+    @GetMapping("/en-attente")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<List<Document>> getDocumentsEnAttente() {
+        List<Document> documents = dossierDocumentService.getPendingDocuments();
+        return ResponseEntity.ok(documents);
     }
 }
 

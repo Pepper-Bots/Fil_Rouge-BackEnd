@@ -3,6 +3,7 @@ package com.hrizzon2.demotest.formation.service;
 
 import com.hrizzon2.demotest.formation.dao.FormationDao;
 import com.hrizzon2.demotest.formation.model.Formation;
+import com.hrizzon2.demotest.inscription.dao.InscriptionDao;
 import com.hrizzon2.demotest.user.model.Stagiaire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,10 +16,12 @@ import java.util.stream.Collectors;
 public class FormationService {
 
     private final FormationDao formationDao;
+    private final InscriptionDao inscriptionDao;
 
     @Autowired
-    public FormationService(FormationDao formationDao) {
+    public FormationService(FormationDao formationDao, InscriptionDao inscriptionDao) {
         this.formationDao = formationDao;
+        this.inscriptionDao = inscriptionDao;
     }
 
     public List<Formation> findAll() {
@@ -56,7 +59,8 @@ public class FormationService {
         return countStagiairesInFormation(formation) >= capaciteMax;
     }
 
+    // ✅ Version correcte
     public List<Formation> findFormationsByStagiaire(Integer stagiaireId) {
-        return
+        return inscriptionDao.findFormationsByStagiaire(stagiaireId);
     }
 }

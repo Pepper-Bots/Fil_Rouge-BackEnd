@@ -235,22 +235,22 @@ public class AdminController {
         return ResponseEntity.ok(pending);
     }
 
-    /**
-     * Valide un document soumis (change son statut en VALIDÉ).
-     * Après validation, on déclenche une vérification du dossier complet du stagiaire.
-     *
-     * @param documentId ID du document à valider
-     */
-    @IsAdmin
-    @PatchMapping("/admin/documents/{documentId}/valider")
-    public ResponseEntity<Void> validerDocument(@PathVariable Integer documentId) {
-        try {
-            dossierDocumentService.validerDocument(documentId);
-            return ResponseEntity.noContent().build();
-        } catch (IllegalArgumentException ex) {
-            return ResponseEntity.notFound().build();
-        }
-    }
+//    /**
+//     * Valide un document soumis (change son statut en VALIDÉ).
+//     * Après validation, on déclenche une vérification du dossier complet du stagiaire.
+//     *
+//     * @param documentId ID du document à valider
+//     */
+//    @IsAdmin
+//    @PatchMapping("/admin/documents/{documentId}/valider")
+//    public ResponseEntity<Void> validerDocument(@PathVariable Integer documentId) {
+//        try {
+//            dossierDocumentService.validerDocument(documentId);
+//            return ResponseEntity.noContent().build();
+//        } catch (IllegalArgumentException ex) {
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
 
     /**
      * Rejette un document soumis (change son statut en REJETÉ).

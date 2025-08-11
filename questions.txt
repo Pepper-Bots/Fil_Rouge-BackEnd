@@ -1041,3 +1041,26 @@ LOGIQUE DE PROGRESSION - UPLAOD DOCUMENT :
 2. Récupérer Documents déjà envoyés par le stagiaire
 3. Compter documents avec statut "VALIDE"
 4. Progression = documentsValides / documentsRequis * 100
+
+-------------------------
+
+Architecture feature Document :
+
+
+📁 document/controller/
+  └── DocumentController.java ← Un seul contrôleur pour tout !
+
+📁 document/service/
+  └── DossierDocumentService.java ← Toute la logique métier
+
+📁 document/dto/
+  ├── DocumentSummaryDto.java
+  ├── DocumentStatutUpdateDto.java
+  └── DocumentAttenteDto.java
+
+  DocumentController      → Gestion principale (MySQL + logique métier)
+  DocumentUploadController → Système d'audit MongoDB (optionnel)
+
+  📁 document/controller/
+    ├── DocumentController.java        ← Principal (MySQL)
+    └── DocumentUploadController.java  ← Audit (MongoDB)

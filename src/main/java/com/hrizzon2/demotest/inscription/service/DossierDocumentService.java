@@ -182,7 +182,7 @@ public class DossierDocumentService {
         return true;
     }
 
-    public void validerDocument(Integer documentId) {
+    public void validerDocument(Integer documentId, String statut, String commentaire) {
         Document doc = documentDao.findById(documentId)
                 .orElseThrow(() -> new IllegalArgumentException("Document introuvable"));
 
@@ -190,10 +190,21 @@ public class DossierDocumentService {
             throw new IllegalArgumentException("Document non en attente");
         }
 
-        StatutDocument statutValide = statutDocumentDao.findByNom("VALIDÉ")
-                .orElseThrow(() -> new IllegalStateException("Statut VALIDÉ introuvable"));
+        // Gestion des différents statuts possibles
+        StatutDocument nouveauStatut;
+        if ("VALIDÉ".equals(statut) || "VALIDE".equals(statut)) {
+            nouveauStatut = statutDocumentDao.findByNom("VALIDÉ")
+                    .orElseThrow(() -> new IllegalStateException("Statut VALIDÉ introuvable"));
+        } else if ("REFUSÉ".equals(statut) || "REFUSE".equals(statut) || "REJETÉ".equals(statut)) {
+            nouveauStatut = statutDocumentDao.findByNom("REFUSÉ")
+                    .orElseThrow(() -> new IllegalStateException("Statut REFUSÉ introuvable"));
+        } else {
+            throw new IllegalArgumentException("Statut non valide : " + statut);
+        }
 
-        doc.setStatut(statutValide);
+        // Mise à jour du document
+        doc.setStatut(nouveauStatut);
+        doc.setCommentaire(commentaire); // Ajout du commentaire
         documentDao.save(doc);
 
         // Recalcul du statut dossier etc. à implémenter selon besoin

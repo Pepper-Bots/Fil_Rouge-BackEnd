@@ -15,6 +15,10 @@ import java.io.File;
 import java.util.Date;
 import java.util.List;
 
+//✅ Gestion MongoDB - Stockage de métadonnées et audit
+//✅ Upload sur disque - Sauvegarde directe des fichiers
+//✅ Fonctionnement dégradé - Continue même si MongoDB est indisponible
+
 @RestController
 @RequestMapping("/documents")
 public class DocumentUploadController {
