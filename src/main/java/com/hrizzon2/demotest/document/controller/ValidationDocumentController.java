@@ -13,7 +13,7 @@
 //
 /// **
 // * Contrôleur REST pour la validation/rejet des documents par un administrateur.
-// * Seuls les utilisateurs avec rôle ADMINISTRATEUR ou RESPONSABLE y ont accès.
+// * Seuls les utilisateurs avec rôle ADMIN ou RESPONSABLE y ont accès.
 // */
 //@RestController
 //@RequestMapping("/api/validation-documents")

@@ -16,7 +16,7 @@ import lombok.Setter;
  * <p>Cette classe hérite de {@link User} et ajoute des propriétés spécifiques
  * aux administrateurs comme leur type et leur niveau de droit.</p>
  *
- * <p>La valeur de discrimination dans la base de données est {@code ADMINISTRATEUR},
+ * <p>La valeur de discrimination dans la base de données est {@code ADMIN},
  * ce qui permet de distinguer les instances d'Admin dans la stratégie
  * d’héritage JOINED.</p>
  *
@@ -27,7 +27,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@DiscriminatorValue("ADMINISTRATEUR")
+@DiscriminatorValue("ADMIN")
 public class Admin extends User {
 
     /**

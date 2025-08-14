@@ -28,7 +28,7 @@ public class DashboardController {
     @Autowired
     private DashboardService dashboardService;
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/dashboard")
     public AdminDashboardDto getAdminDashboard() {
 
@@ -44,7 +44,7 @@ public class DashboardController {
     /**
      * Récupère les KPIs du dashboard admin
      */
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/kpis")
     public ResponseEntity<KpiDataDto> getKpis() {
         try {
@@ -59,7 +59,7 @@ public class DashboardController {
     /**
      * Récupère les inscriptions en attente
      */
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/inscriptions/attente")
     public ResponseEntity<List<InscriptionAttenteDto>> getInscriptionsAttente(
             @RequestParam(defaultValue = "10") int limit) {
@@ -75,7 +75,7 @@ public class DashboardController {
     /**
      * Récupère les documents en attente
      */
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/documents/attente")
     public ResponseEntity<List<DocumentAttenteDto>> getDocumentsAttente(
             @RequestParam(defaultValue = "15") int limit) {
@@ -91,7 +91,7 @@ public class DashboardController {
     /**
      * Télécharge un document
      */
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/documents/{id}/download")
     public ResponseEntity<Resource> telechargerDocument(@PathVariable Long id) {
         try {
@@ -112,7 +112,7 @@ public class DashboardController {
     /**
      * Valide un document
      */
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/admin/documents/{id}/valider")
     public ResponseEntity<Map<String, String>> validerDocument(
             @PathVariable Long id,
@@ -138,7 +138,7 @@ public class DashboardController {
     /**
      * Rejette un document
      */
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/admin/documents/{id}/rejeter")
     public ResponseEntity<Map<String, String>> rejeterDocument(
             @PathVariable Long id,

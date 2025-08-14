@@ -29,13 +29,13 @@ INSERT INTO `user` (last_name,
 VALUES
 -- 1. Administrateurs
 ('Dupont', 'Alice', 'alice@example.com', '$2y$10$flLWd64/eosC6TAY0r2CgehFD.EJEYcSu7LqC5rWsKTa9S7PqUWja', TRUE,
- 'token-verif-123', 'ADMINISTRATEUR', NULL),
+ 'token-verif-123', 'ADMIN', NULL),
 ('Durand', 'Bruno', 'bruno@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
- 'ADMINISTRATEUR', NULL),
+ 'ADMIN', NULL),
 ('Martin', 'Cécile', 'cecile@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
- 'ADMINISTRATEUR', NULL),
+ 'ADMIN', NULL),
 ('Bernard', 'David', 'david@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
- 'ADMINISTRATEUR', NULL),
+ 'ADMIN', NULL),
 
 -- 2. Stagiaires
 ('Dupont', 'Romain', 'romain_dupont@live.fr', '$2a$10$Dow1Kt9EdIVVQ8KQfBGoH.NkbZoCPoEdWkqITpCTBLuRFK5kZzCO2', TRUE,
