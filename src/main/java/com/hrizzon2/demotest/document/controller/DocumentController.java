@@ -169,9 +169,8 @@ public class DocumentController {
         }
     }
 
-    // À ajouter dans DocumentController
     @GetMapping("/download/{documentId}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('RESPONSABLE')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('RESPONSABLE')")
     public ResponseEntity<ByteArrayResource> downloadDocument(@PathVariable Integer documentId) {
         try {
             // Récupérer le document
@@ -206,7 +205,7 @@ public class DocumentController {
      * Validation d'un document par un administrateur
      */
     @PutMapping("/valider/{documentId}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> validerDocument(
             @PathVariable Integer documentId,
             @RequestBody @Valid DocumentStatutUpdateDto validationDto) {
@@ -228,7 +227,7 @@ public class DocumentController {
      * Liste des documents en attente de validation (pour les admins)
      */
     @GetMapping("/en-attente")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<Document>> getDocumentsEnAttente() {
         List<Document> documents = dossierDocumentService.getPendingDocuments();
         return ResponseEntity.ok(documents);

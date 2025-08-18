@@ -4,6 +4,8 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.List;
+
 /**
  * Configuration centralisée pour les paramètres de gestion des fichiers de l'application.
  * <p>
@@ -36,4 +38,7 @@ public class FileConfig {
     @Value("${file.default.accepted.types}")
     private String[] defaultAcceptedTypes;
 
+    public List<String> getAcceptedTypes() {
+        return List.of(defaultAcceptedTypes);
+    }
 }

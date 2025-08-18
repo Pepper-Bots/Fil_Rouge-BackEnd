@@ -3,6 +3,7 @@ package com.hrizzon2.demotest.annotation;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
@@ -23,6 +24,7 @@ import java.util.List;
  *
  * @author [TonNom]
  */
+@Component
 public class FileValidator implements ConstraintValidator<ValidFile, MultipartFile> {
 
     /**
@@ -83,7 +85,6 @@ public class FileValidator implements ConstraintValidator<ValidFile, MultipartFi
         if (file == null || file.isEmpty()) {
             return true; // Si le fichier est facultatif ou vide
         }
-
         // Vérification du type de contenu et de la taille
         return FileValidationUtil.isValidFileSize(file, maxSize, context) &&
                 FileValidationUtil.isValidFileType(file, acceptedTypes, context);

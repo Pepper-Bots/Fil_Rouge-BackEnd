@@ -1,10 +1,10 @@
 package com.hrizzon2.demotest.formation.controller;
 
+import com.hrizzon2.demotest.document.model.enums.TypeDocument;
 import com.hrizzon2.demotest.formation.dao.FormationDao;
 import com.hrizzon2.demotest.formation.model.Formation;
 import com.hrizzon2.demotest.formation.model.ListeDocumentsObligatoires;
 import com.hrizzon2.demotest.formation.service.ListeDocumentsObligatoiresService;
-import com.hrizzon2.demotest.document.model.enums.TypeDocument;
 import com.hrizzon2.demotest.security.IsAdmin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -53,7 +53,6 @@ public class ListeDocumentsObligatoiresController {
         return listeDocsService.findByFormation(formation);
     }
 
-    // TODO à laisser ici ou mettre dans l'entité ?
     // Classe DTO simple pour le payload :
     public static class TypeDocumentPayload {
         private TypeDocument typeDocument;
@@ -67,10 +66,4 @@ public class ListeDocumentsObligatoiresController {
         }
     }
 
-//    @Setter
-//    @Getter
-//    public static class TypeDocumentPayload {
-//        private TypeDocument typeDocument;
-//
-//    }
 }

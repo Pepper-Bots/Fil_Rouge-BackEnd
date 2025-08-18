@@ -1,6 +1,6 @@
 package com.hrizzon2.demotest.common.service;
 
-import org.apache.commons.io.IOUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,7 +13,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
+import static org.aspectj.weaver.tools.cache.SimpleCacheFactory.path;
+
 @Service
+@Slf4j
 public class FichierService {
 
     @Value("${public.upload.folder}")
@@ -46,7 +49,9 @@ public class FichierService {
      * @throws IOException Si une erreur survient lors de la lecture ou de l'écriture du fichier.
      */
     public void uploadToLocalFileSystem(MultipartFile fichier, String fileName, boolean publicFile) throws IOException {
-        uploadToLocalFileSystem(fichier.getInputStream(), fileName, publicFile);
+        try (InputStream in = fichier.getInputStream()) {
+            uploadToLocalFileSystem(in, fileName, publicFile);
+        }
     }
 
     /**
@@ -58,55 +63,42 @@ public class FichierService {
      * @throws IOException Si une erreur survient lors de l'écriture du fichier.
      */
     public void uploadToLocalFileSystem(InputStream inputStream, String fileName, boolean publicFile) throws IOException {
-
         Path storageDirectory = Paths.get(publicFile ? publicUploadFolder : privateUploadFolder);
-
-        if (!Files.exists(storageDirectory)) {
-            try {
-                Files.createDirectories(storageDirectory);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        if (Files.notExists(storageDirectory)) {
+            Files.createDirectories(storageDirectory);
         }
-
-        Path destination = Paths.get(storageDirectory.toString() + "/" + fileName);
-
+        Path destination = storageDirectory.resolve(fileName);
         Files.copy(inputStream, destination, StandardCopyOption.REPLACE_EXISTING);
-
+        log.debug("Fichier stocké: {}", destination);
     }
 
     /**
      * Récupère une image stockée dans le dossier privé à partir de son nom.
      *
-     * @param nomImage Le nom du fichier image à récupérer.
+     * @param fileName Le nom du fichier à récupérer.
      * @return Le contenu du fichier sous forme de tableau d'octets.
      * @throws FileNotFoundException Si le fichier n'existe pas ou n'est pas accessible.
      */
-    public byte[] getImageByName(String nomImage) throws FileNotFoundException {
-
-        Path destination = Paths.get(privateUploadFolder + "/" + nomImage);// retrieve the image by its name
-
+    public byte[] getImageByName(String fileName) throws FileNotFoundException {
+        Path destination = Paths.get(privateUploadFolder).resolve(fileName);
         try {
-            return IOUtils.toByteArray(destination.toUri());
+            if (Files.notExists(Path.of(path))) throw new FileNotFoundException("Fichier introuvable: " + fileName);
+            return Files.readAllBytes(Path.of(path));
         } catch (IOException e) {
             throw new FileNotFoundException(e.getMessage());
         }
-
     }
 
-    public Path getImagePath(String nomImage) {
-        return Paths.get(privateUploadFolder, nomImage);
+    public Path getPrivateFilePath(String fileName) {
+        return Paths.get(privateUploadFolder).resolve(fileName);
     }
 
-    public void deleteFile(String nomFichier) {
+    public void deleteFile(String fileName) {
         try {
-            Path fichierPath = Paths.get(privateUploadFolder, nomFichier);
-            if (Files.exists(fichierPath)) {
-                Files.delete(fichierPath);
-            }
+            Path p = Paths.get(privateUploadFolder).resolve(fileName);
+            if (Files.exists(p)) Files.delete(p);
         } catch (Exception e) {
-            // Log l'erreur mais ne pas faire échouer l'opération
-            e.printStackTrace();
+            log.warn("Suppression fichier échouée: {}", fileName, e);
         }
     }
 }

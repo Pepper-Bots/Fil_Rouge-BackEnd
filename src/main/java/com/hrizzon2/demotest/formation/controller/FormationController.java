@@ -30,7 +30,9 @@ public class FormationController {
     private final PieceJointeStagiaireService pieceJointeStagiaireService;
 
     @Autowired
-    public FormationController(FormationService formationService, StagiaireService stagiaireService, PieceJointeStagiaireService pieceJointeStagiaireService) {
+    public FormationController(FormationService formationService,
+                               StagiaireService stagiaireService,
+                               PieceJointeStagiaireService pieceJointeStagiaireService) {
         this.formationService = formationService;
         this.stagiaireService = stagiaireService;
         this.pieceJointeStagiaireService = pieceJointeStagiaireService;
@@ -109,20 +111,15 @@ public class FormationController {
     }
 
     /**
-     * Récupère les formations d'un stagiaire avec le statut de ses documents
+     * Récupère les formations d'un stagiaire avec le statut de ses documents (alimente le tableau/progression)
      */
     @GetMapping("/stagiaire/{stagiaireId}/formations-avec-statut")
     @PreAuthorize("hasAuthority('STAGIAIRE') or hasAuthority('ADMIN')")
-    public ResponseEntity<List<FormationAvecStatutDto>> getFormationsAvecStatut(@PathVariable Integer stagiaireId) {
-        try {
-            // TODO: À implémenter dans votre FormationService
-            List<FormationAvecStatutDto> formations = formationService.getFormationsAvecStatutDocuments(stagiaireId);
-            return ResponseEntity.ok(formations);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).build();
-        }
+    public ResponseEntity<List<FormationAvecStatutDto>> getFormationsAvecStatut(
+            @PathVariable Integer stagiaireId) {
+        List<FormationAvecStatutDto> formations =
+                formationService.getFormationsAvecStatutDocuments(stagiaireId);
+        return ResponseEntity.ok(formations);
     }
 
     /**

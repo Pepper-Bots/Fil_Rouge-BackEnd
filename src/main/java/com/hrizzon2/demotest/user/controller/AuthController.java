@@ -98,23 +98,26 @@ public class AuthController {
     @IsAdmin
     public ResponseEntity<?> createStagiaire(@RequestBody @Valid Stagiaire stagiaire) {
 
-        // Initialisation des champs
-        stagiaire.setEnabled(false); // Compte à activer par email
-        stagiaire.setPremiereConnexion(true);
+        // Initialisation des champs de sécurité et du cycle de vie du compte
+        stagiaire.setEnabled(false);  // Activation après clic e-mail
+        stagiaire.setPremiereConnexion(true);  // Forcer le changement de mot de passe
         stagiaire.setPassword(passwordEncoder.encode(stagiaire.getPassword()));
 
-        // Génération du token de validation d'email
+        // Jeton de validation e-mail
         String tokenValidationEmail = UUID.randomUUID().toString();
         stagiaire.setJetonVerificationEmail(tokenValidationEmail);
 
         userService.save(stagiaire);
         emailService.sendActivationEmail(stagiaire.getEmail(), tokenValidationEmail);
 
+        // On ne renvoie jamais le mot de passe ni le token à l’appelant
         stagiaire.setPassword(null);
         stagiaire.setJetonVerificationEmail(null);
 
         return new ResponseEntity<>(stagiaire, HttpStatus.CREATED);
     }
+
+
 //Remarques :
 //
 //active (ou enabled) doit être false tant que le mail n’a pas été validé.
@@ -155,7 +158,6 @@ public class AuthController {
 
     @PostMapping("/connexion")
     public ResponseEntity<AuthResponse> connexion(@RequestBody @Valid User user) {
-
         try {
             AppUserDetails userDetails = (AppUserDetails) authenticationProvider
                     .authenticate(
@@ -165,14 +167,9 @@ public class AuthController {
                     .getPrincipal();
 
             String token = securityUtils.generateToken(userDetails);
-
-            // 💡 À adapter selon ton système :
-            boolean premiereConnexion = userDetails.isPremiereConnexion(); // ou tout autre moyen de récupérer ce flag
+            boolean premiereConnexion = userDetails.isPremiereConnexion();
 
             return ResponseEntity.ok(new AuthResponse(token, premiereConnexion));
-
-//            return new ResponseEntity<>(securityUtils.generateToken(userDetails), HttpStatus.OK);
-
         } catch (AuthenticationException e) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }

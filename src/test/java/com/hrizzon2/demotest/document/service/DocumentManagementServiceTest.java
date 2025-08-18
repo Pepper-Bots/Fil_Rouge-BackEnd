@@ -14,43 +14,271 @@ import com.hrizzon2.demotest.inscription.service.DossierService;
 import com.hrizzon2.demotest.notification.service.NotificationService;
 import com.hrizzon2.demotest.user.dao.StagiaireDao;
 import com.hrizzon2.demotest.user.model.Stagiaire;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatcher;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class DocumentManagementServiceTest {
 
-    private DocumentDao documentDao = mock(DocumentDao.class);
-    private DossierService dossierService = mock(DossierService.class);
-    private EvenementService evenementService = mock(EvenementService.class);
-    private NotificationService notificationService = mock(NotificationService.class);
-    private StatutDocumentDao statutDocumentDao = mock(StatutDocumentDao.class);
-    private DocumentStorageService documentStorageService = mock(DocumentStorageService.class);
-    private StagiaireDao stagiaireDao = mock(StagiaireDao.class);
-    private TypeDocumentValidator typeDocumentValidator = mock(TypeDocumentValidator.class);
-    private DocumentMongoDao documentMongoDao = mock(DocumentMongoDao.class);
+    @Mock
+    private DocumentDao documentDao;
+    @Mock
+    private DossierService dossierService;
+    @Mock
+    private EvenementService evenementService;
+    @Mock
+    private NotificationService notificationService;
+    @Mock
+    private StatutDocumentDao statutDocumentDao;
+    @Mock
+    private DocumentStorageService documentStorageService;
+    @Mock
+    private StagiaireDao stagiaireDao;
+    @Mock
+    private TypeDocumentValidator typeDocumentValidator;
+    @Mock
+    private DocumentMongoDao documentMongoDao;
 
+    @InjectMocks
     private DocumentManagementService documentService;
 
-    @BeforeEach
-    void setUp() {
-        documentService = new DocumentManagementService(
-                documentDao,
-                dossierService,
-                evenementService,
-                notificationService,
-                statutDocumentDao,
-                documentStorageService,
-                stagiaireDao,
-                typeDocumentValidator,
-                documentMongoDao
-        );
+    // ==========
+    // HELPERS
+    // ==========
+
+    private Stagiaire mkStagiaire(Integer id, String lastName) {
+        Stagiaire s = new Stagiaire();
+        s.setId(id);
+        s.setLastName(lastName);
+        return s;
+    }
+
+    private StatutDocument mkStatut(String nom) {
+        StatutDocument st = new StatutDocument();
+        st.setNom(nom);
+        return st;
+    }
+
+    private ArgumentMatcher<Document> hasGridFsId(String id) {
+        return d -> d != null && id.equals(d.getUrlFichier());
+    }
+
+    // =======================
+    // TESTS: uploadDocument()
+    // =======================
+
+    @Test
+    void uploadDocument_success() throws Exception {
+        // GIVEN
+        Integer stagiaireId = 1;
+        Formation formation = new Formation();
+        formation.setId(7);
+        TypeDocument type = TypeDocument.CV;
+        MockMultipartFile fichier = new MockMultipartFile("cv", "cv.pdf", "application/pdf", "bytes".getBytes());
+
+        Stagiaire stagiaire = mkStagiaire(stagiaireId, "Dupont");
+
+        when(stagiaireDao.findById(stagiaireId)).thenReturn(Optional.of(stagiaire));
+        when(typeDocumentValidator.isTypeAutorise(formation, type)).thenReturn(true);
+        when(documentDao.findByDossierStagiaireIdAndType(stagiaireId, type)).thenReturn(List.of()); // aucun existant
+        when(documentStorageService.saveFile(fichier, "1", "Dupont")).thenReturn("gridfs-123");
+
+        when(statutDocumentDao.findByNom("EN_ATTENTE")).thenReturn(Optional.of(mkStatut("EN_ATTENTE")));
+
+        // save retourne l'entité enrichie (id simulé)
+        when(documentDao.save(argThat(hasGridFsId("gridfs-123")))).thenAnswer(invocation -> {
+            Document d = invocation.getArgument(0);
+            d.setId(999);
+            return d;
+        });
+
+        // DocMongo présent -> sera mis à jour + audit
+        DocumentMongo mongo = new DocumentMongo();
+        mongo.setId("gridfs-123");
+        mongo.setAudit(new ArrayList<>());
+        when(documentMongoDao.findById("gridfs-123")).thenReturn(Optional.of(mongo));
+
+        // WHEN
+        Document saved = documentService.uploadDocument(stagiaireId, fichier, type, formation);
+
+        // THEN
+        assertNotNull(saved);
+        assertEquals(999, saved.getId());
+        assertEquals("cv.pdf", saved.getNomFichier());
+        assertEquals(TypeDocument.CV, saved.getType());
+        assertEquals("gridfs-123", saved.getUrlFichier());
+        assertEquals(stagiaire, saved.getStagiaire());
+        assertEquals(formation, saved.getFormation());
+        assertEquals("EN_ATTENTE", saved.getStatut().getNom());
+        assertNotNull(saved.getDateDepot());
+
+        verify(dossierService).creerOuAssocierDossier(saved, stagiaireId);
+        verify(documentDao, times(1)).save(any(Document.class));
+        verify(documentMongoDao, atLeastOnce()).save(any(DocumentMongo.class));
+    }
+
+    @Test
+    void uploadDocument_ko_stagiaireIntrouvable() throws Exception {
+        // GIVEN
+        Integer stagiaireId = 404;
+        when(stagiaireDao.findById(stagiaireId)).thenReturn(Optional.empty());
+
+        MockMultipartFile fichier = new MockMultipartFile("f", "cni.pdf", "application/pdf", new byte[]{});
+        // WHEN + THEN
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> documentService.uploadDocument(stagiaireId, fichier, TypeDocument.PIECE_IDENTITE, new Formation()));
+        assertEquals("Stagiaire introuvable", ex.getMessage());
+
+        verifyNoInteractions(documentStorageService);
+        verify(documentDao, never()).save(any());
+    }
+
+    @Test
+    void uploadDocument_ko_typeNonAutorise() throws Exception {
+        // GIVEN
+        Integer stagiaireId = 1;
+        when(stagiaireDao.findById(stagiaireId)).thenReturn(Optional.of(mkStagiaire(stagiaireId, "Dupont")));
+        when(typeDocumentValidator.isTypeAutorise(any(Formation.class), eq(TypeDocument.DIPLOME_BAC_3))).thenReturn(false);
+
+        MockMultipartFile fichier = new MockMultipartFile("f", "diplome.pdf", "application/pdf", new byte[]{1});
+        // WHEN + THEN
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> documentService.uploadDocument(stagiaireId, fichier, TypeDocument.DIPLOME_BAC_3, new Formation()));
+        assertEquals("Type de document non autorisé pour cette formation", ex.getMessage());
+
+        verifyNoInteractions(documentStorageService);
+        verify(documentDao, never()).save(any());
+    }
+
+    @Test
+    void uploadDocument_ko_dejaSoumisNonRejete() throws Exception {
+        // GIVEN
+        Integer stagiaireId = 1;
+        when(stagiaireDao.findById(stagiaireId)).thenReturn(Optional.of(mkStagiaire(stagiaireId, "Dupont")));
+        when(typeDocumentValidator.isTypeAutorise(any(), any())).thenReturn(true);
+
+        Document deja = new Document();
+        deja.setStatut(mkStatut("EN_ATTENTE"));
+        when(documentDao.findByDossierStagiaireIdAndType(stagiaireId, TypeDocument.PIECE_IDENTITE))
+                .thenReturn(List.of(deja));
+
+        MockMultipartFile fichier = new MockMultipartFile("f", "PIECE_IDENTITE.pdf", "application/pdf", new byte[]{});
+        // WHEN + THEN
+        assertThrows(IllegalArgumentException.class,
+                () -> documentService.uploadDocument(stagiaireId, fichier, TypeDocument.PIECE_IDENTITE, new Formation()));
+
+        verify(documentStorageService, never()).saveFile(any(), any(), any());
+        verify(documentDao, never()).save(any());
+    }
+
+    @Test
+    void uploadDocument_ok_auditCreeSiNull() throws Exception {
+        // GIVEN
+        Integer stagiaireId = 1;
+        when(stagiaireDao.findById(stagiaireId)).thenReturn(Optional.of(mkStagiaire(1, "Dupont")));
+        when(typeDocumentValidator.isTypeAutorise(any(), any())).thenReturn(true);
+        when(documentDao.findByDossierStagiaireIdAndType(eq(1), any())).thenReturn(List.of());
+        when(documentStorageService.saveFile(any(), eq("1"), eq("Dupont"))).thenReturn("file-1");
+        when(statutDocumentDao.findByNom("EN_ATTENTE")).thenReturn(Optional.of(mkStatut("EN_ATTENTE")));
+
+        when(documentDao.save(any(Document.class))).thenAnswer(i -> {
+            Document d = i.getArgument(0);
+            d.setId(12);
+            return d;
+        });
+
+        // DocMongo trouvé mais sans audit -> le service doit créer la liste et pousser une action
+        DocumentMongo mongo = new DocumentMongo();
+        mongo.setId("file-1");
+        mongo.setAudit(null);
+        when(documentMongoDao.findById("file-1")).thenReturn(Optional.of(mongo));
+
+        MockMultipartFile fichier = new MockMultipartFile("f", "cv.pdf", "application/pdf", new byte[]{1});
+        // WHEN
+        Document saved = documentService.uploadDocument(1, fichier, TypeDocument.CV, new Formation());
+
+        // THEN
+        assertNotNull(saved);
+        verify(documentMongoDao, atLeastOnce()).save(argThat(m -> m.getAudit() != null && !m.getAudit().isEmpty()));
+    }
+
+    // =======================
+    // TESTS: valider / rejeter
+    // =======================
+
+    @Test
+    void validerDocument_success() {
+        // GIVEN
+        Integer id = 10;
+        Document doc = new Document();
+        doc.setId(id);
+        doc.setUrlFichier("gridfs-123");
+        doc.setStatut(mkStatut("EN_ATTENTE"));
+
+        Stagiaire s = mkStagiaire(2, "Dupont");
+        doc.setStagiaire(s);
+
+        when(documentDao.findById(id)).thenReturn(Optional.of(doc));
+        when(statutDocumentDao.findByNom("VALIDÉ")).thenReturn(Optional.of(mkStatut("VALIDÉ")));
+        when(documentDao.save(any(Document.class))).thenAnswer(i -> i.getArgument(0));
+
+        // côté Mongo
+        DocumentMongo mongo = new DocumentMongo();
+        mongo.setId("gridfs-123");
+        mongo.setAudit(new ArrayList<>());
+        when(documentMongoDao.findById("gridfs-123")).thenReturn(Optional.of(mongo));
+
+        // WHEN
+        Document res = documentService.validerDocument(id);
+
+        // THEN
+        assertEquals("VALIDÉ", res.getStatut().getNom());
+        verify(dossierService, atMostOnce()).verifierEtMettreAJourStatut(anyInt());
+        verify(notificationService).notifyStagiaireValidationDocument(2, 10, true);
+        verify(documentMongoDao, atLeastOnce()).save(any(DocumentMongo.class));
+    }
+
+    @Test
+    void rejeterDocument_success() {
+        // GIVEN
+        Integer id = 11;
+        Document doc = new Document();
+        doc.setId(id);
+        doc.setUrlFichier("gridfs-999");
+        doc.setStatut(mkStatut("EN_ATTENTE"));
+
+        Stagiaire s = mkStagiaire(3, "Martin");
+        doc.setStagiaire(s);
+
+        when(documentDao.findById(id)).thenReturn(Optional.of(doc));
+        when(statutDocumentDao.findByNom("REJETÉ")).thenReturn(Optional.of(mkStatut("REJETÉ")));
+        when(documentDao.save(any(Document.class))).thenAnswer(i -> i.getArgument(0));
+
+        // côté Mongo
+        DocumentMongo mongo = new DocumentMongo();
+        mongo.setId("gridfs-999");
+        mongo.setAudit(new ArrayList<>());
+        when(documentMongoDao.findById("gridfs-999")).thenReturn(Optional.of(mongo));
+
+        // WHEN
+        Document res = documentService.rejeterDocument(id);
+
+        // THEN
+        assertEquals("REJETÉ", res.getStatut().getNom());
+        verify(notificationService).notifyStagiaireValidationDocument(3, 11, false);
+        verify(documentMongoDao, atLeastOnce()).save(any(DocumentMongo.class));
     }
 
     @Test
@@ -58,9 +286,11 @@ class DocumentManagementServiceTest {
         // GIVEN
         Integer stagiaireId = 1;
         Formation formation = new Formation();
-        formation.setId(1); // ou autre valeur factice pour tester
+        formation.setId(1);
         TypeDocument type = TypeDocument.CV;
-        MockMultipartFile fichier = new MockMultipartFile("cv", "cv.pdf", "application/pdf", "Contenu test".getBytes());
+        MockMultipartFile fichier = new MockMultipartFile(
+                "cv", "cv.pdf", "application/pdf", "Contenu test".getBytes()
+        );
 
         Stagiaire stagiaire = new Stagiaire();
         stagiaire.setId(stagiaireId);
@@ -68,8 +298,10 @@ class DocumentManagementServiceTest {
 
         when(stagiaireDao.findById(stagiaireId)).thenReturn(Optional.of(stagiaire));
         when(typeDocumentValidator.isTypeAutorise(formation, type)).thenReturn(true);
-        when(documentDao.findByDossierStagiaireIdAndType(stagiaireId, type)).thenReturn(java.util.Collections.emptyList());
-        when(documentStorageService.saveFile(fichier, stagiaireId.toString(), stagiaire.getLastName())).thenReturn("fakeFileId");
+        when(documentDao.findByDossierStagiaireIdAndType(stagiaireId, type))
+                .thenReturn(java.util.Collections.emptyList());
+        when(documentStorageService.saveFile(fichier, stagiaireId.toString(), stagiaire.getLastName()))
+                .thenReturn("fakeFileId");
 
         StatutDocument statut = new StatutDocument();
         statut.setNom("EN_ATTENTE");
@@ -79,9 +311,7 @@ class DocumentManagementServiceTest {
         documentMongo.setId("fakeFileId");
         documentMongo.setAudit(new ArrayList<>());
         when(documentMongoDao.findById("fakeFileId")).thenReturn(Optional.of(documentMongo));
-        when(documentMongoDao.save(any(DocumentMongo.class))).thenReturn(documentMongo);
 
-        // ✅ CORRECTION : Mock du save avec réponse plus réaliste
         when(documentDao.save(any(Document.class))).thenAnswer(invocation -> {
             Document doc = invocation.getArgument(0);
             doc.setId(999); // Simule l'ID généré par la DB
@@ -101,66 +331,12 @@ class DocumentManagementServiceTest {
         assertEquals(formation, saved.getFormation());
         assertNotNull(saved.getDateDepot());
 
-        // Vérifie que le document a bien été sauvegardé
         verify(documentDao).save(any(Document.class));
         verify(dossierService).creerOuAssocierDossier(saved, stagiaireId);
         verify(documentStorageService).saveFile(fichier, stagiaireId.toString(), stagiaire.getLastName());
-
-        // ✅ VERIFICATION : Synchronisation MongoDB
         verify(documentMongoDao, atLeastOnce()).findById("fakeFileId");
         verify(documentMongoDao, atLeastOnce()).save(any(DocumentMongo.class));
     }
-
-
-    @Test
-    void testUploadDocumentStagiaireNotFound() throws Exception {
-        // GIVEN
-        int stagiaireId = 999;
-        Formation formation = new Formation();
-        TypeDocument type = TypeDocument.CV;
-        MockMultipartFile fichier = new MockMultipartFile("cv", "cv.pdf", "application/pdf", "Contenu test".getBytes());
-
-        when(stagiaireDao.findById(stagiaireId)).thenReturn(Optional.empty());
-
-        // WHEN & THEN
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            documentService.uploadDocument(stagiaireId, fichier, type, formation);
-        });
-
-        assertEquals("Stagiaire introuvable", exception.getMessage());
-        verify(documentStorageService, never()).saveFile(any(), any(), any());
-        verify(documentDao, never()).save(any());
-    }
-
-    @Test
-    void testUploadDocumentTypeNonAutorise() throws Exception {
-        // GIVEN
-        int stagiaireId = 1;
-        Formation formation = new Formation();
-        TypeDocument type = TypeDocument.DIPLOME_BAC_3;
-        MockMultipartFile fichier = new MockMultipartFile("diplome", "diplome.pdf", "application/pdf", "Contenu test".getBytes());
-
-        Stagiaire stagiaire = new Stagiaire();
-        stagiaire.setId(stagiaireId);
-        stagiaire.setLastName("Dupont");
-
-        when(stagiaireDao.findById(stagiaireId)).thenReturn(Optional.of(stagiaire));
-        when(typeDocumentValidator.isTypeAutorise(formation, type)).thenReturn(false);
-
-        // WHEN & THEN - Test qu'une exception est bien lancée
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            documentService.uploadDocument(stagiaireId, fichier, type, formation);
-        });
-
-        // Vérification du message d'erreur
-        assertEquals("Type de document non autorisé pour cette formation", exception.getMessage());
-
-        // Vérification que les services ne sont PAS appelés en cas d'erreur
-        verify(documentStorageService, never()).saveFile(any(), any(), any());
-        verify(documentDao, never()).save(any());
-    }
-
-    // TODO A RELIRE POUR COMPRENDRE :
 
     @Test
     void testValiderDocumentSuccess() {
@@ -185,7 +361,6 @@ class DocumentManagementServiceTest {
         when(statutDocumentDao.findByNom("VALIDÉ")).thenReturn(Optional.of(statutValide));
         when(documentDao.save(any(Document.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        // Mock DocumentMongo
         DocumentMongo documentMongo = new DocumentMongo();
         documentMongo.setId("fakeFileId");
         documentMongo.setAudit(new ArrayList<>());
@@ -202,5 +377,5 @@ class DocumentManagementServiceTest {
         verify(notificationService).notifyStagiaireValidationDocument(stagiaire.getId(), documentId, true);
         verify(documentMongoDao, atLeastOnce()).save(any(DocumentMongo.class));
     }
-}
 
+}

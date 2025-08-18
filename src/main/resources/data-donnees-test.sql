@@ -374,3 +374,80 @@ WHERE email = 'bruno@example.com';
 SELECT *
 FROM user
 WHERE email = 'bruno@example.com';
+
+SELECT *
+FROM Document;
+
+SELECT Id_Document, nom, statut, lien_fichier, Id_Dossier, Id_Liste_Document
+FROM Document
+ORDER BY Id_Document DESC
+LIMIT 5;
+
+
+-- Statuts documents
+INSERT INTO statut_document (nom)
+VALUES ('EN_ATTENTE'),
+       ('VALIDÉ'),
+       ('REJETÉ');
+
+-- Stagiaire de test
+INSERT INTO user (last_name, first_name, email, password, enabled, nom_role)
+VALUES ('Dupont', 'Romain', 'romain.dupont@test.com', 'hashedpwd', TRUE, 'STAGIAIRE');
+
+-- Formation de test
+INSERT INTO formation (id_formation, nom, niveau)
+VALUES (1, 'Développement Web Java', 'C');
+
+-- Dossier rattaché au stagiaire
+INSERT INTO dossier (id_dossier, code_dossier, statut_dossier_id, stagiaire_id, formation_id)
+VALUES (1, 'DSR001', 1, 1, 1);
+
+-- Document associé (en attente)
+INSERT INTO document (nom_fichier, type, statut_document_id, dossier_id, stagiaire_id, formation_id, date_depot)
+VALUES ('CV Romain.pdf', 'CV', 1, 1, 1, 1, NOW());
+
+-- Vérification rapide
+SELECT Id_Document, nom_fichier, statut_document_id, dossier_id
+FROM document
+ORDER BY Id_Document DESC
+LIMIT 5;
+
+
+-- Ajout d’un stagiaire
+INSERT INTO stagiaire (id, premiere_connexion, date_naissance, phone_number, adresse, ville_id, photo_profil)
+VALUES (5, true, '1990-03-01', '0660606060', '12 rue des Rosses', 1, 'default-profile.png');
+
+-- Ajout d’une formation
+INSERT INTO formation (id_formation, nom, niveau)
+VALUES (1, 'Développement Web Front-End', 'A');
+
+-- Création d’un dossier
+INSERT INTO dossier (id_dossier, code_dossier, statut_dossier_id, stagiaire_id, formation_id, createur_id)
+VALUES (1, 'DSR001', 2, 5, 1, 1);
+
+-- Ajout d’un document dans le dossier
+INSERT INTO document (nom_fichier, type, statut_document_id, dossier_id, stagiaire_id)
+VALUES ('CV.pdf', 'CV', 1, 1, 5);
+
+
+-- Utilisateurs (admins + stagiaires)
+INSERT INTO user (last_name, first_name, email, password, enabled, nom_role)
+VALUES ('Dupont', 'Alice', 'alice@example.com', 'hash_mdp', TRUE, 'ADMIN'),
+       ('Durand', 'Bruno', 'bruno@example.com', 'hash_mdp', TRUE, 'ADMIN'),
+       ('Martin', 'Julie', 'julie.martin@example.com', 'hash_mdp', TRUE, 'STAGIAIRE');
+
+-- Stagiaire rattaché à un utilisateur
+INSERT INTO stagiaire (id, premiere_connexion, date_naissance, phone_number, adresse, ville_id, photo_profil)
+VALUES (3, TRUE, '1992-11-22', '0654239876', '34 boulevard Victor Hugo', 3, NULL);
+
+-- Formation
+INSERT INTO formation (id_formation, nom, niveau, description, date_debut, date_fin)
+VALUES (1, 'Développement Web', 'A', 'HTML, CSS, JS, React', '2025-09-01', '2026-06-30');
+
+-- Dossier d’inscription
+INSERT INTO dossier (code_dossier, statut_dossier_id, date_de_creation, stagiaire_id, formation_id, createur_id)
+VALUES ('DSR001', 2, NOW(), 3, 1, 1);
+
+-- Document rattaché
+INSERT INTO document (nom_fichier, type, statut_document_id, dossier_id, stagiaire_id, date_depot)
+VALUES ('CV_Julie.pdf', 'CV', 1, 1, 3, NOW());

@@ -192,6 +192,36 @@ public class StagiaireServiceImpl implements StagiaireService {
         stagiaireDao.save(stagiaire);
     }
 
+    @Transactional
+    public Stagiaire creerStagiaireParAdmin(Stagiaire input, Integer formationId) {
+        // 1) Initialisation sécurité & 1ère connexion
+        input.setEnabled(false);                 // activation par email
+        input.setPremiereConnexion(true);        // forcera le changement de mdp
+        input.setPassword(passwordEncoder.encode(input.getPassword()));
+
+        // 2) Jeton d’activation
+        String token = UUID.randomUUID().toString();
+        input.setJetonVerificationEmail(token);
+
+        // 3) Persistance
+        Stagiaire saved = stagiaireDao.save(input);
+
+        // 4) Envoi mail d’activation
+        emailService.sendActivationEmail(saved.getEmail(), token);
+
+        // 5) Inscription à une formation (optionnel)
+        if (formationId != null) {
+            var formation = formationService.findById(formationId)
+                    .orElseThrow(() -> new IllegalArgumentException("Formation introuvable: " + formationId));
+            inscrireStagiaire(saved, formation); // ta méthode existante si tu l’as, sinon ajoute-la ici
+        }
+
+        // 6) Ne pas renvoyer d’infos sensibles
+        saved.setPassword(null);
+        saved.setJetonVerificationEmail(null);
+        return saved;
+    }
+
 }
 
 // todo

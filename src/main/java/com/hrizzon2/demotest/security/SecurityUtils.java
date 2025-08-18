@@ -28,13 +28,10 @@ public class SecurityUtils implements ISecurityUtils {
     @Override
     public String generateToken(AppUserDetails userDetails) {
 
-        System.out.println(jwtSecret);
-
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
-                .addClaims(Map.of("role", getRole(userDetails))) // on ajoute une revendication - implantation la + classique qu'on peut faire d'un Json
+                .addClaims(Map.of("role", getRole(userDetails)))
                 .signWith(SignatureAlgorithm.HS256, jwtSecret)
-//                .setExpiration(new Date(System.currentTimeMillis() + (24 * 60 * 60 * 1000))) // Permet de donner une expiration à la connexion
                 .setExpiration(expiryDate)
                 .compact();
     }

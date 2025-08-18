@@ -49,7 +49,11 @@ public class AdminController {
         this.evenementDocumentService = evenementDocumentService;
     }
 
-    // Exemples d’usage d’AdminService
+
+    // --------------------------------------------
+    // ADMIN - Utilisateurs / Stagiaires
+    // --------------------------------------------
+
     @IsAdmin
     @GetMapping("/admins")
     public ResponseEntity<List<Admin>> getAllAdmins() {
@@ -57,45 +61,25 @@ public class AdminController {
         return ResponseEntity.ok(admins);
     }
 
-    // --------------------------------------------
-    // 3. Endpoints « CRUD classique pour les stagiaires »
-    // --------------------------------------------
-
     /**
      * Récupère tous les stagiaires (vue restreinte).
      *
      * @return Liste de tous les stagiaires
      */
-    // S'assurer que ton endpoint /stagiaires dans StagiaireController est accessible
-    // et retourne une liste d'objets Stagiaire au format JSON.
     @IsAdmin
     @GetMapping("/stagiaires")
     @JsonView(AffichageDossier.Stagiaire.class)
     public ResponseEntity<List<Stagiaire>> getAllStagiaires() {
-
-        List<Stagiaire> liste = stagiaireService.findAll();
-        return ResponseEntity.ok(liste);
+        return ResponseEntity.ok(stagiaireService.findAll());
     }
 
     /**
      * Récupère tous les stagiaires (vue complète) SEULEMENT ADMINS.
      */
     @IsAdmin
-    @GetMapping("/complet")
+    @GetMapping("/stagiaires/complet")
     @JsonView(AffichageDossier.Complet.class)
     public ResponseEntity<List<Stagiaire>> getAllStagiairesComplet() {
-        return ResponseEntity.ok(stagiaireService.findAll());
-    }
-
-    // todo -> méthode nécessaire ?
-
-    /**
-     * Récupère tous les stagiaires (vue admin) – SEULEMENT ADMIN. — Identique à getAllStagiaires(),
-     * mais illustré ici pour montrer la différence de JsonView.
-     */
-    @GetMapping("/admin")
-    @JsonView(AffichageDossier.Admin.class)
-    public ResponseEntity<List<Stagiaire>> getAllStagiairesAdmin() {
         return ResponseEntity.ok(stagiaireService.findAll());
     }
 
@@ -107,7 +91,7 @@ public class AdminController {
      * @return Stagiaire selon son statut
      */
     @IsAdmin
-    @GetMapping("/statut")
+    @GetMapping("/stagiaires/par-statut")
     public ResponseEntity<List<Stagiaire>> getStagiairesByStatut(
             @RequestParam StatutInscription statut) {
         return ResponseEntity.ok(stagiaireService.findByStatutInscription(statut));
@@ -122,7 +106,7 @@ public class AdminController {
      * @return
      */
     @IsAdmin
-    @GetMapping("/inscrits")
+    @GetMapping("stagiaires/inscrits")
     public ResponseEntity<List<Stagiaire>> getStagiairesInscritsEntre(
             @RequestParam LocalDate debut,
             @RequestParam LocalDate fin) {
@@ -137,21 +121,20 @@ public class AdminController {
      * @return Stagiaire créé
      */
     @IsAdmin
-    @PostMapping("/stagiaire")
+    @PostMapping("/stagiaires")
     public ResponseEntity<Stagiaire> createStagiaire(
             @RequestBody @Valid Stagiaire stagiaire,
             @RequestParam(required = false) Integer formationId) {
 
-        Stagiaire saved = stagiaireService.save(stagiaire);  // Sauvegarde via le service
+        Stagiaire saved = stagiaireService.save(stagiaire);
 
-        // Si formationId est fourni, on associe le stagiaire à cette formation
         if (formationId != null) {
             Optional<Formation> formationOpt =
                     formationService.findById(formationId);
             if (formationOpt.isEmpty()) {
-                return ResponseEntity.badRequest().build();
+                return ResponseEntity.badRequest().build(); // formation inconnue
             }
-            // On inscrit le stagiaire à la formation dès la création
+            // Rattachement direct à la formation
             stagiaireService.inscrireStagiaire(saved, formationOpt.get());
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
@@ -174,7 +157,6 @@ public class AdminController {
             Principal principal,
             Authentication authentication) {
 
-        // Vérifier l'autorisation : ADMIN ou bien identique à id connecté
         Integer idConnecte = stagiaireService.getIdFromPrincipal(principal);
         boolean estAdmin = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -194,8 +176,7 @@ public class AdminController {
         existing.setFirstName(updatedStagiaire.getFirstName());
         existing.setEmail(updatedStagiaire.getEmail());
 
-        Stagiaire sauv = stagiaireService.save(existing);
-        return ResponseEntity.ok(sauv);
+        return ResponseEntity.ok(stagiaireService.save(existing));
     }
 
     /**
@@ -217,40 +198,39 @@ public class AdminController {
         return ResponseEntity.noContent().build();
     }
 
-
     // --------------------------------------------
-    // 6. Endpoints « Admin
-    // → consultation et validation des documents »
+    // ADMIN — Documents à traiter
     // --------------------------------------------
 
-    // todo -> adapter méthode en 2 méthodes distinctes
 
     /**
      * Récupère la liste de tous les documents en attente de validation (accessible aux admins).
      */
     @IsAdmin
-    @GetMapping("/admin/documents/pending")
+    @GetMapping("/documents/en-attente")
     public ResponseEntity<List<Document>> getPendingDocuments() {
         List<Document> pending = dossierDocumentService.getPendingDocuments();
         return ResponseEntity.ok(pending);
     }
 
-//    /**
-//     * Valide un document soumis (change son statut en VALIDÉ).
-//     * Après validation, on déclenche une vérification du dossier complet du stagiaire.
-//     *
-//     * @param documentId ID du document à valider
-//     */
-//    @IsAdmin
-//    @PatchMapping("/admin/documents/{documentId}/valider")
-//    public ResponseEntity<Void> validerDocument(@PathVariable Integer documentId) {
-//        try {
-//            dossierDocumentService.validerDocument(documentId);
-//            return ResponseEntity.noContent().build();
-//        } catch (IllegalArgumentException ex) {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
+    /**
+     * Valide un document soumis (change son statut en VALIDÉ).
+     * Après validation, on déclenche une vérification du dossier complet du stagiaire.
+     *
+     * @param documentId ID du document à valider
+     */
+    @IsAdmin
+    @PatchMapping("/documents/{documentId}/valider")
+    public ResponseEntity<Void> validerDocument(@PathVariable Integer documentId) {
+        try {
+            dossierDocumentService.validerDocument(documentId, "VALIDÉ", null);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
     /**
      * Rejette un document soumis (change son statut en REJETÉ).
@@ -259,7 +239,7 @@ public class AdminController {
      * @param documentId ID du document à rejeter
      */
     @IsAdmin
-    @PatchMapping("/admin/documents/{documentId}/rejeter")
+    @PatchMapping("/documents/{documentId}/rejeter")
     public ResponseEntity<Void> rejeterDocument(@PathVariable Integer documentId) {
         try {
             dossierDocumentService.rejeterDocument(documentId);
@@ -270,15 +250,3 @@ public class AdminController {
     }
 
 }
-
-// TODO -> créer des méthodes séparées
-//  1) pour gérer les documents qui vont compléter le dossier (DossierDocumentService) pour valider ou rejeter un document (et qui vont compléter le dossier d'inscription)
-//  2) pour gérer les documents qui peuvent être envoyés pour justifier un évènement (EvenementDocumentService) pour valider ou rejeter
-
-// TODO -> est ce que toutes les méthodes get pour récupérer un stagiaire sont nécessaires ?
-
-// Controller sans service :
-//C’est possible mais déconseillé, surtout dans des applications à logique métier.
-// Le controller ne doit pas contenir de logique métier, juste orchestrer les appels.
-// Si tu n’as pas de logique métier, un controller peut appeler directement le DAO, mais ce n’est pas une bonne pratique
-// (difficile à maintenir, tester, sécuriser).

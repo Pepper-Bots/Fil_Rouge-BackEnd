@@ -7,7 +7,7 @@ public enum StatutInscription {
 
     EN_ATTENTE("En attente"),
     VALIDEE("Validée"),
-    REFUSEE("Refusée"),
+    REFUSEE("Rejetée"),
     ANNULEE("Annulée"),
     TERMINEE("Terminée"),
     EN_COURS("En cours");

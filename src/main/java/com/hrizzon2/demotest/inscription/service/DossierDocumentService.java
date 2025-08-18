@@ -186,32 +186,39 @@ public class DossierDocumentService {
         Document doc = documentDao.findById(documentId)
                 .orElseThrow(() -> new IllegalArgumentException("Document introuvable"));
 
+        String statutActuel = doc.getStatut() != null ? doc.getStatut().getNom() : null;
+
         if (!"EN_ATTENTE".equals(doc.getStatut().getNom())) {
             throw new IllegalArgumentException("Document non en attente");
         }
 
         // Gestion des différents statuts possibles
-        StatutDocument nouveauStatut;
-        if ("VALIDÉ".equals(statut) || "VALIDE".equals(statut)) {
-            nouveauStatut = statutDocumentDao.findByNom("VALIDÉ")
-                    .orElseThrow(() -> new IllegalStateException("Statut VALIDÉ introuvable"));
-        } else if ("REFUSÉ".equals(statut) || "REFUSE".equals(statut) || "REJETÉ".equals(statut)) {
-            nouveauStatut = statutDocumentDao.findByNom("REFUSÉ")
-                    .orElseThrow(() -> new IllegalStateException("Statut REFUSÉ introuvable"));
+        final String cible = statut != null ? statut.toUpperCase().trim() : "";
+        final String statutCible;
+        if ("VALIDE".equals(cible) || "VALIDÉ".equals(cible)) {
+            statutCible = "VALIDÉ";
+        } else if ("REJETE".equals(cible) || "REJETÉ".equals(cible)) {
+            statutCible = "REJETÉ";
         } else {
-            throw new IllegalArgumentException("Statut non valide : " + statut);
+            throw new IllegalArgumentException("Statut non supporté: " + statut);
         }
+
+        StatutDocument nouveauStatut = statutDocumentDao.findByNom(statutCible)
+                .orElseThrow(() -> new IllegalStateException("Statut " + statutCible + " introuvable"));
 
         // Mise à jour du document
         doc.setStatut(nouveauStatut);
         doc.setCommentaire(commentaire); // Ajout du commentaire
         documentDao.save(doc);
 
-        // Recalcul du statut dossier etc. à implémenter selon besoin
+        // Recalcul du statut dossier
+        if (doc.getDossier() != null && doc.getDossier().getStagiaire() != null) {
+            Integer stagiaireId = doc.getDossier().getStagiaire().getId();
+            getDossierCompletPourStagiaire(stagiaireId);
+        }
     }
 
     public List<Document> getPendingDocuments() {
-        // On suppose que le DAO a une méthode findByStatutNom qui retourne tous les documents par nom de statut
         return documentDao.findByStatutNom("EN_ATTENTE");
     }
 

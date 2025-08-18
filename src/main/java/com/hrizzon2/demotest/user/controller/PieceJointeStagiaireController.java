@@ -148,7 +148,7 @@
 //    }
 //
 //    /**
-//     * Met à jour le statut d'un document (Validé / Refusé, etc.).
+//     * Met à jour le statut d'un document (Validé / Rejeté, etc.).
 //     *
 //     * @param documentId ID de la pièce jointe à mettre à jour
 //     * @param dto        payload contenant le nouveau statut et l'éventuel commentaire

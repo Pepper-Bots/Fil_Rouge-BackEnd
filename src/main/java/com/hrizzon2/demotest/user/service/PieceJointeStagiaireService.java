@@ -192,7 +192,7 @@ public class PieceJointeStagiaireService {
                 .orElseThrow(() -> new EntityNotFoundException("Statut introuvable"));
         document.setStatutDocument(newStatut);
 
-        if ("Refusé".equalsIgnoreCase(dto.getStatut())) {
+        if ("Rejeté".equalsIgnoreCase(dto.getStatut())) {
             document.setCommentaire(dto.getCommentaire());
             // TODO est ce qu'on garde le champ commentaire dans l'entité ?
         } else {

@@ -541,7 +541,7 @@ Pourquoi? Parce que tu dois assembler:
 
 - Les documents attendus,
 - Les documents transmis,
-- Leur statut de validation (Validé, Refusé, En attente…),
+- Leur statut de validation (Validé, Rejeté, En attente…),
 - Et calculer si la complétude est atteinte.
 
 Ton DTO doit donc comporter pour chaque document attendu:
