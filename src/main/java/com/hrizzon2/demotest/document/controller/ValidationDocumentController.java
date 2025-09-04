@@ -42,14 +42,14 @@
 //    /**
 //     * Rejette un document identifié par son ID.
 //     *
-//     * @param documentId id du document à rejeter
+//     * @param documentId id du document à rejetér
 //     * @return document mis à jour
 //     */
 //    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('RESPONSABLE')")
 //    @PostMapping("/{documentId}/rejeter")
 //    public ResponseEntity<Document> rejeterDocument(@PathVariable @NotNull Integer documentId) {
-//        Document docRejete = validationDocumentService.rejeterDocument(Long.valueOf(documentId));
-//        return ResponseEntity.ok(docRejete);
+//        Document docrejete = validationDocumentService.rejeterDocument(Long.valueOf(documentId));
+//        return ResponseEntity.ok(docrejete);
 //    }
 //}
 //

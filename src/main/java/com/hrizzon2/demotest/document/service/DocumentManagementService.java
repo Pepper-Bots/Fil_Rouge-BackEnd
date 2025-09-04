@@ -3,6 +3,7 @@ package com.hrizzon2.demotest.document.service;
 import com.hrizzon2.demotest.document.dao.DocumentDao;
 import com.hrizzon2.demotest.document.dao.DocumentMongoDao;
 import com.hrizzon2.demotest.document.dao.StatutDocumentDao;
+import com.hrizzon2.demotest.document.dto.DocumentSummaryDto;
 import com.hrizzon2.demotest.document.model.AuditAction;
 import com.hrizzon2.demotest.document.model.Document;
 import com.hrizzon2.demotest.document.model.StatutDocument;
@@ -10,6 +11,8 @@ import com.hrizzon2.demotest.document.model.enums.TypeDocument;
 import com.hrizzon2.demotest.document.util.TypeDocumentValidator;
 import com.hrizzon2.demotest.evenement.service.EvenementService;
 import com.hrizzon2.demotest.formation.model.Formation;
+import com.hrizzon2.demotest.formation.model.ListeDocumentsObligatoires;
+import com.hrizzon2.demotest.formation.service.ListeDocumentsObligatoiresService;
 import com.hrizzon2.demotest.inscription.service.DossierService;
 import com.hrizzon2.demotest.notification.service.NotificationService;
 import com.hrizzon2.demotest.user.dao.StagiaireDao;
@@ -23,6 +26,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class DocumentManagementService {
@@ -36,6 +40,7 @@ public class DocumentManagementService {
     private final StagiaireDao stagiaireDao;
     private final TypeDocumentValidator typeDocumentValidator;
     private final DocumentMongoDao documentMongoDao;
+    private final ListeDocumentsObligatoiresService listeDocumentsObligatoiresService;
 
     @Autowired
     public DocumentManagementService(
@@ -47,8 +52,8 @@ public class DocumentManagementService {
             DocumentStorageService documentStorageService,
             StagiaireDao stagiaireDao,
             TypeDocumentValidator typeDocumentValidator,
-            DocumentMongoDao documentMongoDao
-    ) {
+            DocumentMongoDao documentMongoDao,
+            ListeDocumentsObligatoiresService listeDocumentsObligatoiresService) {
         this.documentDao = documentDao;
         this.dossierService = dossierService;
         this.evenementService = evenementService;
@@ -58,7 +63,9 @@ public class DocumentManagementService {
         this.stagiaireDao = stagiaireDao;
         this.typeDocumentValidator = typeDocumentValidator;
         this.documentMongoDao = documentMongoDao;
+        this.listeDocumentsObligatoiresService = listeDocumentsObligatoiresService;
     }
+
 
     @Transactional
     public Document uploadDocument(Integer stagiaireId, MultipartFile fichier, TypeDocument type, Formation formation) throws IOException {
@@ -90,7 +97,7 @@ public class DocumentManagementService {
         Document document = new Document();
         document.setStagiaire(stagiaire);
         document.setNomFichier(fichier.getOriginalFilename());
-        document.setType(type);
+        document.setTypeDocument(type);
         document.setStatut(getStatut("EN_ATTENTE"));
         document.setDateDepot(LocalDateTime.now());
         document.setUrlFichier(fileId);
@@ -111,6 +118,7 @@ public class DocumentManagementService {
         return savedDoc;
     }
 
+    // Méthode principale (avec MongoDB + audit)
     @Transactional
     public Document validerDocument(Integer documentId) {
         Document document = getDocumentEnAttente(documentId);
@@ -119,25 +127,51 @@ public class DocumentManagementService {
         // Synchronisation MongoDB
         updateDocumentMongoStatus(document.getUrlFichier(), "VALIDÉ");
 
-        // Logique métier existante...
-        if (document.getDossier() != null)
-            dossierService.verifierEtMettreAJourStatut(document.getDossier().getId());
-
         // Audit dans MongoDB
         addAuditAction(document.getUrlFichier(), "VALIDATION", "Système");
+
+        // Logique métier
+        if (document.getDossier() != null)
+            dossierService.verifierEtMettreAJourStatut(document.getDossier().getId());
 
         if (document.getEvenement() != null)
             evenementService.marquerJustifie(document.getEvenement().getId());
 
-        notificationService.notifyStagiaireValidationDocument(document.getStagiaire().getId(), document.getId(), true);
-
+        // Déclenchement Notification
+        notificationService.notifyStagiaireValidationDocument(
+                document.getStagiaire().getId(), document.getId(), true);
 
         return documentDao.save(document);
     }
 
+    @Transactional
+    public Document rejeterDocument(Integer documentId) {
+        Document document = getDocumentEnAttente(documentId);
+        document.setStatut(getStatut("REJETÉ"));
+
+        // Synchronisation MongoDB
+        updateDocumentMongoStatus(document.getUrlFichier(), "REJETÉ");
+
+        // Logique métier
+        if (document.getDossier() != null)
+            dossierService.verifierEtMettreAJourStatut(document.getDossier().getId());
+
+        if (document.getEvenement() != null)
+            evenementService.marquerNonJustifie(document.getEvenement().getId());
+
+        // Audit dans MongoDB
+        addAuditAction(document.getUrlFichier(), "REJET", "Système");
+
+        // Notification
+        notificationService.notifyStagiaireValidationDocument(document.getStagiaire().getId(), document.getId(), false);
+
+        return documentDao.save(document);
+    }
+
+
     private void updateDocumentMongo(String fileId, Document document) {
         documentMongoDao.findById(fileId).ifPresent(docMongo -> {
-            docMongo.setType(document.getType().toString());
+            docMongo.setType(document.getTypeDocument().toString());
             docMongo.setStatut(document.getStatut().getNom());
             documentMongoDao.save(docMongo);
         });
@@ -179,29 +213,76 @@ public class DocumentManagementService {
                 .orElseThrow(() -> new IllegalStateException("Statut " + nom + " introuvable"));
     }
 
+
+    /**
+     * Méthode ajoutée : récupérer documents par stagiaire + formation
+     * REMPLACE : PieceJointeStagiaireDao.findByStagiaireIdAndFormationId()
+     */
+    public List<Document> getDocumentsByStagiaireAndFormation(Integer stagiaireId, Integer formationId) {
+        // Utiliser votre DocumentDao existant
+        return documentDao.findByStagiaireIdAndFormationId(stagiaireId, formationId);
+        // Note: il faudra ajouter cette méthode à DocumentDao
+    }
+
+    /**
+     * Méthode ajoutée : calculer statut dossier
+     * REMPLACE : PieceJointeStagiaireService.getStatutDocumentsDossier()
+     */
+    public List<DocumentSummaryDto> getStatutDocumentsDossier(Stagiaire stagiaire, Formation formation) {
+        // Reprendre la logique de PieceJointeStagiaireService mais avec Document
+        List<ListeDocumentsObligatoires> attendus = listeDocumentsObligatoiresService.findByFormation(formation);
+        List<Document> transmis = getDocumentsByStagiaireAndFormation(stagiaire.getId(), formation.getId());
+
+        List<DocumentSummaryDto> result = new ArrayList<>();
+        for (ListeDocumentsObligatoires attendu : attendus) {
+            DocumentSummaryDto dto = new DocumentSummaryDto();
+            dto.setTypeDocument(attendu.getTypeDocument());
+            dto.setObligatoire(true);
+
+            Document docTransmis = transmis.stream()
+                    .filter(doc -> doc.getTypeDocument() == attendu.getTypeDocument())
+                    .findFirst()
+                    .orElse(null);
+
+            dto.setTransmis(docTransmis != null);
+            if (docTransmis != null) {
+                dto.setFichier(docTransmis.getNomFichier());
+                dto.setStatut(docTransmis.getStatut().getNom());
+            } else {
+                dto.setFichier(null);
+                dto.setStatut(null);
+            }
+            result.add(dto);
+        }
+        return result;
+    }
+
+    /**
+     * Méthode ajoutée : vérifier complétude dossier
+     * REMPLACE : PieceJointeStagiaireService.isDossierComplet()
+     */
+    public boolean isDossierComplet(Stagiaire stagiaire, Formation formation) {
+        List<DocumentSummaryDto> docs = getStatutDocumentsDossier(stagiaire, formation);
+        return docs.stream().allMatch(dto ->
+                dto.isTransmis() && "VALIDÉ".equalsIgnoreCase(dto.getStatut())
+        );
+    }
+
     @Transactional
-    public Document rejeterDocument(Integer documentId) {
+    public Document rejeterDocumentWithComment(Integer documentId, String commentaire) {
         Document document = getDocumentEnAttente(documentId);
         document.setStatut(getStatut("REJETÉ"));
+        document.setCommentaire(commentaire);
 
-        // Synchronisation MongoDB
         updateDocumentMongoStatus(document.getUrlFichier(), "REJETÉ");
+        addAuditAction(document.getUrlFichier(), "REJET_AVEC_COMMENTAIRE", "Admin");
 
-        // Logique métier
         if (document.getDossier() != null)
             dossierService.verifierEtMettreAJourStatut(document.getDossier().getId());
 
-        if (document.getEvenement() != null)
-            evenementService.marquerNonJustifie(document.getEvenement().getId());
-
-        // Audit dans MongoDB
-        addAuditAction(document.getUrlFichier(), "REJET", "Système");
-
-        // Notification
-        notificationService.notifyStagiaireValidationDocument(document.getStagiaire().getId(), document.getId(), false);
+        notificationService.notifyStagiaireValidationDocument(
+                document.getStagiaire().getId(), document.getId(), false);
 
         return documentDao.save(document);
     }
-
-
 }

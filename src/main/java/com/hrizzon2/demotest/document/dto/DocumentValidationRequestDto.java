@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class DocumentValidationRequestDto {
     private Long documentId;
-    private String statut; // 'VALIDE' ou 'REJETE'
+    private String statut; // 'VALIDE' ou 'REJETÉ'
     private String motif;
     private String commentaires;
 }

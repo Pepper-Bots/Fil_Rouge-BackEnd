@@ -2,6 +2,7 @@ package com.hrizzon2.demotest.user.service.Stagiaire;
 
 import com.hrizzon2.demotest.common.service.EmailService;
 import com.hrizzon2.demotest.formation.model.Formation;
+import com.hrizzon2.demotest.formation.service.FormationService;
 import com.hrizzon2.demotest.inscription.dao.InscriptionDao;
 import com.hrizzon2.demotest.inscription.model.Inscription;
 import com.hrizzon2.demotest.inscription.model.enums.StatutInscription;
@@ -9,6 +10,7 @@ import com.hrizzon2.demotest.user.dao.StagiaireDao;
 import com.hrizzon2.demotest.user.model.Stagiaire;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
@@ -32,12 +34,16 @@ public class StagiaireServiceImpl implements StagiaireService {
     private final StagiaireDao stagiaireDao;
     private final InscriptionDao inscriptionDao;
     private final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
+    private final FormationService formationService;
 
     @Autowired
-    public StagiaireServiceImpl(StagiaireDao stagiaireDao, InscriptionDao inscriptionDao, EmailService emailService) {
+    public StagiaireServiceImpl(StagiaireDao stagiaireDao, InscriptionDao inscriptionDao, EmailService emailService, PasswordEncoder passwordEncoder, FormationService formationService) {
         this.stagiaireDao = stagiaireDao;
         this.inscriptionDao = inscriptionDao;
         this.emailService = emailService;
+        this.passwordEncoder = passwordEncoder;
+        this.formationService = formationService;
     }
 
     @Override
@@ -211,9 +217,9 @@ public class StagiaireServiceImpl implements StagiaireService {
 
         // 5) Inscription à une formation (optionnel)
         if (formationId != null) {
-            var formation = formationService.findById(formationId)
+            Formation formation = formationService.findById(formationId)
                     .orElseThrow(() -> new IllegalArgumentException("Formation introuvable: " + formationId));
-            inscrireStagiaire(saved, formation); // ta méthode existante si tu l’as, sinon ajoute-la ici
+            inscrireStagiaire(saved, formation);
         }
 
         // 6) Ne pas renvoyer d’infos sensibles

@@ -541,7 +541,7 @@ Pourquoi? Parce que tu dois assembler:
 
 - Les documents attendus,
 - Les documents transmis,
-- Leur statut de validation (Validé, Rejeté, En attente…),
+- Leur statut de validation (Validé, rejete, En attente…),
 - Et calculer si la complétude est atteinte.
 
 Ton DTO doit donc comporter pour chaque document attendu:
@@ -1064,3 +1064,48 @@ Architecture feature Document :
   📁 document/controller/
     ├── DocumentController.java        ← Principal (MySQL)
     └── DocumentUploadController.java  ← Audit (MongoDB)
+
+
+----------------------------
+
+Structure Classique          Structure Feature
+src/main/java/              src/main/java/
+├── controller/             ├── document/
+├── service/                │   ├── DocumentController
+├── repository/             │   ├── DocumentService
+├── entity/                 │   ├── DocumentRepository
+└── dto/                    │   └── DocumentDTO
+                           ├── stagiaire/
+                           └── admin/
+
+
+                           PRESENTATION TIER          LOGIC TIER              DATA TIER
+                           ┌─────────────────┐       ┌─────────────────┐     ┌─────────────────┐
+                           │   Angular 19    │◄─────►│  Spring Boot    │◄───►│  MySQL 8.0      │
+                           │                 │       │                 │     │                 │
+                           │ • Components    │       │ • Controllers   │     │ • Tables        │
+                           │ • Services      │       │ • Services      │     │ • Relations     │
+                           │ • Guards        │       │ • Repositories  │     │ • Contraintes   │
+                           └─────────────────┘       └─────────────────┘     └─────────────────┘
+
+-----------------------------
+Tests
+
+Arborescence recommandée :
+
+src/
+├── main/java/com/hrizzon2/demotest/
+└── test/java/com/hrizzon2/demotest/
+    ├── document/
+    │   ├── service/
+    │   │   ├── DocumentManagementServiceTest.java
+    │   │   └── DocumentStorageServiceTest.java
+    │   └── controller/
+    │       └── DocumentUploadControllerTest.java
+    ├── formation/
+    │   ├── service/
+    │   │   └── FormationServiceTest.java
+    │   └── controller/
+    │       └── FormationControllerTest.java
+    └── integration/
+        └── DocumentUploadIntegrationTest.java

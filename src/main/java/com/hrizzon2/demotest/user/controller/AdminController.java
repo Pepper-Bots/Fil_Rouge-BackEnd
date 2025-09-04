@@ -2,8 +2,6 @@ package com.hrizzon2.demotest.user.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.hrizzon2.demotest.document.model.Document;
-import com.hrizzon2.demotest.document.service.ValidationDocumentService;
-import com.hrizzon2.demotest.evenement.service.EvenementDocumentService;
 import com.hrizzon2.demotest.formation.model.Formation;
 import com.hrizzon2.demotest.formation.service.FormationService;
 import com.hrizzon2.demotest.inscription.model.enums.StatutInscription;
@@ -36,17 +34,13 @@ public class AdminController {
     private final StagiaireService stagiaireService;
     private final DossierDocumentService dossierDocumentService;
     private final FormationService formationService;
-    private final EvenementDocumentService evenementDocumentService;
-    private final ValidationDocumentService validationDocumentService;
 
     @Autowired
-    public AdminController(AdminService adminService, StagiaireService stagiaireService, DossierDocumentService dossierDocumentService, FormationService formationService, EvenementDocumentService evenementDocumentService, ValidationDocumentService validationDocumentService) {
+    public AdminController(AdminService adminService, StagiaireService stagiaireService, DossierDocumentService dossierDocumentService, FormationService formationService) {
         this.adminService = adminService;
         this.stagiaireService = stagiaireService;
         this.dossierDocumentService = dossierDocumentService;
-        this.validationDocumentService = validationDocumentService;
         this.formationService = formationService;
-        this.evenementDocumentService = evenementDocumentService;
     }
 
 

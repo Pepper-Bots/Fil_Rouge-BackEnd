@@ -31,17 +31,19 @@ public class Ville {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "Id_Ville")
     private Integer idVille;
 
     /**
      * Code postal de la ville.
      */
+    @Column(name = "code_postal")
     private String codePostal;
 
     /**
      * Nom de la ville.
      */
-    @Column(unique = false)
+    @Column(name = "nom_ville")
     private String nomVille;
 
     /**

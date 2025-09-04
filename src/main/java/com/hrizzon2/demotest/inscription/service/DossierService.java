@@ -138,7 +138,7 @@ public class DossierService {
 
         for (ListeDocumentsObligatoires item : requiredDocs) {
             Document doc = new Document();
-            doc.setType(item.getTypeDocument());
+            doc.setTypeDocument(item.getTypeDocument());
             doc.setStatut(statutDocAFournir.orElseThrow(() ->
                     new EntityNotFoundException("Statut 'À fournir' introuvable"))
             );

@@ -1,13 +1,13 @@
 package com.hrizzon2.demotest.formation.controller;
 
 import com.hrizzon2.demotest.document.dto.DocumentSummaryDto;
+import com.hrizzon2.demotest.document.model.Document;
 import com.hrizzon2.demotest.document.model.enums.TypeDocument;
+import com.hrizzon2.demotest.document.service.DocumentManagementService;
 import com.hrizzon2.demotest.formation.dto.FormationAvecStatutDto;
 import com.hrizzon2.demotest.formation.model.Formation;
 import com.hrizzon2.demotest.formation.service.FormationService;
-import com.hrizzon2.demotest.user.model.PieceJointeStagiaire;
 import com.hrizzon2.demotest.user.model.Stagiaire;
-import com.hrizzon2.demotest.user.service.PieceJointeStagiaireService;
 import com.hrizzon2.demotest.user.service.Stagiaire.StagiaireService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,19 +27,21 @@ public class FormationController {
 
     private final FormationService formationService;
     private final StagiaireService stagiaireService;
-    private final PieceJointeStagiaireService pieceJointeStagiaireService;
+    private final DocumentManagementService documentManagementService;
 
     @Autowired
     public FormationController(FormationService formationService,
                                StagiaireService stagiaireService,
-                               PieceJointeStagiaireService pieceJointeStagiaireService) {
+                               DocumentManagementService documentManagementService
+    ) {
         this.formationService = formationService;
         this.stagiaireService = stagiaireService;
-        this.pieceJointeStagiaireService = pieceJointeStagiaireService;
+        this.documentManagementService = documentManagementService;
     }
 
     @GetMapping("/formations")
     public ResponseEntity<List<Formation>> getAllFormations() {
+
         return ResponseEntity.ok(formationService.findAll());
     }
 
@@ -50,11 +52,17 @@ public class FormationController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // À ajouter dans FormationController
+    /**
+     * Récupérer formations d'un stagiaire
+     */
     @GetMapping("/stagiaire/{stagiaireId}/formations")
     public ResponseEntity<List<Formation>> getFormationsStagiaire(@PathVariable Integer stagiaireId) {
-        List<Formation> formations = formationService.findFormationsByStagiaire(stagiaireId);
-        return ResponseEntity.ok(formations);
+        try {
+            List<Formation> formations = formationService.findFormationsByStagiaire(stagiaireId);
+            return ResponseEntity.ok(formations);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PostMapping("/formation")
@@ -92,7 +100,7 @@ public class FormationController {
      */
     @GetMapping("/formation/{formationId}/documents-requis")
     @PreAuthorize("hasAuthority('STAGIAIRE') or hasAuthority('ADMIN')")
-    public ResponseEntity<List<TypeDocument>> getDocumentsRequis(@PathVariable Integer formationId) {
+    public ResponseEntity<List<TypeDocument>> getDocumentsRequisFormation(@PathVariable Integer formationId) {
         try {
             Optional<Formation> formationOpt = formationService.findById(formationId);
             if (formationOpt.isEmpty()) {
@@ -111,11 +119,11 @@ public class FormationController {
     }
 
     /**
-     * Récupère les formations d'un stagiaire avec le statut de ses documents (alimente le tableau/progression)
+     * Récupère les formations d'un stagiaire avec le statut de ses documents (alimente la progression)
      */
     @GetMapping("/stagiaire/{stagiaireId}/formations-avec-statut")
     @PreAuthorize("hasAuthority('STAGIAIRE') or hasAuthority('ADMIN')")
-    public ResponseEntity<List<FormationAvecStatutDto>> getFormationsAvecStatut(
+    public ResponseEntity<List<FormationAvecStatutDto>> getFormationsAvecStatutDocuments(
             @PathVariable Integer stagiaireId) {
         List<FormationAvecStatutDto> formations =
                 formationService.getFormationsAvecStatutDocuments(stagiaireId);
@@ -140,8 +148,8 @@ public class FormationController {
             List<TypeDocument> documentsRequis = formationOpt.get().getListeDocumentsObligatoires();
 
             // Récupérer les documents déjà soumis par le stagiaire
-            List<PieceJointeStagiaire> documentsDeposes = pieceJointeStagiaireService
-                    .getPiecesPourStagiaireEtFormation(stagiaireId, formationId);
+            List<Document> documentsDeposes = documentManagementService
+                    .getDocumentsByStagiaireAndFormation(stagiaireId, formationId);
 
             // Calculer le pourcentage de complétion
             int totalRequis = documentsRequis.size();
@@ -171,13 +179,13 @@ public class FormationController {
             @PathVariable Integer stagiaireId) {
         try {
             Optional<Formation> formationOpt = formationService.findById(formationId);
-            Optional<Stagiaire> stagiaireOpt = stagiaireService.findById(stagiaireId); // Il vous faudra ce service aussi
+            Optional<Stagiaire> stagiaireOpt = stagiaireService.findById(stagiaireId);
 
             if (formationOpt.isEmpty() || stagiaireOpt.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
 
-            List<DocumentSummaryDto> summary = pieceJointeStagiaireService
+            List<DocumentSummaryDto> summary = documentManagementService
                     .getStatutDocumentsDossier(stagiaireOpt.get(), formationOpt.get());
 
             return ResponseEntity.ok(summary);

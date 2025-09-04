@@ -6,7 +6,6 @@ import com.hrizzon2.demotest.document.model.Document;
 import com.hrizzon2.demotest.document.model.DocumentMongo;
 import com.hrizzon2.demotest.document.model.enums.TypeDocument;
 import com.hrizzon2.demotest.document.service.DocumentManagementService;
-import com.hrizzon2.demotest.formation.dto.FormationAvecStatutDto;
 import com.hrizzon2.demotest.formation.model.Formation;
 import com.hrizzon2.demotest.formation.service.FormationService;
 import jakarta.persistence.EntityNotFoundException;
@@ -28,16 +27,51 @@ import java.util.Map;
 @RequestMapping("/documents")
 public class DocumentUploadController {
 
-    // Injection optionnelle
-    @Autowired(required = false)
-    private DocumentMongoDao documentMongoDao;
+    private final DocumentMongoDao documentMongoDao;
+    private final FormationService formationService;
+    private final DocumentManagementService documentManagementService;
 
-    @Autowired
-    private FormationService formationService;
 
-    @Autowired
-    private DocumentManagementService documentManagementService;
+    public DocumentUploadController(
+            @Autowired(required = false)
+            DocumentMongoDao documentMongoDao,
+            FormationService formationService,
+            DocumentManagementService documentManagementService) {
+        this.documentMongoDao = documentMongoDao;
+        this.formationService = formationService;
+        this.documentManagementService = documentManagementService;
+    }
 
+    /**
+     * Upload pour une formation - Upload principal avec MongoDB
+     * Point d'entrée unique pour l'upload de documents liés aux formations
+     */
+    @PostMapping("/formations/{formationId}/upload")
+    public ResponseEntity<?> uploadDocumentForFormation(
+            @PathVariable Integer formationId,
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("type") TypeDocument type,
+            @RequestParam("userId") Integer userId
+    ) {
+        try {
+            Formation formation = formationService.findById(formationId)
+                    .orElseThrow(() -> new EntityNotFoundException("Formation non trouvée"));
+
+            Document document = documentManagementService.uploadDocument(userId, file, type, formation);
+
+            return ResponseEntity.ok(Map.of(
+                    "message", "Document envoyé avec succès !",
+                    "documentId", document.getId()
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Upload simple (fallback MongoDB optionnel)
+     * Pour compatibilité ou cas d'usage spéciaux
+     */
     @PostMapping("/upload")
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file,
                                              @RequestParam("stagiaireId") String stagiaireId,
@@ -80,100 +114,6 @@ public class DocumentUploadController {
 
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Erreur lors de l'upload : " + e.getMessage());
-        }
-    }
-
-    // Ajouter dans DocumentUploadController
-
-
-    /**
-     * ✅ Upload pour une formation - ADAPTÉ à tes services existants
-     */
-    @PostMapping("/formations/{formationId}/upload")
-    public ResponseEntity<?> uploadDocumentForFormation(
-            @PathVariable Integer formationId,
-            @RequestParam("file") MultipartFile file,
-            @RequestParam("type") TypeDocument type,
-            @RequestParam("userId") Integer userId
-    ) {
-        try {
-            // Utiliser ton service existant DocumentManagementService
-            Formation formation = formationService.findById(formationId)
-                    .orElseThrow(() -> new EntityNotFoundException("Formation non trouvée"));
-
-            Document document = documentManagementService.uploadDocument(userId, file, type, formation);
-
-            return ResponseEntity.ok(Map.of(
-                    "message", "Document envoyé avec succès !",
-                    "documentId", document.getId()
-            ));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
-    }
-
-    /**
-     * ✅ Récupérer formations d'un stagiaire - UTILISE ton service existant
-     */
-    @GetMapping("/stagiaire/{userId}/formations")
-    public ResponseEntity<List<Formation>> getFormationsByStagiaire(@PathVariable Integer userId) {
-        try {
-            // Tu as déjà cette méthode dans FormationService !
-            List<Formation> formations = formationService.findFormationsByStagiaire(userId);
-            return ResponseEntity.ok(formations);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
-    /**
-     * ✅ Documents requis pour une formation - UTILISE ton service existant
-     */
-    @GetMapping("/formation/{formationId}/documents-requis")
-    public ResponseEntity<List<TypeDocument>> getDocumentsRequisFormation(@PathVariable Integer formationId) {
-        try {
-            Formation formation = formationService.findById(formationId)
-                    .orElseThrow(() -> new EntityNotFoundException("Formation non trouvée"));
-
-            // Tu as déjà cette méthode dans Formation.getListeDocumentsObligatoires() !
-            List<TypeDocument> typesRequis = formation.getListeDocumentsObligatoires();
-
-            return ResponseEntity.ok(typesRequis);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
-    /**
-     * ✅ Statut dossier formation - UTILISE FormationAvecStatutDto existant
-     */
-    @GetMapping("/formation/{formationId}/statut/{userId}")
-    public ResponseEntity<FormationAvecStatutDto> getStatutDossierFormation(
-            @PathVariable Integer formationId,
-            @PathVariable Integer userId
-    ) {
-        try {
-            // Tu as déjà cette méthode dans FormationService !
-            FormationAvecStatutDto statut = formationService.getStatutDossierFormation(userId, formationId);
-            return ResponseEntity.ok(statut);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
-    // Ajouter dans DocumentUploadController
-
-    /**
-     * ✅ Récupérer toutes les formations avec statut documents
-     */
-    @GetMapping("/stagiaire/{userId}/formations-avec-statut")
-    public ResponseEntity<List<FormationAvecStatutDto>> getFormationsAvecStatutDocuments(@PathVariable Integer userId) {
-        try {
-            // Tu as déjà cette méthode dans FormationService !
-            List<FormationAvecStatutDto> formations = formationService.getFormationsAvecStatutDocuments(userId);
-            return ResponseEntity.ok(formations);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
         }
     }
 }

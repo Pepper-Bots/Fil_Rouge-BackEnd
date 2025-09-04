@@ -117,7 +117,7 @@ class DocumentManagementServiceTest {
         assertNotNull(saved);
         assertEquals(999, saved.getId());
         assertEquals("cv.pdf", saved.getNomFichier());
-        assertEquals(TypeDocument.CV, saved.getType());
+        assertEquals(TypeDocument.CV, saved.getTypeDocument());
         assertEquals("gridfs-123", saved.getUrlFichier());
         assertEquals(stagiaire, saved.getStagiaire());
         assertEquals(formation, saved.getFormation());
@@ -163,7 +163,7 @@ class DocumentManagementServiceTest {
     }
 
     @Test
-    void uploadDocument_ko_dejaSoumisNonRejete() throws Exception {
+    void uploadDocument_ko_dejaSoumisNonrejete() throws Exception {
         // GIVEN
         Integer stagiaireId = 1;
         when(stagiaireDao.findById(stagiaireId)).thenReturn(Optional.of(mkStagiaire(stagiaireId, "Dupont")));
@@ -324,7 +324,7 @@ class DocumentManagementServiceTest {
         // THEN
         assertNotNull(saved);
         assertEquals("cv.pdf", saved.getNomFichier());
-        assertEquals(type, saved.getType());
+        assertEquals(type, saved.getTypeDocument());
         assertEquals("fakeFileId", saved.getUrlFichier());
         assertEquals(stagiaire, saved.getStagiaire());
         assertEquals(statut, saved.getStatut());

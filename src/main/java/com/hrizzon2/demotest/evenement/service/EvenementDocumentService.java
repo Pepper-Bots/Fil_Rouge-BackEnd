@@ -50,7 +50,7 @@ public class EvenementDocumentService {
             Document document = new Document();
             document.setEvenement(evenement);
             document.setNomFichier(cleanFileName);
-            document.setType(type);
+            document.setTypeDocument(type);
             document.setStatut(statutEnAttente);
             document.setDateDepot(LocalDateTime.now());
 

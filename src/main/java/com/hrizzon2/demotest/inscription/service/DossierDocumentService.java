@@ -7,6 +7,7 @@ import com.hrizzon2.demotest.document.dto.DocumentSummaryDto;
 import com.hrizzon2.demotest.document.model.Document;
 import com.hrizzon2.demotest.document.model.StatutDocument;
 import com.hrizzon2.demotest.document.model.enums.TypeDocument;
+import com.hrizzon2.demotest.document.service.DocumentManagementService;
 import com.hrizzon2.demotest.formation.model.Formation;
 import com.hrizzon2.demotest.inscription.dao.DossierDao;
 import com.hrizzon2.demotest.inscription.dao.InscriptionDao;
@@ -51,18 +52,20 @@ public class DossierDocumentService {
             TypeDocument.ATTEST_RESP_CIVILE,
             TypeDocument.AUTRE
     );
+    private final DocumentManagementService documentManagementService;
 
     @Autowired
     public DossierDocumentService(DocumentDao documentDao,
                                   DossierDao dossierDao, InscriptionDao inscriptionDao,
                                   StatutDocumentDao statutDocumentDao, StatutDossierDao statutDossierDao,
-                                  FichierService fichierService) {
+                                  FichierService fichierService, DocumentManagementService documentManagementService) {
         this.documentDao = documentDao;
         this.dossierDao = dossierDao;
         this.inscriptionDao = inscriptionDao;
         this.statutDocumentDao = statutDocumentDao;
         this.statutDossierDao = statutDossierDao;
         this.fichierService = fichierService;
+        this.documentManagementService = documentManagementService;
     }
 
 
@@ -86,7 +89,7 @@ public class DossierDocumentService {
             Document document = new Document();
             document.setDossier(dossier);
             document.setNomFichier(cleanFileName);
-            document.setType(type);
+            document.setTypeDocument(type);
             document.setStatut(statutEnAttente);
             document.setDateDepot(LocalDateTime.now());
 
@@ -111,7 +114,7 @@ public class DossierDocumentService {
 
         boolean complet = listeDocsObligatoires.stream()
                 .allMatch(type -> docs.stream()
-                        .anyMatch(doc -> doc.getType() == type && "VALIDÉ".equals(doc.getStatut().getNom())));
+                        .anyMatch(doc -> doc.getTypeDocument() == type && "VALIDÉ".equals(doc.getStatut().getNom())));
 
         StatutDossier statut = statutDossierDao.findByNomStatut(complet ? "COMPLET" : "INCOMPLET")
                 .orElseThrow(() -> new IllegalStateException("Statut dossier introuvable"));
@@ -146,7 +149,7 @@ public class DossierDocumentService {
         for (TypeDocument type : documentsAttendus) {
             // Chercher document transmis correspondant à ce type
             Document doc = documentsTransmis.stream()
-                    .filter(d -> d.getType() == type)
+                    .filter(d -> d.getTypeDocument() == type)
                     .findFirst()
                     .orElse(null);
 
@@ -183,6 +186,14 @@ public class DossierDocumentService {
     }
 
     public void validerDocument(Integer documentId, String statut, String commentaire) {
+
+        if ("VALIDE".equals(statut.toUpperCase().trim())) {
+            documentManagementService.validerDocument(documentId);
+        } else if ("REJETÉ".equals(statut.toUpperCase().trim())) {
+            documentManagementService.rejeterDocumentWithComment(documentId, commentaire);
+        }
+
+
         Document doc = documentDao.findById(documentId)
                 .orElseThrow(() -> new IllegalArgumentException("Document introuvable"));
 
@@ -197,7 +208,7 @@ public class DossierDocumentService {
         final String statutCible;
         if ("VALIDE".equals(cible) || "VALIDÉ".equals(cible)) {
             statutCible = "VALIDÉ";
-        } else if ("REJETE".equals(cible) || "REJETÉ".equals(cible)) {
+        } else if ("REJETÉ".equals(cible) || "REJETÉ".equals(cible)) {
             statutCible = "REJETÉ";
         } else {
             throw new IllegalArgumentException("Statut non supporté: " + statut);
@@ -231,13 +242,12 @@ public class DossierDocumentService {
             throw new IllegalArgumentException("Document non en attente");
         }
 
-        StatutDocument statutRejete = statutDocumentDao.findByNom("REJETÉ")
+        StatutDocument statutrejete = statutDocumentDao.findByNom("REJETÉ")
                 .orElseThrow(() -> new IllegalStateException("Statut REJETÉ introuvable"));
 
-        doc.setStatut(statutRejete);
+        doc.setStatut(statutrejete);
         documentDao.save(doc);
 
-        // Recalcul du statut dossier etc. à implémenter selon besoin
     }
 
 

@@ -255,7 +255,7 @@
 //    /**
 //     * Passe le document en statut REJETÉ, puis recalcule le dossier global.
 //     *
-//     * @param documentId ID du document à rejeter
+//     * @param documentId ID du document à rejetér
 //     * @throws IllegalArgumentException si le document n’existe pas ou n’est pas en attente
 //     */
 //
@@ -270,9 +270,9 @@
 //        }
 //
 //        // 1. Changer le statut en REJETÉ
-//        StatutDocument statutRejete = statutDocumentDao.findByNom("REJETÉ")
+//        StatutDocument statutRejeté = statutDocumentDao.findByNom("REJETÉ")
 //                .orElseThrow(() -> new IllegalStateException("Statut REJETÉ introuvable en base !"));
-//        doc.setStatut(statutRejete);
+//        doc.setStatut(statutRejeté);
 //        documentDao.save(doc);
 //
 //        // 2. Recalculer le dossier du stagiaire (il restera INCOMPLET car un doc a été rejeté)

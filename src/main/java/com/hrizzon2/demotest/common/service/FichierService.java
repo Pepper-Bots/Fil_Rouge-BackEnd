@@ -101,4 +101,14 @@ public class FichierService {
             log.warn("Suppression fichier échouée: {}", fileName, e);
         }
     }
+
+    /**
+     * Retourne le chemin complet vers un fichier image dans le dossier privé.
+     *
+     * @param nomImage Le nom du fichier image
+     * @return Le chemin complet vers le fichier
+     */
+    public Path getImagePath(String nomImage) {
+        return Paths.get(privateUploadFolder).resolve(nomImage);
+    }
 }

@@ -178,9 +178,9 @@ VALUES (1, 'Développement Web Front-End', 'A', 'Apprendre HTML, CSS, JavaScript
 
 
 -- 10. DOSSIER
-INSERT INTO dossier (id_dossier, code_dossier, statut_dossier_id, date_de_creation, derniere_mise_a_jour,
+INSERT INTO dossier (id_dossier, code_dossier, Id_statut_dossier, date_de_creation, derniere_mise_a_jour,
                      date_modification,
-                     stagiaire_id, formation_id, createur_id)
+                     id_Stagiaire, id_formation, id_createur)
 VALUES (1, 'DSR001', 2, '2025-01-05 09:00:00', '2025-01-07 14:00:00', '2025-01-07 14:00:00', 5, 1, 1),   -- Java avancé
        (2, 'DSR002', 1, '2025-01-08 10:15:00', '2025-01-09 16:30:00', '2025-01-07 14:00:00', 6, 2, 2),-- Développement Web
        (3, 'DSR003', 3, '2025-01-12 11:00:00', '2025-01-13 15:45:00', '2025-01-07 14:00:00', 7, 3, 3),-- Data Science
@@ -210,9 +210,9 @@ VALUES (1, 'DSR001', 2, '2025-01-05 09:00:00', '2025-01-07 14:00:00', '2025-01-0
 -- Développement Web
 
 
--- Données de test avec formation_id_formation
-INSERT INTO document (nom_fichier, type, statut_document_id, dossier_id, stagiaire_id, evenement_id, commentaire,
-                      date_depot, url_fichier, formation_id_formation)
+-- Données de test avec id_formation
+INSERT INTO document (nom_fichier, type, statut_document_id, id_dossier, Id_Stagiaire, evenement_id, commentaire,
+                      date_depot, url_fichier, id_formation)
 VALUES ('Justificatif de domicile', 'JUSTIFICATIF', 2, 1, 5, NULL, NULL, NOW(), NULL, 1),
        ('CV Paul', 'CV', 1, 1, 6, NULL, NULL, NOW(), NULL, 1),
        ('Lettre de motivation', 'LETTRE_MOTIVATION', 1, 2, 7, NULL, NULL, NOW(), NULL, 2),
@@ -220,87 +220,88 @@ VALUES ('Justificatif de domicile', 'JUSTIFICATIF', 2, 1, 5, NULL, NULL, NOW(), 
 
 
 -- 1) Inscription n°1 pour le stagiaire dont id = 3, sur la formation id = 5, en EN_ATTENTE,
---    pas encore de dossier (dossier_id = NULL), date_modification et date_validation NULL :
+--    pas encore de dossier (id_dossier = NULL), date_modification et date_validation NULL :
 
 -- Exemple inscription
 INSERT INTO inscription (id_inscription, date_inscription, date_modification, date_validation, statut_inscription,
-                         stagiaire_id,
-                         formation_id, dossier_id)
+                         Id_Stagiaire,
+                         id_formation, id_dossier)
 VALUES (1, CURDATE(), NULL, NULL, 'EN_ATTENTE', 5, 1, 1);
 
 
 
-INSERT INTO evenement (id_evenement, date_debut, date_fin, est_retard, stagiaire_id, motif_id, document_id)
+INSERT INTO evenement (id_evenement, date_debut, date_fin, est_retard, Id_Stagiaire, motif_id, document_id)
 VALUES (1, '2025-10-15', '2025-10-16', FALSE, 5, 1, NULL);
 
 
 -- 7. DOCUMENTS OBLIGATOIRES - Complément cohérent pour chaque formation
 
 -- Formation 1 : Dév Web Front-End
-INSERT INTO liste_documents_obligatoires (id, formation_id, type_document)
+INSERT INTO liste_documents_obligatoires (id, id_formation, type_document)
 VALUES (11, 1, 'CV'),
        (12, 1, 'LETTRE_MOTIVATION'),
        (13, 1, 'PORTFOLIO');
 
 -- Formation 2 : Dév Web Back-End
-INSERT INTO liste_documents_obligatoires (id, formation_id, type_document)
+INSERT INTO liste_documents_obligatoires (id, id_formation, type_document)
 VALUES (14, 2, 'CV'),
        (15, 2, 'DIPLOME_BAC'),
        (16, 2, 'PIECE_IDENTITE');
 
 -- Formation 3 : Full Stack Web
-INSERT INTO liste_documents_obligatoires (id, formation_id, type_document)
+INSERT INTO liste_documents_obligatoires (id, id_formation, type_document)
 VALUES (17, 3, 'CV'),
        (18, 3, 'LETTRE_MOTIVATION'),
        (19, 3, 'DIPLOME_BAC_2'),
        (20, 3, 'PORTFOLIO');
 
 -- Formation 4 : Sécurité Réseaux
-INSERT INTO liste_documents_obligatoires (id, formation_id, type_document)
+INSERT INTO liste_documents_obligatoires (id, id_formation, type_document)
 VALUES (21, 4, 'PIECE_IDENTITE'),
        (22, 4, 'DIPLOME_BAC'),
        (23, 4, 'ATTEST_RESP_CIVILE');
 
 -- Formation 5 : Pentesting
-INSERT INTO liste_documents_obligatoires (id, formation_id, type_document)
+INSERT INTO liste_documents_obligatoires (id, id_formation, type_document)
 VALUES (24, 5, 'CV'),
        (25, 5, 'JUSTIF_SITUATION'),
        (26, 5, 'DIPLOME_BAC_3');
 
 -- Formation 6 : Java Spring
-INSERT INTO liste_documents_obligatoires (id, formation_id, type_document)
+INSERT INTO liste_documents_obligatoires (id, id_formation, type_document)
 VALUES (27, 6, 'CV'),
        (28, 6, 'DIPLOME_BAC_2'),
        (29, 6, 'PORTFOLIO');
 
 -- Formation 7 : Cyberdéfense et SOC
-INSERT INTO liste_documents_obligatoires (id, formation_id, type_document)
+INSERT INTO liste_documents_obligatoires (id, id_formation, type_document)
 VALUES (30, 7, 'PIECE_IDENTITE'),
        (31, 7, 'CV'),
        (32, 7, 'ATTEST_RESP_CIVILE');
 
 -- Formation 8 : PHP / Laravel
-INSERT INTO liste_documents_obligatoires (id, formation_id, type_document)
+INSERT INTO liste_documents_obligatoires (id, id_formation, type_document)
 VALUES (33, 8, 'CV'),
        (34, 8, 'LETTRE_MOTIVATION'),
        (35, 8, 'PORTFOLIO');
 
 -- Formation 9 : Sécu Applis Web
-INSERT INTO liste_documents_obligatoires (id, formation_id, type_document)
+INSERT INTO liste_documents_obligatoires (id, id_formation, type_document)
 VALUES (36, 9, 'CV'),
        (37, 9, 'JUSTIFICATIF'),
        (38, 9, 'ATTEST_RESP_CIVILE');
 
 -- Formation 10 : Initiation cybersécurité
-INSERT INTO liste_documents_obligatoires (id, formation_id, type_document)
+INSERT INTO liste_documents_obligatoires (id, id_formation, type_document)
 VALUES (39, 10, 'CV'),
        (40, 10, 'PIECE_IDENTITE');
 
 
-
-INSERT INTO piece_jointe_stagiaire (id, stagiaire_id, formation_id, type_document, chemin_fichier, statut_document_id)
-VALUES (1, 5, 1, 'CV', 'cv_roman_dupont.pdf', 1),
-       (2, 5, 1, 'JUSTIFICATIF', 'justificatif_roman_dupont.pdf', 2);
+-- Statuts documents
+INSERT INTO statut_document (nom)
+VALUES ('EN_ATTENTE'),
+       ('VALIDÉ'),
+       ('REJETÉ');
 
 -- Création des modèles de message
 # INSERT INTO notification_template (id, type, message)
@@ -353,101 +354,88 @@ VALUES (1, 5, 1, 'CV', 'cv_roman_dupont.pdf', 1),
 #        (27, 4, 19),
 #        (28, 4, 20);
 
-SELECT email, enabled
-FROM user;
-# WHERE email = 'ton.email@test.com';
-
-SELECT *
-FROM user
-WHERE LOWER(email) = 'test1@example.com';
-
-
-
-UPDATE user
-SET password = '$2a$10$uDcN81kQoUSbZ6Inyga.dOoM5RI1Ihi.lSAJg54qlG3Z5sfI4ax/S'
-WHERE email = 'alice@example.com';
-
-UPDATE user
-SET enabled = true
-WHERE email = 'bruno@example.com';
-
-SELECT *
-FROM user
-WHERE email = 'bruno@example.com';
-
-SELECT *
-FROM Document;
-
-SELECT Id_Document, nom, statut, lien_fichier, Id_Dossier, Id_Liste_Document
-FROM Document
-ORDER BY Id_Document DESC
-LIMIT 5;
+# SELECT email, enabled
+# FROM user;
+# # WHERE email = 'ton.email@test.com';
+#
+# SELECT *
+# FROM user
+# WHERE LOWER(email) = 'test1@example.com';
 
 
--- Statuts documents
-INSERT INTO statut_document (nom)
-VALUES ('EN_ATTENTE'),
-       ('VALIDÉ'),
-       ('REJETÉ');
+# UPDATE user
+# SET password = '$2a$10$uDcN81kQoUSbZ6Inyga.dOoM5RI1Ihi.lSAJg54qlG3Z5sfI4ax/S'
+# WHERE email = 'alice@example.com';
+#
+# UPDATE user
+# SET enabled = true
+# WHERE email = 'bruno@example.com';
+#
+# SELECT *
+# FROM user
+# WHERE email = 'bruno@example.com';
+#
+# SELECT Id_Document, nom, statut, lien_fichier, Id_Dossier, Id_Liste_Document
+# FROM Document
+# ORDER BY Id_Document DESC
+# LIMIT 5;
+
 
 -- Stagiaire de test
-INSERT INTO user (last_name, first_name, email, password, enabled, nom_role)
-VALUES ('Dupont', 'Romain', 'romain.dupont@test.com', 'hashedpwd', TRUE, 'STAGIAIRE');
+# INSERT INTO user (last_name, first_name, email, password, enabled, nom_role)
+# VALUES ('Dupont', 'Romain', 'romain.dupont@test.com', 'hashedpwd', TRUE, 'STAGIAIRE');
+# #
+# -- Formation de test
+# INSERT INTO formation (id_formation, nom, niveau)
+# VALUES (1, 'Développement Web Java', 'C');
 
--- Formation de test
-INSERT INTO formation (id_formation, nom, niveau)
-VALUES (1, 'Développement Web Java', 'C');
-
--- Dossier rattaché au stagiaire
-INSERT INTO dossier (id_dossier, code_dossier, statut_dossier_id, stagiaire_id, formation_id)
-VALUES (1, 'DSR001', 1, 1, 1);
-
--- Document associé (en attente)
-INSERT INTO document (nom_fichier, type, statut_document_id, dossier_id, stagiaire_id, formation_id, date_depot)
-VALUES ('CV Romain.pdf', 'CV', 1, 1, 1, 1, NOW());
+# -- Document associé (en attente)
+# INSERT INTO document (nom_fichier, type, statut_document_id, id_dossier, Id_Stagiaire, id_formation, date_depot)
+# VALUES ('CV Romain.pdf', 'CV', 1, 1, 1, 1, NOW());
 
 -- Vérification rapide
-SELECT Id_Document, nom_fichier, statut_document_id, dossier_id
-FROM document
-ORDER BY Id_Document DESC
-LIMIT 5;
+# SELECT Id_Document, nom_fichier, statut_document_id, id_dossier
+# FROM document
+# ORDER BY Id_Document DESC
+# LIMIT 5;
 
 
 -- Ajout d’un stagiaire
-INSERT INTO stagiaire (id, premiere_connexion, date_naissance, phone_number, adresse, ville_id, photo_profil)
-VALUES (5, true, '1990-03-01', '0660606060', '12 rue des Rosses', 1, 'default-profile.png');
+# INSERT INTO stagiaire (id, premiere_connexion, date_naissance, phone_number, adresse, ville_id, photo_profil)
+# VALUES (5, true, '1990-03-01', '0660606060', '12 rue des Rosses', 1, 'default-profile.png');
 
 -- Ajout d’une formation
-INSERT INTO formation (id_formation, nom, niveau)
-VALUES (1, 'Développement Web Front-End', 'A');
+# INSERT INTO formation (id_formation, nom, niveau)
+# VALUES (1, 'Développement Web Front-End', 'A');
 
 -- Création d’un dossier
-INSERT INTO dossier (id_dossier, code_dossier, statut_dossier_id, stagiaire_id, formation_id, createur_id)
-VALUES (1, 'DSR001', 2, 5, 1, 1);
+# INSERT INTO dossier (id_dossier, code_dossier, statut_id_dossier, date_de_creation, derniere_mise_a_jour,
+#                      date_modification, Id_Stagiaire, id_formation, id_createur)
+# VALUES (1, 'DSR001', 2, NOW(), NOW(), NOW(), 5, 1, 1);
 
--- Ajout d’un document dans le dossier
-INSERT INTO document (nom_fichier, type, statut_document_id, dossier_id, stagiaire_id)
-VALUES ('CV.pdf', 'CV', 1, 1, 5);
+# -- Ajout d’un document dans le dossier
+# INSERT INTO document (nom_fichier, type, statut_document_id, id_dossier, Id_Stagiaire)
+# VALUES ('CV.pdf', 'CV', 1, 1, 5);
 
 
 -- Utilisateurs (admins + stagiaires)
-INSERT INTO user (last_name, first_name, email, password, enabled, nom_role)
-VALUES ('Dupont', 'Alice', 'alice@example.com', 'hash_mdp', TRUE, 'ADMIN'),
-       ('Durand', 'Bruno', 'bruno@example.com', 'hash_mdp', TRUE, 'ADMIN'),
-       ('Martin', 'Julie', 'julie.martin@example.com', 'hash_mdp', TRUE, 'STAGIAIRE');
+# INSERT INTO user (last_name, first_name, email, password, enabled, nom_role)
+# VALUES ('Dupont', 'Alice', 'alice@example.com', 'hash_mdp', TRUE, 'ADMIN'),
+#        ('Durand', 'Bruno', 'bruno@example.com', 'hash_mdp', TRUE, 'ADMIN'),
+#        ('Martin', 'Julie', 'julie.martin@example.com', 'hash_mdp', TRUE, 'STAGIAIRE');
 
 -- Stagiaire rattaché à un utilisateur
-INSERT INTO stagiaire (id, premiere_connexion, date_naissance, phone_number, adresse, ville_id, photo_profil)
-VALUES (3, TRUE, '1992-11-22', '0654239876', '34 boulevard Victor Hugo', 3, NULL);
+# INSERT INTO stagiaire (id, premiere_connexion, date_naissance, phone_number, adresse, ville_id, photo_profil)
+# VALUES (3, TRUE, '1992-11-22', '0654239876', '34 boulevard Victor Hugo', 3, NULL);
 
 -- Formation
-INSERT INTO formation (id_formation, nom, niveau, description, date_debut, date_fin)
-VALUES (1, 'Développement Web', 'A', 'HTML, CSS, JS, React', '2025-09-01', '2026-06-30');
+# INSERT INTO formation (id_formation, nom, niveau, description, date_debut, date_fin)
+# VALUES (1, 'Développement Web', 'A', 'HTML, CSS, JS, React', '2025-09-01', '2026-06-30');
 
 -- Dossier d’inscription
-INSERT INTO dossier (code_dossier, statut_dossier_id, date_de_creation, stagiaire_id, formation_id, createur_id)
-VALUES ('DSR001', 2, NOW(), 3, 1, 1);
+# INSERT INTO dossier (code_dossier, statut_id_dossier, date_de_creation, Id_Stagiaire, id_formation, id_createur)
+# VALUES ('DSR001', 2, NOW(), 3, 1, 1);
 
 -- Document rattaché
-INSERT INTO document (nom_fichier, type, statut_document_id, dossier_id, stagiaire_id, date_depot)
-VALUES ('CV_Julie.pdf', 'CV', 1, 1, 3, NOW());
+# INSERT INTO document (nom_fichier, type, statut_document_id, id_dossier, Id_Stagiaire, date_depot)
+# VALUES ('CV_Julie.pdf', 'CV', 1, 1, 3, NOW());

@@ -1,13 +1,13 @@
 //Service pour gérer les formations et vérifier la disponibilité, les horaires, etc.
 package com.hrizzon2.demotest.formation.service;
 
+import com.hrizzon2.demotest.document.model.Document;
 import com.hrizzon2.demotest.document.model.enums.TypeDocument;
+import com.hrizzon2.demotest.document.service.DocumentManagementService;
 import com.hrizzon2.demotest.formation.dao.FormationDao;
 import com.hrizzon2.demotest.formation.dto.FormationAvecStatutDto;
 import com.hrizzon2.demotest.formation.model.Formation;
 import com.hrizzon2.demotest.inscription.dao.InscriptionDao;
-import com.hrizzon2.demotest.user.dao.PieceJointeStagiaireDao;
-import com.hrizzon2.demotest.user.model.PieceJointeStagiaire;
 import com.hrizzon2.demotest.user.model.Stagiaire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,14 +21,14 @@ public class FormationService {
 
     private final FormationDao formationDao;
     private final InscriptionDao inscriptionDao;
-    private final PieceJointeStagiaireDao pieceJointeStagiaireDao;
+    private final DocumentManagementService documentManagementService;
 
 
     @Autowired
-    public FormationService(FormationDao formationDao, InscriptionDao inscriptionDao, PieceJointeStagiaireDao pieceJointeStagiaireDao) {
+    public FormationService(FormationDao formationDao, InscriptionDao inscriptionDao, DocumentManagementService documentManagementService) {
         this.formationDao = formationDao;
         this.inscriptionDao = inscriptionDao;
-        this.pieceJointeStagiaireDao = pieceJointeStagiaireDao;
+        this.documentManagementService = documentManagementService;
     }
 
     public List<Formation> findAll() {
@@ -93,11 +93,11 @@ public class FormationService {
             dto.setDocumentsRequis(documentsRequis);
 
             // Documents uploadés par le stagiaire pour cette formation
-            List<PieceJointeStagiaire> documentsUploades =
-                    pieceJointeStagiaireDao.findByStagiaireIdAndFormationId(stagiaireId, formation.getId());
+            List<Document> documentsUploades =
+                    documentManagementService.getDocumentsByStagiaireAndFormation(stagiaireId, formation.getId());
 
             dto.setDocumentsUploades(documentsUploades.stream()
-                    .map(PieceJointeStagiaire::getTypeDocument)
+                    .map(Document::getTypeDocument)
                     .collect(Collectors.toList()));
 
             // Calcul du pourcentage de complétion
@@ -112,7 +112,6 @@ public class FormationService {
 
             // Détermination du statut du dossier
             dto.setStatutDossier(determinerStatutDossier(documentsRequis, documentsUploades));
-
             return dto;
         }).collect(Collectors.toList());
     }
@@ -121,7 +120,7 @@ public class FormationService {
      * ✅ Méthode utilitaire pour déterminer le statut du dossier
      */
     private String determinerStatutDossier(List<TypeDocument> documentsRequis,
-                                           List<PieceJointeStagiaire> documentsUploades) {
+                                           List<Document> documentsUploades) {
         if (documentsRequis.isEmpty()) {
             return "COMPLET"; // Aucun document requis
         }
@@ -132,7 +131,7 @@ public class FormationService {
 
         // Vérifier si tous les documents requis sont uploadés
         List<TypeDocument> typesUploades = documentsUploades.stream()
-                .map(PieceJointeStagiaire::getTypeDocument)
+                .map(Document::getTypeDocument)
                 .collect(Collectors.toList());
 
         boolean tousDocumentsUploades = documentsRequis.stream()
@@ -141,8 +140,8 @@ public class FormationService {
         if (tousDocumentsUploades) {
             // Vérifier le statut de validation des documents
             boolean tousValides = documentsUploades.stream()
-                    .allMatch(doc -> doc.getStatutDocument() != null &&
-                            "VALIDE".equals(doc.getStatutDocument().getNom()));
+                    .allMatch(doc -> doc.getStatut() != null &&
+                            "VALIDE".equals(doc.getStatut().getNom()));
 
             if (tousValides) {
                 return "VALIDE";

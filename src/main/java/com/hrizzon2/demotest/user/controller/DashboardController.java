@@ -153,7 +153,7 @@ public class DashboardController {
 
             Map<String, String> response = new HashMap<>();
             response.put("message", "Document rejeté");
-            response.put("statut", "REJETE");
+            response.put("statut", "REJETÉ");
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {

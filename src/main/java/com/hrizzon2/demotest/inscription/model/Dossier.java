@@ -53,7 +53,7 @@ public class Dossier {
      */
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "statut_dossier_id", nullable = false)
+    @JoinColumn(name = "Id_statut_dossier", nullable = false)
     @JsonView(AffichageDossier.Dossier.class)
     protected StatutDossier statutDossier;
 
@@ -112,7 +112,7 @@ public class Dossier {
      */
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "stagiaire_id", nullable = false)
+    @JoinColumn(name = "id_Stagiaire", nullable = false)
     private Stagiaire stagiaire;
 
 
@@ -121,7 +121,7 @@ public class Dossier {
      */
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "formation_id", nullable = false)
+    @JoinColumn(name = "id_formation", nullable = false)
     private Formation formation;
 
     /**
@@ -129,7 +129,7 @@ public class Dossier {
      */
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "createur_id", nullable = false)
+    @JoinColumn(name = "id_createur", nullable = false)
     private Admin createur;
 
 

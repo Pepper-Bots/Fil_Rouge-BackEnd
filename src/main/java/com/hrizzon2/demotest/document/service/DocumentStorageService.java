@@ -16,7 +16,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
 
-// TODO Service pas utilisé !!!
 
 @Service
 public class DocumentStorageService {

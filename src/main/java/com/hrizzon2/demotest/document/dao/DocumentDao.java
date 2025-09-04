@@ -4,6 +4,8 @@ import com.hrizzon2.demotest.document.model.Document;
 import com.hrizzon2.demotest.document.model.StatutDocument;
 import com.hrizzon2.demotest.document.model.enums.TypeDocument;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -43,17 +45,13 @@ public interface DocumentDao extends JpaRepository<Document, Integer> {
     List<Document> findByStatut(StatutDocument statut);
 
 
-//    Optional<Document> findDocumentByName(String name);
-//
-//    List<Document> findByStagiaireId(Long stagiaireId);
-//
-//    List<Document> findByStagiaireIdAndType(Long stagiaireId, TypeDocument type);
-//
-//    List<Document> findByStatut(StatutDocument statut);
+    @Query("SELECT d FROM Document d WHERE d.stagiaire.id = :stagiaireId AND d.formation.id = :formationId")
+    List<Document> findByStagiaireIdAndFormationId(
+            @Param("stagiaireId") Integer stagiaireId,
+            @Param("formationId") Integer formationId);
 
-
+    @Query("SELECT d FROM Document d WHERE d.stagiaire.id = :stagiaireId AND d.formation.id = :formationId AND d.dossier IS NOT NULL")
+    List<Document> findDocumentsDossierByStagiaireAndFormation(
+            @Param("stagiaireId") Integer stagiaireId,
+            @Param("formationId") Integer formationId);
 }
-
-// TODO **Conserver** :
-//  gérer Documents, incluant liens vers Stagiaire, Dossier, Evenement, StatutDocument.
-//  Requête pour documents par stagiaire, dossier, évènement.

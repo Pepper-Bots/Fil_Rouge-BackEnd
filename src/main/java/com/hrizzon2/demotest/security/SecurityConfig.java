@@ -64,7 +64,7 @@ public class SecurityConfig {
 
         return http
                 .csrf(c -> c.disable()) //desactiver la protection de la faille CSRF (création de token de formulaire)
-                .cors(c -> c.configurationSource(corsConfigurationSource())) // definition des regles du CORS policy
+                .cors(c -> c.configurationSource(corsConfigurationSource())) // definition des règles du CORS policy
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // Endpoints publics (ex: login, inscription)

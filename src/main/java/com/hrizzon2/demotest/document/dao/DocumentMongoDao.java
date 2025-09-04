@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+// TODO inutilisé en V1
+
 //  Stockage complémentaire pour certaines données : métadonnées, logs, éventuellement fichiers eux-mêmes.
 // Appeler ton repo Mongo pour stocker les métadonnées :
 

@@ -192,8 +192,8 @@ public class DashboardService {
                     dto.setNomFichierOriginal(document.getNomFichier()); // Si vous n'avez pas cette propriété
                     dto.setTypeFichier(getExtensionFichier(document.getNomFichier()));
 
-                    if (document.getType() != null) {
-                        dto.setTypeDocument(document.getType().toString());
+                    if (document.getTypeDocument() != null) {
+                        dto.setTypeDocument(document.getTypeDocument().toString());
                     } else {
                         dto.setTypeDocument("AUTRE");
                     }
@@ -269,10 +269,10 @@ public class DashboardService {
         Document document = documentDao.findById(documentId.intValue())
                 .orElseThrow(() -> new RuntimeException("Document non trouvé"));
 
-        StatutDocument statutRejete = statutDocumentDao.findByNom("REJETE")
-                .orElseThrow(() -> new RuntimeException("Statut REJETE non trouvé"));
+        StatutDocument statutrejete = statutDocumentDao.findByNom("REJETÉ")
+                .orElseThrow(() -> new RuntimeException("Statut REJETÉ non trouvé"));
 
-        document.setStatut(statutRejete);
+        document.setStatut(statutrejete);
         document.setCommentaire(motif);
         document.setDateDepot(LocalDateTime.now());
 
