@@ -211,7 +211,8 @@ VALUES (1, 'DSR001', 2, '2025-01-05 09:00:00', '2025-01-07 14:00:00', '2025-01-0
 
 
 -- Données de test avec id_formation
-INSERT INTO document (nom_fichier, type, statut_document_id, id_dossier, Id_Stagiaire, evenement_id, commentaire,
+INSERT INTO document (nom_fichier, type_document, id_statut_document, id_dossier, Id_Stagiaire, evenement_id,
+                      commentaire,
                       date_depot, url_fichier, id_formation)
 VALUES ('Justificatif de domicile', 'JUSTIFICATIF', 2, 1, 5, NULL, NULL, NOW(), NULL, 1),
        ('CV Paul', 'CV', 1, 1, 6, NULL, NULL, NOW(), NULL, 1),
@@ -224,8 +225,7 @@ VALUES ('Justificatif de domicile', 'JUSTIFICATIF', 2, 1, 5, NULL, NULL, NOW(), 
 
 -- Exemple inscription
 INSERT INTO inscription (id_inscription, date_inscription, date_modification, date_validation, statut_inscription,
-                         Id_Stagiaire,
-                         id_formation, id_dossier)
+                         Id_Stagiaire, id_formation, id_dossier)
 VALUES (1, CURDATE(), NULL, NULL, 'EN_ATTENTE', 5, 1, 1);
 
 
@@ -390,11 +390,11 @@ VALUES ('EN_ATTENTE'),
 # VALUES (1, 'Développement Web Java', 'C');
 
 # -- Document associé (en attente)
-# INSERT INTO document (nom_fichier, type, statut_document_id, id_dossier, Id_Stagiaire, id_formation, date_depot)
+# INSERT INTO document (nom_fichier, type, id_statut_document, id_dossier, Id_Stagiaire, id_formation, date_depot)
 # VALUES ('CV Romain.pdf', 'CV', 1, 1, 1, 1, NOW());
 
 -- Vérification rapide
-# SELECT Id_Document, nom_fichier, statut_document_id, id_dossier
+# SELECT Id_Document, nom_fichier, id_statut_document, id_dossier
 # FROM document
 # ORDER BY Id_Document DESC
 # LIMIT 5;
@@ -414,7 +414,7 @@ VALUES ('EN_ATTENTE'),
 # VALUES (1, 'DSR001', 2, NOW(), NOW(), NOW(), 5, 1, 1);
 
 # -- Ajout d’un document dans le dossier
-# INSERT INTO document (nom_fichier, type, statut_document_id, id_dossier, Id_Stagiaire)
+# INSERT INTO document (nom_fichier, type, id_statut_document, id_dossier, Id_Stagiaire)
 # VALUES ('CV.pdf', 'CV', 1, 1, 5);
 
 
@@ -437,5 +437,69 @@ VALUES ('EN_ATTENTE'),
 # VALUES ('DSR001', 2, NOW(), 3, 1, 1);
 
 -- Document rattaché
-# INSERT INTO document (nom_fichier, type, statut_document_id, id_dossier, Id_Stagiaire, date_depot)
+# INSERT INTO document (nom_fichier, type, id_statut_document, id_dossier, Id_Stagiaire, date_depot)
 # VALUES ('CV_Julie.pdf', 'CV', 1, 1, 3, NOW());
+
+SHOW CREATE TABLE stagiaire
+
+SELECT email, enabled, password FROM user WHERE email = 'romain_dupont@live.fr';
+
+-- Créer un utilisateur avec mot de passe "test123"
+INSERT INTO user (last_name, first_name, email, password, enabled, nom_role)
+VALUES ('Test', 'User', 'test@example.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', true, 'STAGIAIRE');
+
+SELECT email, password, enabled, nom_role FROM user WHERE email = 'test@example.com';
+
+-- Supprimer l'ancien utilisateur de test s'il existe
+DELETE FROM user WHERE email = 'testauth@example.com';
+
+-- Créer un utilisateur avec le hash BCrypt pour "password"
+INSERT INTO user (last_name, first_name, email, password, enabled, nom_role)
+VALUES ('Test', 'Auth', 'testauth@example.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', true, 'STAGIAIRE');
+
+-- Supprimer l'ancien
+DELETE FROM stagiaire WHERE id IN (SELECT id FROM user WHERE email = 'testauth@example.com');
+DELETE FROM user WHERE email = 'testauth@example.com';
+
+-- Créer d'abord l'utilisateur
+INSERT INTO user (last_name, first_name, email, password, enabled, nom_role)
+VALUES ('Test', 'Auth', 'testauth@example.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', true, 'STAGIAIRE');
+
+-- Récupérer l'ID et créer l'entrée stagiaire
+INSERT INTO stagiaire (id, premiere_connexion, date_naissance, phone_number, adresse, ville_id, photo_profil)
+VALUES (LAST_INSERT_ID(), true, '1990-01-01', '0123456789', '123 rue Test', 1, null);
+
+SELECT id_dossier, code_dossier, id_Stagiaire FROM dossier LIMIT 5;
+
+-- Vérifier les utilisateurs existants
+SELECT id, email FROM user WHERE id IN (5, 6, 7, 8, 9, 10);
+
+-- Vérifier les formations existantes
+SELECT id_formation, nom FROM formation WHERE id_formation IN (1, 2, 3, 4, 5, 6);
+
+-- Vérifier les statuts de dossier
+SELECT id, nom_statut FROM statut_dossier WHERE id IN (1, 2, 3);
+
+-- D'abord, vérifiez l'ID de votre utilisateur test
+SELECT id FROM user WHERE email = 'testauth@example.com'; -- 32
+
+-- Créer un dossier simple pour tester (remplacez XXX par l'ID trouvé)
+INSERT INTO dossier (code_dossier, Id_statut_dossier, date_de_creation, derniere_mise_a_jour, date_modification, id_Stagiaire, id_formation, id_createur)
+VALUES ('TEST001', 1, NOW(), NOW(), NOW(), 32, 1, 1);
+
+-- Récupérer l'ID du dossier créé
+SELECT id_dossier FROM dossier WHERE code_dossier = 'TEST001'; -- id_dossier(1)
+
+-- Vérifier s'il y a des doublons pour votre dossier
+SELECT * FROM dossier WHERE id_dossier = 1;
+
+-- Vérifier les statuts de documents
+SELECT * FROM statut_document WHERE nom = 'EN_ATTENTE';
+
+-- Supprimer les doublons de statut_document
+DELETE s1 FROM statut_document s1
+                   INNER JOIN statut_document s2
+WHERE s1.id > s2.id AND s1.nom = s2.nom;
+
+-- Vérifier qu'il ne reste qu'un seul "EN_ATTENTE"
+SELECT * FROM statut_document WHERE nom = 'EN_ATTENTE';

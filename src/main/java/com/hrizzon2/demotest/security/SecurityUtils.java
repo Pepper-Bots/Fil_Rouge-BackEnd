@@ -11,9 +11,6 @@ import java.util.Map;
 @Service
 public class SecurityUtils implements ISecurityUtils {
 
-    Date now = new Date();
-    Date expiryDate = new Date(now.getTime() + 3600000); // 1h
-
     @Value("${jwt.secret}")
     String jwtSecret;
 
@@ -27,6 +24,10 @@ public class SecurityUtils implements ISecurityUtils {
 
     @Override
     public String generateToken(AppUserDetails userDetails) {
+
+        // Dates calculées à chaque génération de token
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + 8 + 3600000); // 8h pour les tests
 
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())

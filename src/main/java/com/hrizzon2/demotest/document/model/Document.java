@@ -51,7 +51,7 @@ public class Document {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_formation", nullable = true)
-    public Formation formation;
+    private Formation formation;
 
 
     // ========== Attributs =============//

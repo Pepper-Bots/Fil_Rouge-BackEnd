@@ -48,20 +48,20 @@ public class AppUserDetails implements UserDetails {
         return user.getEmail();
     }
 
-//    @Override
-//    public boolean isAccountNonExpired() {
-//        return true; // à adapter si besoin
-//    }
-//
-//    @Override
-//    public boolean isAccountNonLocked() {
-//        return true; // idem
-//    }
-//
-//    @Override
-//    public boolean isCredentialsNonExpired() {
-//        return true; // idem
-//    }
+    @Override
+    public boolean isAccountNonExpired() {
+        return true; // à adapter si besoin
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true; // idem
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true; // idem
+    }
 
     // Gestion spécifique pour forcer le changement de mot de passe
     public boolean isPremiereConnexion() {

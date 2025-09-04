@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@PreAuthorize("has")
+@PreAuthorize("hasRole('STAGIAIRE')")
 // TODO à vérifier -> voir repo Franck
 public @interface IsStagiaire {
 }

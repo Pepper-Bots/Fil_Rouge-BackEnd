@@ -13,8 +13,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
-import static org.aspectj.weaver.tools.cache.SimpleCacheFactory.path;
-
 @Service
 @Slf4j
 public class FichierService {
@@ -79,11 +77,11 @@ public class FichierService {
      * @return Le contenu du fichier sous forme de tableau d'octets.
      * @throws FileNotFoundException Si le fichier n'existe pas ou n'est pas accessible.
      */
-    public byte[] getImageByName(String fileName) throws FileNotFoundException {
+    public byte[] getFileByName(String fileName) throws FileNotFoundException {
         Path destination = Paths.get(privateUploadFolder).resolve(fileName);
         try {
-            if (Files.notExists(Path.of(path))) throw new FileNotFoundException("Fichier introuvable: " + fileName);
-            return Files.readAllBytes(Path.of(path));
+            if (Files.notExists(destination)) throw new FileNotFoundException("Fichier introuvable: " + fileName);
+            return Files.readAllBytes(destination);
         } catch (IOException e) {
             throw new FileNotFoundException(e.getMessage());
         }

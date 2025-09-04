@@ -3,11 +3,14 @@
 package com.hrizzon2.demotest.security;
 
 import com.hrizzon2.demotest.user.dao.UserDao;
+import com.hrizzon2.demotest.user.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 /**
  * Service chargé de charger les détails de l'utilisateur
@@ -38,10 +41,28 @@ public class AppUserDetailsService implements UserDetailsService {
 
         System.out.println("Recherche utilisateur par email : " + email);
 
-        return userDao.findByEmail(email)
-                .map(AppUserDetails::new)
-                .orElseThrow(() -> new UsernameNotFoundException("Aucun utilisateur trouvé avec l'email : " + email));
-    }
+        try {
+            Optional<User> userOpt = userDao.findByEmail(email);
+            System.out.println("Résultat findByEmail : " + userOpt.isPresent());
+
+            if (userOpt.isPresent()) {
+                User user = userOpt.get();
+                System.out.println("Utilisateur trouvé : " + user.getEmail());
+                System.out.println("Password hash : " + user.getPassword());
+                System.out.println("Enabled : " + user.getEnabled());
+
+                AppUserDetails details = new AppUserDetails(user);
+                System.out.println("AppUserDetails créé");
+                return details;
+            } else {
+                System.out.println("Aucun utilisateur trouvé");
+                throw new UsernameNotFoundException("Aucun utilisateur trouvé avec l'email : " + email);
+            }
+        } catch (Exception e) {
+            System.out.println("Exception dans loadUserByUsername : " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
 
 //        if (optionalStagiaire.isPresent()) {
 //            return new AppUserDetails(optionalStagiaire.get());
@@ -55,4 +76,5 @@ public class AppUserDetailsService implements UserDetailsService {
 //
 //        throw new UsernameNotFoundException("Aucun utilisateur trouvé avec l'email : " + email);
 //    }
+    }
 }

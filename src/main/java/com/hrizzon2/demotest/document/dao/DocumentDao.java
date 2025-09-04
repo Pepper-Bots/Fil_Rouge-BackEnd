@@ -25,10 +25,10 @@ public interface DocumentDao extends JpaRepository<Document, Integer> {
     List<Document> findByDossierStagiaireId(Integer stagiaireId);
 
     /**
-     * Renvoie tous les Document d’un type précis pour un même stagiaire (depuis le dossier associé).
+     * Renvoie tous les Documents d’un type précis pour un même stagiaire (depuis le dossier associé).
      * Exemple d’usage : vérifier qu’on n’a pas déjà soumis un CV ou une pièce d’identité.
      */
-    List<Document> findByDossierStagiaireIdAndType(Integer stagiaireId, TypeDocument type);
+    List<Document> findByDossierStagiaireIdAndTypeDocument(Integer stagiaireId, TypeDocument typeDocument);
 
     /**
      * Pour lister tous les documents dont le statut (StatutDocument.nom) = « EN_ATTENTE ».

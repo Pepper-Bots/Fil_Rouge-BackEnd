@@ -122,7 +122,7 @@ public class DocumentController {
             return ResponseEntity.notFound().build();
         }
         try {
-            byte[] image = fichierService.getImageByName(nomImage);
+            byte[] image = fichierService.getFileByName(nomImage);
 
             // On devine le type MIME à partir du fichier stocké sur le disque
             Path cheminImage = fichierService.getImagePath(nomImage); // À ajouter dans FichierService !
@@ -182,7 +182,7 @@ public class DocumentController {
             Document document = documentOpt.get();
 
             // Charger le fichier
-            byte[] fileContent = fichierService.getImageByName(document.getNomFichier());
+            byte[] fileContent = fichierService.getFileByName(document.getNomFichier());
             ByteArrayResource resource = new ByteArrayResource(fileContent);
 
             // Déterminer le type MIME

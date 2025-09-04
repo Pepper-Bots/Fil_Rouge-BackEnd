@@ -92,7 +92,7 @@ class DocumentManagementServiceTest {
 
         when(stagiaireDao.findById(stagiaireId)).thenReturn(Optional.of(stagiaire));
         when(typeDocumentValidator.isTypeAutorise(formation, type)).thenReturn(true);
-        when(documentDao.findByDossierStagiaireIdAndType(stagiaireId, type)).thenReturn(List.of()); // aucun existant
+        when(documentDao.findByDossierStagiaireIdAndTypeDocument(stagiaireId, type)).thenReturn(List.of()); // aucun existant
         when(documentStorageService.saveFile(fichier, "1", "Dupont")).thenReturn("gridfs-123");
 
         when(statutDocumentDao.findByNom("EN_ATTENTE")).thenReturn(Optional.of(mkStatut("EN_ATTENTE")));
@@ -171,7 +171,7 @@ class DocumentManagementServiceTest {
 
         Document deja = new Document();
         deja.setStatut(mkStatut("EN_ATTENTE"));
-        when(documentDao.findByDossierStagiaireIdAndType(stagiaireId, TypeDocument.PIECE_IDENTITE))
+        when(documentDao.findByDossierStagiaireIdAndTypeDocument(stagiaireId, TypeDocument.PIECE_IDENTITE))
                 .thenReturn(List.of(deja));
 
         MockMultipartFile fichier = new MockMultipartFile("f", "PIECE_IDENTITE.pdf", "application/pdf", new byte[]{});
@@ -189,7 +189,7 @@ class DocumentManagementServiceTest {
         Integer stagiaireId = 1;
         when(stagiaireDao.findById(stagiaireId)).thenReturn(Optional.of(mkStagiaire(1, "Dupont")));
         when(typeDocumentValidator.isTypeAutorise(any(), any())).thenReturn(true);
-        when(documentDao.findByDossierStagiaireIdAndType(eq(1), any())).thenReturn(List.of());
+        when(documentDao.findByDossierStagiaireIdAndTypeDocument(eq(1), any())).thenReturn(List.of());
         when(documentStorageService.saveFile(any(), eq("1"), eq("Dupont"))).thenReturn("file-1");
         when(statutDocumentDao.findByNom("EN_ATTENTE")).thenReturn(Optional.of(mkStatut("EN_ATTENTE")));
 
@@ -298,7 +298,7 @@ class DocumentManagementServiceTest {
 
         when(stagiaireDao.findById(stagiaireId)).thenReturn(Optional.of(stagiaire));
         when(typeDocumentValidator.isTypeAutorise(formation, type)).thenReturn(true);
-        when(documentDao.findByDossierStagiaireIdAndType(stagiaireId, type))
+        when(documentDao.findByDossierStagiaireIdAndTypeDocument(stagiaireId, type))
                 .thenReturn(java.util.Collections.emptyList());
         when(documentStorageService.saveFile(fichier, stagiaireId.toString(), stagiaire.getLastName()))
                 .thenReturn("fakeFileId");

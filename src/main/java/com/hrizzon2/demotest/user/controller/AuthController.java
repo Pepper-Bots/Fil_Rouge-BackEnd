@@ -126,7 +126,7 @@ public class AuthController {
 
     //Validation des emails déjà utilisés
 //
-//Avant inscription, vérifie si un utilisateur existe déjà avec cet email (sinon, duplication possible).
+//Avant inscription, on vérifie si un utilisateur existe déjà avec cet email (sinon, duplication possible).
 
     /**
      * Validation du compte par email (pour tous les users)
@@ -158,6 +158,27 @@ public class AuthController {
 
     @PostMapping("/connexion")
     public ResponseEntity<AuthResponse> connexion(@RequestBody @Valid User user) {
+
+        System.out.println("========== DEBUT METHODE CONNEXION ==========");
+        System.out.println("Email reçu : " + user.getEmail());
+        System.out.println("Password reçu : " + user.getPassword());
+
+        // Test des mots de passe courants
+        String hash = "$2a$10$Dow1Kt9EdIVVQ8KQfBGoH.NkbZoCPoEdWkqITpCTBLuRFK5kZzCO2";
+        String[] motsDePasse = {"test", "root", "password", "admin", "123456", "romain", "dupont", ""};
+
+        System.out.println("Test de décodage du hash...");
+
+        for (String mdp : motsDePasse) {
+            boolean matches = passwordEncoder.matches(mdp, hash);
+            System.out.println("Test '" + mdp + "' : " + matches);
+            if (matches) {
+                System.out.println("*** TROUVÉ ! Le mot de passe est : '" + mdp + "' ***");
+            }
+        }
+
+        System.out.println("Tentative d'authentification...");
+        
         try {
             AppUserDetails userDetails = (AppUserDetails) authenticationProvider
                     .authenticate(
@@ -165,64 +186,20 @@ public class AuthController {
                                     user.getEmail(),
                                     user.getPassword()))
                     .getPrincipal();
+            System.out.println("Authentification réussie !");
 
             String token = securityUtils.generateToken(userDetails);
             boolean premiereConnexion = userDetails.isPremiereConnexion();
+
+            // Dans AuthController, méthode connexion
+            System.out.println("Tentative de connexion pour : " + user.getEmail());
+            System.out.println("Mot de passe reçu : " + user.getPassword());
 
             return ResponseEntity.ok(new AuthResponse(token, premiereConnexion));
         } catch (AuthenticationException e) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
-
-    /**
-     * Connexion (login)
-     */
-//    @PostMapping("/connexion")
-//    public ResponseEntity<?> connexion(@RequestBody @Valid User user) {
-//
-//        // Optionnel : Vérifier si le compte est activé (enabled)
-//        Optional<User> userOpt = userService.findByEmail(user.getEmail());
-//        System.out.println(userOpt.get().getEmail());
-//        if (userOpt.isEmpty() || !userOpt.get().getEnabled()) {
-//            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-//                    .body("Compte non activé. Merci de valider votre email.");
-//        }
-//
-//        User userEntity = userOpt.get();
-//        System.out.println("Mot de passe reçu: " + user.getPassword());
-//        System.out.println("Mot de passe attendu: " + userEntity.getPassword());
-//        System.out.println("Résultat encodeur: " + passwordEncoder.matches(user.getPassword(), userEntity.getPassword()));
-//
-//        if (passwordEncoder.matches(user.getPassword(), userEntity.getPassword())) {
-//            return new ResponseEntity<>(securityUtils.generateToken(userDetails), HttpStatus.OK);
-//        } else {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Mauvais mot de passe");
-//        }
-
-//        try {
-//            System.out.println("Tentative de connexion pour : " + user.getEmail());
-//            System.out.println("Mot de passe en base : " + userService.findByEmail(user.getEmail()).get().getPassword());
-//            System.out.println("Enabled ? " + userOpt.get().isEnabled());
-//
-//            AppUserDetails userDetails = (AppUserDetails) authenticationProvider
-//                    .authenticate(
-//                            new UsernamePasswordAuthenticationToken(
-//                                    user.getEmail(),
-//                                    user.getPassword()))
-//                    .getPrincipal();
-//
-//            return ResponseEntity.ok(Map.of(
-//                    "token", securityUtils.generateToken(userDetails),
-//                    "email", userDetails.getUsername(),
-//                    "role", userDetails.getRole(), // ou getAuthorities().toString()
-//                    "premiereConnexion", userDetails.isPremiereConnexion()
-//            ));
-//
-//        } catch (AuthenticationException e) {
-//            System.out.println("Échec d'authentification : " + e.getMessage());
-//            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-//        }
 
     /**
      * Demande de reset password (forgot password)

@@ -31,24 +31,41 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        String token = request.getHeader("Authorization");
-
-        if (token != null) {
-
-            String jwt = token.substring(7);
-
-            String subject = securityUtils.getSubjectFromJwt(jwt);
-
-            UserDetails userDetails = userDetailsService.loadUserByUsername(subject);
-
-            // Voir doc pour partie suivante :
-            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-            usernamePasswordAuthenticationToken
-                    .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+        // 1. Ignorer les endpoints d'authentification
+        String requestURI = request.getRequestURI();
+        if (requestURI.startsWith("/api/auth/")) {
+            filterChain.doFilter(request, response);
+            return;
         }
 
+        // 2. Récupérer le token Authorization
+        String token = request.getHeader("Authorization");
+
+        // 3. Vérifier le format Bearer
+        if (token != null && token.startsWith("Bearer ")) {
+            try {
+                String jwt = token.substring(7);
+
+                // 4. Vérifier que le JWT n'est pas vide
+                if (!jwt.isEmpty()) {
+                    String subject = securityUtils.getSubjectFromJwt(jwt);
+
+                    if (subject != null) {
+                        UserDetails userDetails = userDetailsService.loadUserByUsername(subject);
+
+                        // Voir doc pour partie suivante :
+                        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                        usernamePasswordAuthenticationToken
+                                .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                    }
+                }
+            } catch (Exception e) {
+                // Log l'erreur mais ne pas faire planter l'application
+                System.out.println("Erreur JWT : " + e.getMessage());
+            }
+        }
         filterChain.doFilter(request, response);
     }
 }

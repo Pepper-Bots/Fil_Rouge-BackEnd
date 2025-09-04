@@ -22,7 +22,7 @@ public class ListeDocumentsObligatoires {
 
     @JsonView(AffichageListeDocumentsObligatoires.Complet.class)
     @ManyToOne
-    @JoinColumn(name = "formation_id", nullable = false)
+    @JoinColumn(name = "id_formation", nullable = false)
     private Formation formation;
 
     @Enumerated(EnumType.STRING)

@@ -71,6 +71,7 @@ public class DossierDocumentService {
 
     public void uploadDocument(Integer dossierId, MultipartFile file, TypeDocument type) {
         try {
+
             // Nettoyer le nom du fichier
             String cleanFileName = fichierService.sanitizeFileName(file.getOriginalFilename());
 
@@ -88,12 +89,14 @@ public class DossierDocumentService {
             // Créer et sauvegarder le document
             Document document = new Document();
             document.setDossier(dossier);
+            document.setStagiaire(dossier.getStagiaire());
             document.setNomFichier(cleanFileName);
             document.setTypeDocument(type);
             document.setStatut(statutEnAttente);
             document.setDateDepot(LocalDateTime.now());
 
             documentDao.save(document);
+
         } catch (IOException e) {
             throw new RuntimeException("Erreur lors de l'upload du fichier", e);
         }

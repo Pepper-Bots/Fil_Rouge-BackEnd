@@ -81,7 +81,7 @@ public class DocumentManagementService {
 
         // 3. Vérifier s'il existe déjà un document de ce type non rejeté
         boolean dejaSoumis = documentDao
-                .findByDossierStagiaireIdAndType(stagiaireId, type)
+                .findByDossierStagiaireIdAndTypeDocument(stagiaireId, type)
                 .stream()
                 .anyMatch(doc -> !doc.getStatut().getNom().equals("REJETÉ"));
 
