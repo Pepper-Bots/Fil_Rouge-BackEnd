@@ -59,10 +59,10 @@ public class Dossier {
 
     /**
      * Liste des documents associés à ce dossier.
-     * Si vous souhaitez contrôler l’arborescence Doc↔StatutDocument,
+     * Si je souhaite contrôler l’arborescence Doc ↔ StatutDocument,
      * c’est à Document de référencer StatutDocument, pas l’inverse.
      */
-    @OneToMany(mappedBy = "dossier", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "dossier", cascade = CascadeType.ALL)
     private List<Document> documents;
 
     /**

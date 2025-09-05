@@ -241,7 +241,7 @@ class DocumentManagementServiceTest {
         when(documentMongoDao.findById("gridfs-123")).thenReturn(Optional.of(mongo));
 
         // WHEN
-        Document res = documentService.validerDocument(id);
+        Document res = documentService.validerDocument(id, "Document conforme");
 
         // THEN
         assertEquals("VALIDÉ", res.getStatut().getNom());
@@ -367,11 +367,12 @@ class DocumentManagementServiceTest {
         when(documentMongoDao.findById("fakeFileId")).thenReturn(Optional.of(documentMongo));
 
         // WHEN
-        Document result = documentService.validerDocument(documentId);
+        Document result = documentService.validerDocument(documentId, "Validation réussie");
 
         // THEN
         assertNotNull(result);
         assertEquals(statutValide, result.getStatut());
+        assertEquals("Validation réussie", result.getCommentaire()); // Vérifier le commentaire
 
         verify(documentDao).save(document);
         verify(notificationService).notifyStagiaireValidationDocument(stagiaire.getId(), documentId, true);

@@ -6,6 +6,7 @@ import com.hrizzon2.demotest.document.dto.DocumentStatutUpdateDto;
 import com.hrizzon2.demotest.document.dto.DocumentSummaryDto;
 import com.hrizzon2.demotest.document.model.Document;
 import com.hrizzon2.demotest.document.model.enums.TypeDocument;
+import com.hrizzon2.demotest.document.service.DocumentManagementService;
 import com.hrizzon2.demotest.evenement.service.EvenementDocumentService;
 import com.hrizzon2.demotest.formation.model.Formation;
 import com.hrizzon2.demotest.formation.service.FormationService;
@@ -51,6 +52,7 @@ public class DocumentController {
     private final FichierService fichierService;
     private final FormationService formationService;
     private final StagiaireService stagiaireService;
+    private final DocumentManagementService documentManagementService;
 
     @Autowired
     public DocumentController(DossierDocumentService dossierDocumentService,
@@ -58,13 +60,14 @@ public class DocumentController {
                               DossierService dossierService,
                               FichierService fichierService,
                               FormationService formationService,
-                              StagiaireService stagiaireService) {
+                              StagiaireService stagiaireService, DocumentManagementService documentManagementService) {
         this.dossierDocumentService = dossierDocumentService;
         this.evenementDocumentService = evenementDocumentService;
         this.formationService = formationService;
         this.stagiaireService = stagiaireService;
         this.dossierService = dossierService;
         this.fichierService = fichierService;
+        this.documentManagementService = documentManagementService;
     }
 
     /**
@@ -211,9 +214,7 @@ public class DocumentController {
             @RequestBody @Valid DocumentStatutUpdateDto validationDto) {
 
         try {
-            dossierDocumentService.validerDocument(documentId,
-                    validationDto.getStatut(),
-                    validationDto.getCommentaire());
+            documentManagementService.validerDocument(documentId, validationDto.getCommentaire());
             return ResponseEntity.ok("Document validé avec succès");
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();

@@ -1,7 +1,7 @@
 package com.hrizzon2.demotest.user.controller;
 
 import com.hrizzon2.demotest.document.dto.DocumentAttenteDto;
-import com.hrizzon2.demotest.document.dto.DocumentValidationRequestDto;
+import com.hrizzon2.demotest.document.service.DocumentManagementService;
 import com.hrizzon2.demotest.inscription.dto.InscriptionAttenteDto;
 import com.hrizzon2.demotest.user.dto.AdminDashboardDto;
 import com.hrizzon2.demotest.user.dto.KpiDataDto;
@@ -25,8 +25,14 @@ import java.util.Map;
 @CrossOrigin(origins = "http://localhost:4200")
 public class DashboardController {
 
+    private final DashboardService dashboardService;
+    private final DocumentManagementService documentManagementService;
+
     @Autowired
-    private DashboardService dashboardService;
+    public DashboardController(DashboardService dashboardService, DocumentManagementService documentManagementService) {
+        this.dashboardService = dashboardService;
+        this.documentManagementService = documentManagementService;
+    }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/dashboard")
@@ -106,32 +112,6 @@ public class DashboardController {
         } catch (Exception e) {
             e.printStackTrace(); // ⚠️⚠ Debug
             return ResponseEntity.status(500).build();
-        }
-    }
-
-    /**
-     * Valide un document
-     */
-    @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/admin/documents/{id}/valider")
-    public ResponseEntity<Map<String, String>> validerDocument(
-            @PathVariable Long id,
-            @RequestBody DocumentValidationRequestDto request,
-            Authentication authentication) {
-        try {
-            String validateur = authentication.getName();
-            dashboardService.validerDocument(id, request, validateur);
-
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "Document validé avec succès");
-            response.put("statut", "VALIDE");
-
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            e.printStackTrace(); // ⚠️⚠ Debug
-            Map<String, String> error = new HashMap<>();
-            error.put("error", "Erreur lors de la validation");
-            return ResponseEntity.status(500).body(error);
         }
     }
 

@@ -213,18 +213,18 @@ public class AdminController {
      *
      * @param documentId ID du document à valider
      */
-    @IsAdmin
-    @PatchMapping("/documents/{documentId}/valider")
-    public ResponseEntity<Void> validerDocument(@PathVariable Integer documentId) {
-        try {
-            dossierDocumentService.validerDocument(documentId, "VALIDÉ", null);
-            return ResponseEntity.noContent().build();
-        } catch (IllegalArgumentException ex) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
+//    @IsAdmin
+//    @PatchMapping("/documents/{documentId}/valider")
+//    public ResponseEntity<Void> validerDocument(@PathVariable Integer documentId) {
+//        try {
+//            dossierDocumentService.validerDocument(documentId, "VALIDÉ", null);
+//            return ResponseEntity.noContent().build();
+//        } catch (IllegalArgumentException ex) {
+//            return ResponseEntity.notFound().build();
+//        } catch (Exception ex) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+//        }
+//    }
 
     /**
      * Rejette un document soumis (change son statut en REJETÉ).

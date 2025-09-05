@@ -3,7 +3,6 @@ package com.hrizzon2.demotest.user.service;
 import com.hrizzon2.demotest.document.dao.DocumentDao;
 import com.hrizzon2.demotest.document.dao.StatutDocumentDao;
 import com.hrizzon2.demotest.document.dto.DocumentAttenteDto;
-import com.hrizzon2.demotest.document.dto.DocumentValidationRequestDto;
 import com.hrizzon2.demotest.document.model.Document;
 import com.hrizzon2.demotest.document.model.StatutDocument;
 import com.hrizzon2.demotest.formation.dao.FormationDao;
@@ -242,23 +241,6 @@ public class DashboardService {
         Document document = documentDao.findById(documentId.intValue())
                 .orElseThrow(() -> new RuntimeException("Document non trouvé"));
         return document.getNomFichier();
-    }
-
-    /**
-     * Valide un document
-     */
-    @Transactional
-    public void validerDocument(Long documentId, DocumentValidationRequestDto request, String validateur) {
-        Document document = documentDao.findById(documentId.intValue())
-                .orElseThrow(() -> new RuntimeException("Document non trouvé"));
-
-        StatutDocument statutValide = statutDocumentDao.findByNom("VALIDE")
-                .orElseThrow(() -> new RuntimeException("Statut VALIDE non trouvé"));
-
-        document.setStatut(statutValide);
-        document.setDateDepot(LocalDateTime.now());
-
-        documentDao.save(document);
     }
 
     /**

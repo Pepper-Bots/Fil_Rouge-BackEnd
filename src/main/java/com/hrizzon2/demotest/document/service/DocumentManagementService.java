@@ -120,9 +120,14 @@ public class DocumentManagementService {
 
     // Méthode principale (avec MongoDB + audit)
     @Transactional
-    public Document validerDocument(Integer documentId) {
+    public Document validerDocument(Integer documentId, String commentaire) {
         Document document = getDocumentEnAttente(documentId);
         document.setStatut(getStatut("VALIDÉ"));
+
+        // Ajout commentaire
+        if (commentaire != null && !commentaire.trim().isEmpty()) {
+            document.setCommentaire(commentaire);
+        }
 
         // Synchronisation MongoDB
         updateDocumentMongoStatus(document.getUrlFichier(), "VALIDÉ");
@@ -130,14 +135,13 @@ public class DocumentManagementService {
         // Audit dans MongoDB
         addAuditAction(document.getUrlFichier(), "VALIDATION", "Système");
 
-        // Logique métier
+        // Logique métier (recalcul dossier, notifications...)
         if (document.getDossier() != null)
             dossierService.verifierEtMettreAJourStatut(document.getDossier().getId());
 
         if (document.getEvenement() != null)
             evenementService.marquerJustifie(document.getEvenement().getId());
 
-        // Déclenchement Notification
         notificationService.notifyStagiaireValidationDocument(
                 document.getStagiaire().getId(), document.getId(), true);
 

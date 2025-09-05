@@ -52,7 +52,6 @@ public class DossierDocumentService {
             TypeDocument.ATTEST_RESP_CIVILE,
             TypeDocument.AUTRE
     );
-    private final DocumentManagementService documentManagementService;
 
     @Autowired
     public DossierDocumentService(DocumentDao documentDao,
@@ -65,7 +64,6 @@ public class DossierDocumentService {
         this.statutDocumentDao = statutDocumentDao;
         this.statutDossierDao = statutDossierDao;
         this.fichierService = fichierService;
-        this.documentManagementService = documentManagementService;
     }
 
 
@@ -188,49 +186,49 @@ public class DossierDocumentService {
         return true;
     }
 
-    public void validerDocument(Integer documentId, String statut, String commentaire) {
-
-        if ("VALIDE".equals(statut.toUpperCase().trim())) {
-            documentManagementService.validerDocument(documentId);
-        } else if ("REJETÉ".equals(statut.toUpperCase().trim())) {
-            documentManagementService.rejeterDocumentWithComment(documentId, commentaire);
-        }
-
-
-        Document doc = documentDao.findById(documentId)
-                .orElseThrow(() -> new IllegalArgumentException("Document introuvable"));
-
-        String statutActuel = doc.getStatut() != null ? doc.getStatut().getNom() : null;
-
-        if (!"EN_ATTENTE".equals(doc.getStatut().getNom())) {
-            throw new IllegalArgumentException("Document non en attente");
-        }
-
-        // Gestion des différents statuts possibles
-        final String cible = statut != null ? statut.toUpperCase().trim() : "";
-        final String statutCible;
-        if ("VALIDE".equals(cible) || "VALIDÉ".equals(cible)) {
-            statutCible = "VALIDÉ";
-        } else if ("REJETÉ".equals(cible) || "REJETÉ".equals(cible)) {
-            statutCible = "REJETÉ";
-        } else {
-            throw new IllegalArgumentException("Statut non supporté: " + statut);
-        }
-
-        StatutDocument nouveauStatut = statutDocumentDao.findByNom(statutCible)
-                .orElseThrow(() -> new IllegalStateException("Statut " + statutCible + " introuvable"));
-
-        // Mise à jour du document
-        doc.setStatut(nouveauStatut);
-        doc.setCommentaire(commentaire); // Ajout du commentaire
-        documentDao.save(doc);
-
-        // Recalcul du statut dossier
-        if (doc.getDossier() != null && doc.getDossier().getStagiaire() != null) {
-            Integer stagiaireId = doc.getDossier().getStagiaire().getId();
-            getDossierCompletPourStagiaire(stagiaireId);
-        }
-    }
+//    public void validerDocument(Integer documentId, String statut, String commentaire) {
+//
+//        if ("VALIDE".equals(statut.toUpperCase().trim())) {
+//            documentManagementService.validerDocument(documentId);
+//        } else if ("REJETÉ".equals(statut.toUpperCase().trim())) {
+//            documentManagementService.rejeterDocumentWithComment(documentId, commentaire);
+//        }
+//
+//
+//        Document doc = documentDao.findById(documentId)
+//                .orElseThrow(() -> new IllegalArgumentException("Document introuvable"));
+//
+//        String statutActuel = doc.getStatut() != null ? doc.getStatut().getNom() : null;
+//
+//        if (!"EN_ATTENTE".equals(doc.getStatut().getNom())) {
+//            throw new IllegalArgumentException("Document non en attente");
+//        }
+//
+//        // Gestion des différents statuts possibles
+//        final String cible = statut != null ? statut.toUpperCase().trim() : "";
+//        final String statutCible;
+//        if ("VALIDE".equals(cible) || "VALIDÉ".equals(cible)) {
+//            statutCible = "VALIDÉ";
+//        } else if ("REJETÉ".equals(cible) || "REJETÉ".equals(cible)) {
+//            statutCible = "REJETÉ";
+//        } else {
+//            throw new IllegalArgumentException("Statut non supporté: " + statut);
+//        }
+//
+//        StatutDocument nouveauStatut = statutDocumentDao.findByNom(statutCible)
+//                .orElseThrow(() -> new IllegalStateException("Statut " + statutCible + " introuvable"));
+//
+//        // Mise à jour du document
+//        doc.setStatut(nouveauStatut);
+//        doc.setCommentaire(commentaire); // Ajout du commentaire
+//        documentDao.save(doc);
+//
+//        // Recalcul du statut dossier
+//        if (doc.getDossier() != null && doc.getDossier().getStagiaire() != null) {
+//            Integer stagiaireId = doc.getDossier().getStagiaire().getId();
+//            getDossierCompletPourStagiaire(stagiaireId);
+//        }
+//    }
 
     public List<Document> getPendingDocuments() {
         return documentDao.findByStatutNom("EN_ATTENTE");

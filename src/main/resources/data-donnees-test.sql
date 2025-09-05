@@ -503,3 +503,12 @@ WHERE s1.id > s2.id AND s1.nom = s2.nom;
 
 -- Vérifier qu'il ne reste qu'un seul "EN_ATTENTE"
 SELECT * FROM statut_document WHERE nom = 'EN_ATTENTE';
+
+-- Créer un admin
+INSERT INTO user (last_name, first_name, email, password, enabled, nom_role)
+VALUES ('Admin', 'Test', 'admin@test.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', true, 'ADMIN');
+
+INSERT INTO admin (id, type_admin, niveau_droit)
+VALUES (LAST_INSERT_ID(), 'RESPONSABLE_ETABLISSEMENT', 'SUPER_ADMIN');
+
+UPDATE document SET statut_document_id = (SELECT id FROM statut_document WHERE nom = 'EN_ATTENTE') WHERE id_document = 1; -- uniquement pour test
