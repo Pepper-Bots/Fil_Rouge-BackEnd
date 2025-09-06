@@ -29,6 +29,33 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Tests unitaires pour DocumentManagementService.
+ *
+ * <p>Cette classe teste les fonctionnalités principales du service de gestion
+ * des documents en isolation, en utilisant des mocks pour toutes les dépendances
+ * externes (DAO, services, etc.).</p>
+ *
+ * <p>Fonctionnalités testées :</p>
+ * <ul>
+ *   <li>Upload de documents avec validation métier</li>
+ *   <li>Validation et rejet de documents</li>
+ *   <li>Gestion des cas d'erreur (stagiaire introuvable, type non autorisé)</li>
+ *   <li>Synchronisation avec MongoDB et audit trail</li>
+ *   <li>Notifications aux stagiaires</li>
+ * </ul>
+ *
+ * <p>Architecture de test :</p>
+ * <ul>
+ *   <li><strong>@ExtendWith(MockitoExtension.class)</strong> : Activation de Mockito</li>
+ *   <li><strong>@Mock</strong> : Simulation des dépendances externes</li>
+ *   <li><strong>@InjectMocks</strong> : Injection automatique des mocks dans le service</li>
+ * </ul>
+ *
+ * @author Votre nom
+ * @see DocumentManagementService
+ * @since 1.0
+ */
 @ExtendWith(MockitoExtension.class)
 class DocumentManagementServiceTest {
 
@@ -58,6 +85,13 @@ class DocumentManagementServiceTest {
     // HELPERS
     // ==========
 
+    /**
+     * Crée un stagiaire de test avec les propriétés minimales requises.
+     *
+     * @param id       identifiant du stagiaire
+     * @param lastName nom de famille
+     * @return stagiaire configuré pour les tests
+     */
     private Stagiaire mkStagiaire(Integer id, String lastName) {
         Stagiaire s = new Stagiaire();
         s.setId(id);
@@ -65,12 +99,24 @@ class DocumentManagementServiceTest {
         return s;
     }
 
+    /**
+     * Crée un statut de document pour les tests.
+     *
+     * @param nom nom du statut (ex: "EN_ATTENTE", "VALIDÉ")
+     * @return statut configuré
+     */
     private StatutDocument mkStatut(String nom) {
         StatutDocument st = new StatutDocument();
         st.setNom(nom);
         return st;
     }
 
+    /**
+     * Matcher personnalisé pour vérifier l'ID GridFS dans les documents.
+     *
+     * @param id identifiant GridFS attendu
+     * @return matcher Mockito
+     */
     private ArgumentMatcher<Document> hasGridFsId(String id) {
         return d -> d != null && id.equals(d.getUrlFichier());
     }
@@ -79,6 +125,18 @@ class DocumentManagementServiceTest {
     // TESTS: uploadDocument()
     // =======================
 
+    /**
+     * Test nominal : upload d'un document avec succès.
+     *
+     * <p>Vérifie que le processus complet d'upload fonctionne :</p>
+     * <ol>
+     *   <li>Validation du stagiaire et du type de document</li>
+     *   <li>Stockage physique via GridFS</li>
+     *   <li>Création de l'entité Document en MySQL</li>
+     *   <li>Association à un dossier d'inscription</li>
+     *   <li>Synchronisation MongoDB avec audit</li>
+     * </ol>
+     */
     @Test
     void uploadDocument_success() throws Exception {
         // GIVEN
@@ -129,6 +187,12 @@ class DocumentManagementServiceTest {
         verify(documentMongoDao, atLeastOnce()).save(any(DocumentMongo.class));
     }
 
+    /**
+     * Test d'erreur : stagiaire introuvable.
+     *
+     * <p>Vérifie que le service lève une exception appropriée
+     * et n'effectue aucune opération de stockage.</p>
+     */
     @Test
     void uploadDocument_ko_stagiaireIntrouvable() throws Exception {
         // GIVEN
@@ -145,6 +209,12 @@ class DocumentManagementServiceTest {
         verify(documentDao, never()).save(any());
     }
 
+    /**
+     * Test d'erreur : type de document non autorisé pour la formation.
+     *
+     * <p>Vérifie que le TypeDocumentValidator empêche l'upload
+     * de documents inappropriés selon le niveau de formation.</p>
+     */
     @Test
     void uploadDocument_ko_typeNonAutorise() throws Exception {
         // GIVEN
@@ -162,6 +232,13 @@ class DocumentManagementServiceTest {
         verify(documentDao, never()).save(any());
     }
 
+    /**
+     * Test d'erreur : document du même type déjà soumis.
+     *
+     * <p>Vérifie qu'un stagiaire ne peut pas soumettre plusieurs
+     * documents du même type pour une formation, sauf si le
+     * précédent a été rejeté.</p>
+     */
     @Test
     void uploadDocument_ko_dejaSoumisNonrejete() throws Exception {
         // GIVEN
@@ -183,6 +260,12 @@ class DocumentManagementServiceTest {
         verify(documentDao, never()).save(any());
     }
 
+    /**
+     * Test de robustesse : création d'audit trail si inexistant.
+     *
+     * <p>Vérifie que le service crée automatiquement une liste
+     * d'audit MongoDB si elle est null, garantissant la traçabilité.</p>
+     */
     @Test
     void uploadDocument_ok_auditCreeSiNull() throws Exception {
         // GIVEN
@@ -218,6 +301,17 @@ class DocumentManagementServiceTest {
     // TESTS: valider / rejeter
     // =======================
 
+    /**
+     * Test de validation de document avec mise à jour complète du système.
+     *
+     * <p>Vérifie que la validation déclenche :</p>
+     * <ul>
+     *   <li>Changement de statut MySQL</li>
+     *   <li>Synchronisation MongoDB</li>
+     *   <li>Audit trail</li>
+     *   <li>Notification au stagiaire</li>
+     * </ul>
+     */
     @Test
     void validerDocument_success() {
         // GIVEN
@@ -250,6 +344,12 @@ class DocumentManagementServiceTest {
         verify(documentMongoDao, atLeastOnce()).save(any(DocumentMongo.class));
     }
 
+    /**
+     * Test de rejet de document avec mise à jour complète.
+     *
+     * <p>Vérifie que le rejet déclenche les mêmes mécanismes
+     * que la validation : statut, synchronisation, notifications.</p>
+     */
     @Test
     void rejeterDocument_success() {
         // GIVEN
@@ -281,102 +381,102 @@ class DocumentManagementServiceTest {
         verify(documentMongoDao, atLeastOnce()).save(any(DocumentMongo.class));
     }
 
-    @Test
-    void testUploadDocumentSuccess() throws Exception {
-        // GIVEN
-        Integer stagiaireId = 1;
-        Formation formation = new Formation();
-        formation.setId(1);
-        TypeDocument type = TypeDocument.CV;
-        MockMultipartFile fichier = new MockMultipartFile(
-                "cv", "cv.pdf", "application/pdf", "Contenu test".getBytes()
-        );
+//    @Test
+//    void testUploadDocumentSuccess() throws Exception {
+//        // GIVEN
+//        Integer stagiaireId = 1;
+//        Formation formation = new Formation();
+//        formation.setId(1);
+//        TypeDocument type = TypeDocument.CV;
+//        MockMultipartFile fichier = new MockMultipartFile(
+//                "cv", "cv.pdf", "application/pdf", "Contenu test".getBytes()
+//        );
+//
+//        Stagiaire stagiaire = new Stagiaire();
+//        stagiaire.setId(stagiaireId);
+//        stagiaire.setLastName("Dupont");
+//
+//        when(stagiaireDao.findById(stagiaireId)).thenReturn(Optional.of(stagiaire));
+//        when(typeDocumentValidator.isTypeAutorise(formation, type)).thenReturn(true);
+//        when(documentDao.findByDossierStagiaireIdAndTypeDocument(stagiaireId, type))
+//                .thenReturn(java.util.Collections.emptyList());
+//        when(documentStorageService.saveFile(fichier, stagiaireId.toString(), stagiaire.getLastName()))
+//                .thenReturn("fakeFileId");
+//
+//        StatutDocument statut = new StatutDocument();
+//        statut.setNom("EN_ATTENTE");
+//        when(statutDocumentDao.findByNom("EN_ATTENTE")).thenReturn(Optional.of(statut));
+//
+//        DocumentMongo documentMongo = new DocumentMongo();
+//        documentMongo.setId("fakeFileId");
+//        documentMongo.setAudit(new ArrayList<>());
+//        when(documentMongoDao.findById("fakeFileId")).thenReturn(Optional.of(documentMongo));
+//
+//        when(documentDao.save(any(Document.class))).thenAnswer(invocation -> {
+//            Document doc = invocation.getArgument(0);
+//            doc.setId(999); // Simule l'ID généré par la DB
+//            return doc;
+//        });
+//
+//        // WHEN
+//        Document saved = documentService.uploadDocument(stagiaireId, fichier, type, formation);
+//
+//        // THEN
+//        assertNotNull(saved);
+//        assertEquals("cv.pdf", saved.getNomFichier());
+//        assertEquals(type, saved.getTypeDocument());
+//        assertEquals("fakeFileId", saved.getUrlFichier());
+//        assertEquals(stagiaire, saved.getStagiaire());
+//        assertEquals(statut, saved.getStatut());
+//        assertEquals(formation, saved.getFormation());
+//        assertNotNull(saved.getDateDepot());
+//
+//        verify(documentDao).save(any(Document.class));
+//        verify(dossierService).creerOuAssocierDossier(saved, stagiaireId);
+//        verify(documentStorageService).saveFile(fichier, stagiaireId.toString(), stagiaire.getLastName());
+//        verify(documentMongoDao, atLeastOnce()).findById("fakeFileId");
+//        verify(documentMongoDao, atLeastOnce()).save(any(DocumentMongo.class));
+//    }
 
-        Stagiaire stagiaire = new Stagiaire();
-        stagiaire.setId(stagiaireId);
-        stagiaire.setLastName("Dupont");
-
-        when(stagiaireDao.findById(stagiaireId)).thenReturn(Optional.of(stagiaire));
-        when(typeDocumentValidator.isTypeAutorise(formation, type)).thenReturn(true);
-        when(documentDao.findByDossierStagiaireIdAndTypeDocument(stagiaireId, type))
-                .thenReturn(java.util.Collections.emptyList());
-        when(documentStorageService.saveFile(fichier, stagiaireId.toString(), stagiaire.getLastName()))
-                .thenReturn("fakeFileId");
-
-        StatutDocument statut = new StatutDocument();
-        statut.setNom("EN_ATTENTE");
-        when(statutDocumentDao.findByNom("EN_ATTENTE")).thenReturn(Optional.of(statut));
-
-        DocumentMongo documentMongo = new DocumentMongo();
-        documentMongo.setId("fakeFileId");
-        documentMongo.setAudit(new ArrayList<>());
-        when(documentMongoDao.findById("fakeFileId")).thenReturn(Optional.of(documentMongo));
-
-        when(documentDao.save(any(Document.class))).thenAnswer(invocation -> {
-            Document doc = invocation.getArgument(0);
-            doc.setId(999); // Simule l'ID généré par la DB
-            return doc;
-        });
-
-        // WHEN
-        Document saved = documentService.uploadDocument(stagiaireId, fichier, type, formation);
-
-        // THEN
-        assertNotNull(saved);
-        assertEquals("cv.pdf", saved.getNomFichier());
-        assertEquals(type, saved.getTypeDocument());
-        assertEquals("fakeFileId", saved.getUrlFichier());
-        assertEquals(stagiaire, saved.getStagiaire());
-        assertEquals(statut, saved.getStatut());
-        assertEquals(formation, saved.getFormation());
-        assertNotNull(saved.getDateDepot());
-
-        verify(documentDao).save(any(Document.class));
-        verify(dossierService).creerOuAssocierDossier(saved, stagiaireId);
-        verify(documentStorageService).saveFile(fichier, stagiaireId.toString(), stagiaire.getLastName());
-        verify(documentMongoDao, atLeastOnce()).findById("fakeFileId");
-        verify(documentMongoDao, atLeastOnce()).save(any(DocumentMongo.class));
-    }
-
-    @Test
-    void testValiderDocumentSuccess() {
-        // GIVEN
-        Integer documentId = 1;
-        Document document = new Document();
-        document.setId(documentId);
-        document.setUrlFichier("fakeFileId");
-
-        StatutDocument statutEnAttente = new StatutDocument();
-        statutEnAttente.setNom("EN_ATTENTE");
-        document.setStatut(statutEnAttente);
-
-        StatutDocument statutValide = new StatutDocument();
-        statutValide.setNom("VALIDÉ");
-
-        Stagiaire stagiaire = new Stagiaire();
-        stagiaire.setId(1);
-        document.setStagiaire(stagiaire);
-
-        when(documentDao.findById(documentId)).thenReturn(Optional.of(document));
-        when(statutDocumentDao.findByNom("VALIDÉ")).thenReturn(Optional.of(statutValide));
-        when(documentDao.save(any(Document.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        DocumentMongo documentMongo = new DocumentMongo();
-        documentMongo.setId("fakeFileId");
-        documentMongo.setAudit(new ArrayList<>());
-        when(documentMongoDao.findById("fakeFileId")).thenReturn(Optional.of(documentMongo));
-
-        // WHEN
-        Document result = documentService.validerDocument(documentId, "Validation réussie");
-
-        // THEN
-        assertNotNull(result);
-        assertEquals(statutValide, result.getStatut());
-        assertEquals("Validation réussie", result.getCommentaire()); // Vérifier le commentaire
-
-        verify(documentDao).save(document);
-        verify(notificationService).notifyStagiaireValidationDocument(stagiaire.getId(), documentId, true);
-        verify(documentMongoDao, atLeastOnce()).save(any(DocumentMongo.class));
-    }
+//    @Test
+//    void testValiderDocumentSuccess() {
+//        // GIVEN
+//        Integer documentId = 1;
+//        Document document = new Document();
+//        document.setId(documentId);
+//        document.setUrlFichier("fakeFileId");
+//
+//        StatutDocument statutEnAttente = new StatutDocument();
+//        statutEnAttente.setNom("EN_ATTENTE");
+//        document.setStatut(statutEnAttente);
+//
+//        StatutDocument statutValide = new StatutDocument();
+//        statutValide.setNom("VALIDÉ");
+//
+//        Stagiaire stagiaire = new Stagiaire();
+//        stagiaire.setId(1);
+//        document.setStagiaire(stagiaire);
+//
+//        when(documentDao.findById(documentId)).thenReturn(Optional.of(document));
+//        when(statutDocumentDao.findByNom("VALIDÉ")).thenReturn(Optional.of(statutValide));
+//        when(documentDao.save(any(Document.class))).thenAnswer(invocation -> invocation.getArgument(0));
+//
+//        DocumentMongo documentMongo = new DocumentMongo();
+//        documentMongo.setId("fakeFileId");
+//        documentMongo.setAudit(new ArrayList<>());
+//        when(documentMongoDao.findById("fakeFileId")).thenReturn(Optional.of(documentMongo));
+//
+//        // WHEN
+//        Document result = documentService.validerDocument(documentId, "Validation réussie");
+//
+//        // THEN
+//        assertNotNull(result);
+//        assertEquals(statutValide, result.getStatut());
+//        assertEquals("Validation réussie", result.getCommentaire()); // Vérifier le commentaire
+//
+//        verify(documentDao).save(document);
+//        verify(notificationService).notifyStagiaireValidationDocument(stagiaire.getId(), documentId, true);
+//        verify(documentMongoDao, atLeastOnce()).save(any(DocumentMongo.class));
+//    }
 
 }

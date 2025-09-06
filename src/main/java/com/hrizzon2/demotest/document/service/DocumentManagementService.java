@@ -68,7 +68,11 @@ public class DocumentManagementService {
 
 
     @Transactional
-    public Document uploadDocument(Integer stagiaireId, MultipartFile fichier, TypeDocument type, Formation formation) throws IOException {
+    public Document uploadDocument(
+            Integer stagiaireId,
+            MultipartFile fichier,
+            TypeDocument type,
+            Formation formation) throws IOException {
 
         // 1. Validation du stagiaire
         Stagiaire stagiaire = stagiaireDao.findById(stagiaireId)

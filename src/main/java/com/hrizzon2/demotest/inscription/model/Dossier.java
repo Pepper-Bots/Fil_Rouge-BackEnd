@@ -112,7 +112,7 @@ public class Dossier {
      */
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_Stagiaire", nullable = false)
+    @JoinColumn(name = "id_stagiaire", nullable = false)
     private Stagiaire stagiaire;
 
 

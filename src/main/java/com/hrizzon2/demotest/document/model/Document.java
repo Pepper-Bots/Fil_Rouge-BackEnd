@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
+@Table(name = "document")
 public class Document {
 
     @Id
@@ -29,7 +30,7 @@ public class Document {
      * Association vers le stagiaire qui a soumis ce document
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "Id_Stagiaire", nullable = false)
+    @JoinColumn(name = "id_stagiaire", nullable = false)
     private Stagiaire stagiaire;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -180,7 +180,7 @@ VALUES (1, 'Développement Web Front-End', 'A', 'Apprendre HTML, CSS, JavaScript
 -- 10. DOSSIER
 INSERT INTO dossier (id_dossier, code_dossier, Id_statut_dossier, date_de_creation, derniere_mise_a_jour,
                      date_modification,
-                     id_Stagiaire, id_formation, id_createur)
+                     id_stagiaire, id_formation, id_createur)
 VALUES (1, 'DSR001', 2, '2025-01-05 09:00:00', '2025-01-07 14:00:00', '2025-01-07 14:00:00', 5, 1, 1),   -- Java avancé
        (2, 'DSR002', 1, '2025-01-08 10:15:00', '2025-01-09 16:30:00', '2025-01-07 14:00:00', 6, 2, 2),-- Développement Web
        (3, 'DSR003', 3, '2025-01-12 11:00:00', '2025-01-13 15:45:00', '2025-01-07 14:00:00', 7, 3, 3),-- Data Science
@@ -211,7 +211,7 @@ VALUES (1, 'DSR001', 2, '2025-01-05 09:00:00', '2025-01-07 14:00:00', '2025-01-0
 
 
 -- Données de test avec id_formation
-INSERT INTO document (nom_fichier, type_document, id_statut_document, id_dossier, Id_Stagiaire, evenement_id,
+INSERT INTO document (nom_fichier, type_document, id_statut_document, id_dossier, id_stagiaire, evenement_id,
                       commentaire,
                       date_depot, url_fichier, id_formation)
 VALUES ('Justificatif de domicile', 'JUSTIFICATIF', 2, 1, 5, NULL, NULL, NOW(), NULL, 1),
@@ -225,12 +225,12 @@ VALUES ('Justificatif de domicile', 'JUSTIFICATIF', 2, 1, 5, NULL, NULL, NOW(), 
 
 -- Exemple inscription
 INSERT INTO inscription (id_inscription, date_inscription, date_modification, date_validation, statut_inscription,
-                         Id_Stagiaire, id_formation, id_dossier)
+                         id_stagiaire, id_formation, id_dossier)
 VALUES (1, CURDATE(), NULL, NULL, 'EN_ATTENTE', 5, 1, 1);
 
 
 
-INSERT INTO evenement (id_evenement, date_debut, date_fin, est_retard, Id_Stagiaire, motif_id, document_id)
+INSERT INTO evenement (id_evenement, date_debut, date_fin, est_retard, id_stagiaire, motif_id, document_id)
 VALUES (1, '2025-10-15', '2025-10-16', FALSE, 5, 1, NULL);
 
 
@@ -390,7 +390,7 @@ VALUES ('EN_ATTENTE'),
 # VALUES (1, 'Développement Web Java', 'C');
 
 # -- Document associé (en attente)
-# INSERT INTO document (nom_fichier, type, id_statut_document, id_dossier, Id_Stagiaire, id_formation, date_depot)
+# INSERT INTO document (nom_fichier, type, id_statut_document, id_dossier, id_stagiaire, id_formation, date_depot)
 # VALUES ('CV Romain.pdf', 'CV', 1, 1, 1, 1, NOW());
 
 -- Vérification rapide
@@ -410,11 +410,11 @@ VALUES ('EN_ATTENTE'),
 
 -- Création d’un dossier
 # INSERT INTO dossier (id_dossier, code_dossier, statut_id_dossier, date_de_creation, derniere_mise_a_jour,
-#                      date_modification, Id_Stagiaire, id_formation, id_createur)
+#                      date_modification, id_stagiaire, id_formation, id_createur)
 # VALUES (1, 'DSR001', 2, NOW(), NOW(), NOW(), 5, 1, 1);
 
 # -- Ajout d’un document dans le dossier
-# INSERT INTO document (nom_fichier, type, id_statut_document, id_dossier, Id_Stagiaire)
+# INSERT INTO document (nom_fichier, type, id_statut_document, id_dossier, id_stagiaire)
 # VALUES ('CV.pdf', 'CV', 1, 1, 5);
 
 
@@ -433,11 +433,11 @@ VALUES ('EN_ATTENTE'),
 # VALUES (1, 'Développement Web', 'A', 'HTML, CSS, JS, React', '2025-09-01', '2026-06-30');
 
 -- Dossier d’inscription
-# INSERT INTO dossier (code_dossier, statut_id_dossier, date_de_creation, Id_Stagiaire, id_formation, id_createur)
+# INSERT INTO dossier (code_dossier, statut_id_dossier, date_de_creation, id_stagiaire, id_formation, id_createur)
 # VALUES ('DSR001', 2, NOW(), 3, 1, 1);
 
 -- Document rattaché
-# INSERT INTO document (nom_fichier, type, id_statut_document, id_dossier, Id_Stagiaire, date_depot)
+# INSERT INTO document (nom_fichier, type, id_statut_document, id_dossier, id_stagiaire, date_depot)
 # VALUES ('CV_Julie.pdf', 'CV', 1, 1, 3, NOW());
 
 SHOW CREATE TABLE stagiaire
@@ -469,7 +469,7 @@ VALUES ('Test', 'Auth', 'testauth@example.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4o
 INSERT INTO stagiaire (id, premiere_connexion, date_naissance, phone_number, adresse, ville_id, photo_profil)
 VALUES (LAST_INSERT_ID(), true, '1990-01-01', '0123456789', '123 rue Test', 1, null);
 
-SELECT id_dossier, code_dossier, id_Stagiaire FROM dossier LIMIT 5;
+SELECT id_dossier, code_dossier, id_stagiaire FROM dossier LIMIT 5;
 
 -- Vérifier les utilisateurs existants
 SELECT id, email FROM user WHERE id IN (5, 6, 7, 8, 9, 10);
@@ -484,7 +484,7 @@ SELECT id, nom_statut FROM statut_dossier WHERE id IN (1, 2, 3);
 SELECT id FROM user WHERE email = 'testauth@example.com'; -- 32
 
 -- Créer un dossier simple pour tester (remplacez XXX par l'ID trouvé)
-INSERT INTO dossier (code_dossier, Id_statut_dossier, date_de_creation, derniere_mise_a_jour, date_modification, id_Stagiaire, id_formation, id_createur)
+INSERT INTO dossier (code_dossier, Id_statut_dossier, date_de_creation, derniere_mise_a_jour, date_modification, id_stagiaire, id_formation, id_createur)
 VALUES ('TEST001', 1, NOW(), NOW(), NOW(), 32, 1, 1);
 
 -- Récupérer l'ID du dossier créé
