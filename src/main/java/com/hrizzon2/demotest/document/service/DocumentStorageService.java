@@ -28,6 +28,15 @@ public class DocumentStorageService {
 
     // Stocker le fichier
     public String saveFile(MultipartFile file, String stagiaireId, String nomStagiaire) throws IOException {
+
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("Fichier vide ou null");
+        }
+
+        if (stagiaireId == null || nomStagiaire == null) {
+            throw new IllegalArgumentException("StagiaireId et nomStagiaire requis");
+        }
+
         // Stockage GridFS
         ObjectId fileId = gridFsTemplate.store(
                 file.getInputStream(),

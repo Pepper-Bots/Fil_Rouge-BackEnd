@@ -14,5 +14,4 @@ public class AuditAction {
     private String action;
     private Date date;
     private String par;
-    // getters/setters
 }

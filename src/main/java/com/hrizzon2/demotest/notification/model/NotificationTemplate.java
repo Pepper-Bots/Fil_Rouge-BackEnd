@@ -8,11 +8,12 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@SuppressWarnings("unused")
+@Table(name = "notification_template")
 public class NotificationTemplate {
 
     @Id
     @GeneratedValue
+    @Column(name = "id_notification_template")
     private Integer id;
 
     @Enumerated(EnumType.STRING)

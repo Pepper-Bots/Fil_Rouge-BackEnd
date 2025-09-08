@@ -40,34 +40,42 @@ import java.util.List;
 @DiscriminatorValue("STAGIAIRE")
 public class Stagiaire extends User {
 
-    @Column(name = "premiere_connexion")
-    @JsonView({AffichageDossier.Stagiaire.class, AffichageDossier.Complet.class})
-    private boolean premiereConnexion = true;
+    @JsonView({AffichageDossier.Stagiaire.class,
+            AffichageDossier.Complet.class})
+    @Column(name = "first_connection")
+    private boolean firstConnection = true;
 
     /**
      * Date de naissance (date-only).
      */
     @Temporal(TemporalType.DATE)
-    @JsonView({AffichageDossier.Stagiaire.class, AffichageDossier.Complet.class})
-    private Date dateNaissance;
+    @JsonView({AffichageDossier.Stagiaire.class,
+            AffichageDossier.Complet.class})
+    @Column(name = "birth_date")
+    private Date birthDate;
 
     /**
      * Numéro de téléphone du stagiaire.
      * Ce champ est obligatoire.
      */
-    @JsonView({AffichageDossier.Stagiaire.class, AffichageDossier.Complet.class})
+    @JsonView({AffichageDossier.Stagiaire.class,
+            AffichageDossier.Complet.class})
+    @Column(name = "phone_number")
     private String phoneNumber;
 
     /**
      * Adresse postale du stagiaire.
      * Ce champ est obligatoire.
      */
-    @JsonView({AffichageDossier.Stagiaire.class, AffichageDossier.Complet.class})
-    private String adresse;
+    @JsonView({AffichageDossier.Stagiaire.class,
+            AffichageDossier.Complet.class})
+    @Column(name = "address")
+    private String address;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "ville_id", nullable = false)
-    @JsonView({AffichageDossier.Stagiaire.class, AffichageDossier.Complet.class})
+    @JsonView({AffichageDossier.Stagiaire.class,
+            AffichageDossier.Complet.class})
+    @JoinColumn(name = "id_ville", nullable = false)
     private Ville ville;
 
     /**
@@ -118,8 +126,8 @@ public class Stagiaire extends User {
      * Nom ou chemin relatif de la photo de profil du stagiaire.
      */
     @JsonView({AffichageDossier.Stagiaire.class, AffichageDossier.Complet.class})
-    @Column(name = "photo_profil")
-    private String photoProfil;
+    @Column(name = "profile_picture")
+    private String profilePicture;
 
 }
 

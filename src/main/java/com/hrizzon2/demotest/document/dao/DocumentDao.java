@@ -10,46 +10,90 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-// Tu continues à utiliser MySQL/PostgreSQL pour ta gestion “métier” des dossiers/documents (logique métier, liens avec Stagiaire, Dossier, Statut, etc).
-// DocumentDao va continuer à gérer tout ce qui concerne la logique relationnelle, la validation, la complétude, etc.
-// DocumentDao (JPA) = logique métier “structurée”, tout ce qui a besoin d’être en SQL/transactionnel/lié à d’autres entités.
-
+/**
+ * DAO pour la gestion des entités Document.
+ * Toutes les requêtes sont sécurisées via paramètres bindés (JPQL ou Spring Data).
+ * Protection contre les injections SQL par utilisation de @Param et méthodes dérivées.
+ */
 @Repository
 public interface DocumentDao extends JpaRepository<Document, Integer> {
 
     /**
-     * Renvoie tous les Document liés à un dossier dont le stagiaire a l’ID donné.
-     * Hibernate générera automatiquement une requête
-     * JOIN dossier → stagiaire → WHERE stagiaire.id = :stagiaireId.
+     * Récupère tous les documents d'un stagiaire via son dossier.
+     * Requête sécurisée par paramètre bindé automatique Spring Data.
+     *
+     * @param stagiaireId Identifiant du stagiaire
+     * @return Liste des documents associés au stagiaire
      */
     List<Document> findByDossierStagiaireId(Integer stagiaireId);
 
     /**
-     * Renvoie tous les Documents d’un type précis pour un même stagiaire (depuis le dossier associé).
-     * Exemple d’usage : vérifier qu’on n’a pas déjà soumis un CV ou une pièce d’identité.
+     * Trouve les documents d'un type spécifique pour un stagiaire.
+     * Évite la duplication de documents (ex: plusieurs CV).
+     * Paramètres automatiquement sécurisés par Spring Data JPA.
+     *
+     * @param stagiaireId Identifiant du stagiaire
+     * @param type        Type de document recherché
+     * @return Liste des documents correspondant aux critères
      */
     List<Document> findByDossierStagiaireIdAndTypeDocument(Integer stagiaireId, TypeDocument type);
 
     /**
-     * Pour lister tous les documents dont le statut (StatutDocument.nom) = « EN_ATTENTE ».
-     * On peut exploiter la signature automatique si StatutDocument est une entité
-     * avec un champ « nom ». Spring Data JPA va comprendre qu’il faut
-     * faire un JOIN sur Document → StatutDocument → WHERE nom = :statut.
+     * Récupère tous les documents ayant un statut donné.
+     * Utilise la jointure automatique Spring Data vers StatutDocument.
+     *
+     * @param nom Nom du statut (ex: "EN_ATTENTE", "VALIDÉ")
+     * @return Liste des documents avec ce statut
      */
     List<Document> findByStatutNom(String nom);
 
+    /**
+     * Trouve les documents liés à un événement spécifique.
+     * Paramètre bindé pour éviter l'injection SQL.
+     *
+     * @param evenementId Identifiant de l'événement
+     * @return Liste des documents associés à l'événement
+     */
     List<Document> findByEvenementId(Integer evenementId);
 
+    /**
+     * Compte le nombre de documents par statut.
+     * Méthode sécurisée par Spring Data JPA.
+     *
+     * @param statut Statut à compter
+     * @return Nombre de documents avec ce statut
+     */
     int countByStatut(StatutDocument statut);
 
+    /**
+     * Récupère tous les documents d'un statut donné.
+     *
+     * @param statut Statut recherché
+     * @return Liste des documents
+     */
     List<Document> findByStatut(StatutDocument statut);
 
-
+    /**
+     * Requête JPQL personnalisée avec paramètres bindés.
+     * Protection anti-injection via @Param sur les paramètres d'entrée.
+     *
+     * @param stagiaireId Identifiant du stagiaire
+     * @param formationId Identifiant de la formation
+     * @return Documents du stagiaire pour cette formation
+     */
     @Query("SELECT d FROM Document d WHERE d.stagiaire.id = :stagiaireId AND d.formation.id = :formationId")
     List<Document> findByStagiaireIdAndFormationId(
             @Param("stagiaireId") Integer stagiaireId,
             @Param("formationId") Integer formationId);
 
+    /**
+     * Trouve les documents de dossier d'inscription pour un stagiaire et une formation.
+     * Requête JPQL sécurisée avec validation que le dossier existe.
+     *
+     * @param stagiaireId Identifiant du stagiaire
+     * @param formationId Identifiant de la formation
+     * @return Documents d'inscription du stagiaire
+     */
     @Query("SELECT d FROM Document d WHERE d.stagiaire.id = :stagiaireId AND d.formation.id = :formationId AND d.dossier IS NOT NULL")
     List<Document> findDocumentsDossierByStagiaireAndFormation(
             @Param("stagiaireId") Integer stagiaireId,

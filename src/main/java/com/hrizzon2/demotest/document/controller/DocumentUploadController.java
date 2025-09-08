@@ -73,9 +73,9 @@ public class DocumentUploadController {
      * Pour compatibilité ou cas d'usage spéciaux
      */
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file,
-                                             @RequestParam("stagiaireId") String stagiaireId,
-                                             @RequestParam("nomStagiaire") String nomStagiaire) {
+    public ResponseEntity<String> uploadFileFallback(@RequestParam("file") MultipartFile file,
+                                                     @RequestParam("stagiaireId") String stagiaireId,
+                                                     @RequestParam("nomStagiaire") String nomStagiaire) {
         try {
             // 1. Sauvegarde sur le disque (toujours active)
             String dossier = "uploads/";

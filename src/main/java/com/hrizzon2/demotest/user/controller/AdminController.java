@@ -25,6 +25,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+@IsAdmin
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/admin")
@@ -36,41 +37,42 @@ public class AdminController {
     private final FormationService formationService;
 
     @Autowired
-    public AdminController(AdminService adminService, StagiaireService stagiaireService, DossierDocumentService dossierDocumentService, FormationService formationService) {
+    public AdminController(AdminService adminService,
+                           StagiaireService stagiaireService,
+                           DossierDocumentService dossierDocumentService,
+                           FormationService formationService) {
         this.adminService = adminService;
         this.stagiaireService = stagiaireService;
         this.dossierDocumentService = dossierDocumentService;
         this.formationService = formationService;
     }
 
-
     // --------------------------------------------
     // ADMIN - Utilisateurs / Stagiaires
     // --------------------------------------------
-
-    @IsAdmin
-    @GetMapping("/admins")
-    public ResponseEntity<List<Admin>> getAllAdmins() {
-        List<Admin> admins = adminService.getAdminsByTypeAndNiveauDroit();
-        return ResponseEntity.ok(admins);
-    }
 
     /**
      * Récupère tous les stagiaires (vue restreinte).
      *
      * @return Liste de tous les stagiaires
      */
-    @IsAdmin
     @GetMapping("/stagiaires")
     @JsonView(AffichageDossier.Stagiaire.class)
     public ResponseEntity<List<Stagiaire>> getAllStagiaires() {
+
         return ResponseEntity.ok(stagiaireService.findAll());
     }
+
+    @GetMapping("/admins")
+    public ResponseEntity<List<Admin>> getAllAdmins() {
+        List<Admin> admins = adminService.getAdminsByTypeAndNiveauDroit();
+        return ResponseEntity.ok(admins);
+    }
+
 
     /**
      * Récupère tous les stagiaires (vue complète) SEULEMENT ADMINS.
      */
-    @IsAdmin
     @GetMapping("/stagiaires/complet")
     @JsonView(AffichageDossier.Complet.class)
     public ResponseEntity<List<Stagiaire>> getAllStagiairesComplet() {
@@ -84,7 +86,6 @@ public class AdminController {
      * @param statut Statut d'inscription à filtrer
      * @return Stagiaire selon son statut
      */
-    @IsAdmin
     @GetMapping("/stagiaires/par-statut")
     public ResponseEntity<List<Stagiaire>> getStagiairesByStatut(
             @RequestParam StatutInscription statut) {
@@ -99,7 +100,6 @@ public class AdminController {
      * @param fin   Date de fin (inclus)
      * @return
      */
-    @IsAdmin
     @GetMapping("stagiaires/inscrits")
     public ResponseEntity<List<Stagiaire>> getStagiairesInscritsEntre(
             @RequestParam LocalDate debut,
@@ -114,7 +114,6 @@ public class AdminController {
      * @param formationId ID de la formation (optionnel)
      * @return Stagiaire créé
      */
-    @IsAdmin
     @PostMapping("/stagiaires")
     public ResponseEntity<Stagiaire> createStagiaire(
             @RequestBody @Valid Stagiaire stagiaire,
@@ -143,7 +142,6 @@ public class AdminController {
      * @param updatedStagiaire Données à mettre à jour
      * @return Stagiaire mis à jour ou code 404
      */
-    @IsAdmin
     @PutMapping("/stagiaire/{id}")
     public ResponseEntity<Stagiaire> updateStagiaire(
             @PathVariable int id,
@@ -181,7 +179,6 @@ public class AdminController {
      * @param id ID du stagiaire
      * @return Code 204 si supprimé, 404 sinon
      */
-    @IsAdmin
     @DeleteMapping("/stagiaire/{id}")
     public ResponseEntity<Void> deleteStagiaire(@PathVariable int id) {
 
@@ -200,19 +197,18 @@ public class AdminController {
     /**
      * Récupère la liste de tous les documents en attente de validation (accessible aux admins).
      */
-    @IsAdmin
     @GetMapping("/documents/en-attente")
     public ResponseEntity<List<Document>> getPendingDocuments() {
         List<Document> pending = dossierDocumentService.getPendingDocuments();
         return ResponseEntity.ok(pending);
     }
-
-    /**
-     * Valide un document soumis (change son statut en VALIDÉ).
-     * Après validation, on déclenche une vérification du dossier complet du stagiaire.
-     *
-     * @param documentId ID du document à valider
-     */
+//
+//    /**
+//     * Valide un document soumis (change son statut en VALIDÉ).
+//     * Après validation, on déclenche une vérification du dossier complet du stagiaire.
+//     *
+//     * @param documentId ID du document à valider
+//     */
 //    @IsAdmin
 //    @PatchMapping("/documents/{documentId}/valider")
 //    public ResponseEntity<Void> validerDocument(@PathVariable Integer documentId) {
@@ -232,7 +228,6 @@ public class AdminController {
      *
      * @param documentId ID du document à rejeter
      */
-    @IsAdmin
     @PatchMapping("/documents/{documentId}/rejeter")
     public ResponseEntity<Void> rejeterDocument(@PathVariable Integer documentId) {
         try {

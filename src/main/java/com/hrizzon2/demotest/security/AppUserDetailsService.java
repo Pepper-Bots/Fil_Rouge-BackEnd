@@ -49,7 +49,7 @@ public class AppUserDetailsService implements UserDetailsService {
                 User user = userOpt.get();
                 System.out.println("Utilisateur trouvé : " + user.getEmail());
                 System.out.println("Password hash : " + user.getPassword());
-                System.out.println("Enabled : " + user.getEnabled());
+                System.out.println("Enabled : " + user.isEnabled());
 
                 AppUserDetails details = new AppUserDetails(user);
                 System.out.println("AppUserDetails créé");

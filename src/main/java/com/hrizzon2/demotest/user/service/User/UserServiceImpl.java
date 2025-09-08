@@ -45,10 +45,10 @@ public class UserServiceImpl implements UserService {
 
         // Si user est Stagiaire, check premiereConnexion
         if (user instanceof Stagiaire stagiaire) {
-            if (!stagiaire.isPremiereConnexion()) {
+            if (!stagiaire.isFirstConnection()) {
                 throw new RuntimeException("Vous devez vous connecter pour changer votre mot de passe");
             }
-            stagiaire.setPremiereConnexion(false);
+            stagiaire.setFirstConnection(false);
 
         }
         user.setPassword(passwordEncoder.encode(newPassword));

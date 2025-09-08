@@ -31,13 +31,11 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@Table(name = "user")
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "nom_role", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorColumn(name = "nom_role",
+        discriminatorType = DiscriminatorType.STRING)
 public class User {
-
-
-//// VOIR GESTION DES DROITS AVEC UN BOOLEEN - PAGE 415 SLIDE SPRING
-
 
     /**
      * Identifiant unique de l'utilisateur.
@@ -46,10 +44,6 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Integer id;
-
-
-    @Column(name = "enabled", nullable = false)
-    private Boolean enabled = false; // TODO garder ce type Boolean objet qui peut etre undifined ? ou preferer un boolean false || true ?
 
     /**
      * Nom de famille de l'utilisateur.
@@ -79,6 +73,10 @@ public class User {
     @Column(nullable = false, unique = true)
     protected String email;
 
+    @Column(name = "enabled", nullable = false)
+    public boolean enabled = false;
+
+
     /**
      * Mot de passe de l'utilisateur.
      * Ce champ ne peut pas être nul.
@@ -99,5 +97,6 @@ public class User {
 
     @Column(name = "reset_password_token")
     private String resetPasswordToken;
+
 
 }

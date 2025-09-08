@@ -14,10 +14,12 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
+@Table(name = "liste_documents_obligatoires")
 public class ListeDocumentsObligatoires {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonView(AffichageListeDocumentsObligatoires.Resume.class)
+    @Column(name = "id_listedocs")
     private Integer id;
 
     @JsonView(AffichageListeDocumentsObligatoires.Complet.class)

@@ -71,7 +71,8 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Build toutes les images via docker-compose (build front, back, proxy, static, etc.)
+      # Build toutes les images via docker-compose
+      #      (build front, back, proxy, static, etc.)
       - name: Build Docker Compose services
         run: docker-compose build
 
@@ -120,3 +121,5 @@ jobs:
 #  9.Tag/push images
 #
 #  10.Nettoyage
+
+

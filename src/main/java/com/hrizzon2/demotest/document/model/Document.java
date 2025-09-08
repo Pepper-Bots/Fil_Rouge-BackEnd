@@ -11,7 +11,6 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-// ingrédient apporté
 
 @Getter
 @Setter
@@ -36,24 +35,6 @@ public class Document {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_statut_document", nullable = false)
     private StatutDocument statut;
-
-    // ========== Relations contextuelles (une seule non-null à la fois) =============//
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_dossier", nullable = true)
-    private Dossier dossier;  // Pour documents d'inscription
-
-    /**
-     * Association optionnelle vers l'évènement justifié par ce document
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "Id_evenement", nullable = true)
-    private Evenement evenement;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_formation", nullable = true)
-    private Formation formation;
-
 
     // ========== Attributs =============//
 
@@ -80,4 +61,23 @@ public class Document {
      */
     @Column(length = 1000)
     private String commentaire;
+
+    // ========== Relations contextuelles (une seule non-null à la fois) =============//
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_dossier", nullable = true)
+    private Dossier dossier;  // Pour documents d'inscription
+
+    /**
+     * Association optionnelle vers l'évènement justifié par ce document
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "Id_evenement", nullable = true)
+    private Evenement evenement;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_formation", nullable = true)
+    private Formation formation;
+
+
 }

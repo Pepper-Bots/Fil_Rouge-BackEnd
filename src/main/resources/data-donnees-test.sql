@@ -1,104 +1,22 @@
-INSERT INTO motif (id, libelle)
+-- 1. Tables de référence (aucune dépendance)
+
+INSERT INTO motif (id_motif, libelle)
 VALUES (1, 'RETRAIT_DOSSIER'),
        (2, 'JUSTIFICATIF_INFIRMITÉ');
 
+INSERT INTO statut_document (id_statut_document, nom)
+VALUES (1, 'EN_ATTENTE'),
+       (2, 'VALIDÉ'),
+       (3, 'REJETÉ'),
+       (4, 'MANQUANT');
 
--- 14. Insertions exemples (statuts)
-INSERT INTO statut_document (nom)
-VALUES ('EN_ATTENTE'),
-       ('VALIDÉ'),
-       ('REJETÉ'),
-       ('MANQUANT');
+INSERT INTO statut_dossier (id_statut_dossier, nom_statut)
+VALUES (1, 'INCOMPLET'),
+       (2, 'EN_COURS'),
+       (3, 'COMPLET'),
+       (4, 'VALIDÉ');
 
-INSERT INTO statut_dossier (nom_statut)
-VALUES ('INCOMPLET'),
-       ('EN_COURS'),
-       ('COMPLET'),
-       ('VALIDÉ');
-
-
--- Étape 1 : insérer les utilisateurs de base dans la table USER
-INSERT INTO `user` (last_name,
-                    first_name,
-                    email,
-                    password,
-                    enabled,
-                    jeton_verification_email,
-                    nom_role,
-                    reset_password_token)
-VALUES
--- 1. Administrateurs
-('Dupont', 'Alice', 'alice@example.com', '$2y$10$flLWd64/eosC6TAY0r2CgehFD.EJEYcSu7LqC5rWsKTa9S7PqUWja', TRUE,
- 'token-verif-123', 'ADMIN', NULL),
-('Durand', 'Bruno', 'bruno@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
- 'ADMIN', NULL),
-('Martin', 'Cécile', 'cecile@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
- 'ADMIN', NULL),
-('Bernard', 'David', 'david@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
- 'ADMIN', NULL),
-
--- 2. Stagiaires
-('Dupont', 'Romain', 'romain_dupont@live.fr', '$2a$10$Dow1Kt9EdIVVQ8KQfBGoH.NkbZoCPoEdWkqITpCTBLuRFK5kZzCO2', TRUE,
- NULL, 'STAGIAIRE', NULL),
-('Martin', 'Julie', 'julie.martin@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
- NULL, 'STAGIAIRE', NULL),
-('Legrand', 'Paul', 'paul.legrand@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
- NULL, 'STAGIAIRE', NULL),
-('Durand', 'Sophie', 'sophie.durand@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
- NULL, 'STAGIAIRE', NULL),
-('Petit', 'Lucas', 'lucas.petit@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
- NULL, 'STAGIAIRE', NULL),
-('Moreau', 'Camille', 'camille.moreau@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG',
- TRUE, NULL, 'STAGIAIRE', NULL),
-('Fournier', 'Léo', 'leo.fournier@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
- NULL, 'STAGIAIRE', NULL),
-('Garnier', 'Emma', 'emma.garnier@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
- NULL, 'STAGIAIRE', NULL),
-('Henry', 'Maxime', 'maxime.henry@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
- NULL, 'STAGIAIRE', NULL),
-('Roux', 'Manon', 'manon.roux@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
- 'STAGIAIRE', NULL),
-('Guerin', 'Tom', 'tom.guerin@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
- 'STAGIAIRE', NULL),
-('Schmitt', 'Chloé', 'chloe.schmitt@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
- NULL, 'STAGIAIRE', NULL),
-('Robert', 'Nathan', 'nathan.robert@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
- NULL, 'STAGIAIRE', NULL),
-('Lemoine', 'Élise', 'elise.lemoine@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
- NULL, 'STAGIAIRE', NULL),
-('Blanc', 'Axel', 'axel.blanc@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
- 'STAGIAIRE', NULL),
-('Chevalier', 'Laura', 'laura.chevalier@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG',
- TRUE, NULL, 'STAGIAIRE', NULL),
-('Faure', 'Noah', 'noah.faure@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
- 'STAGIAIRE', NULL),
-('André', 'Sarah', 'sarah.andre@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
- NULL, 'STAGIAIRE', NULL),
-('Renaud', 'Julien', 'julien.renaud@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
- NULL, 'STAGIAIRE', NULL),
-('Collet', 'Anaïs', 'anais.collet@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
- NULL, 'STAGIAIRE', NULL),
-
--- 3. Utilisateurs de test génériques
-('Test1', 'User1', 'test1@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
- 'STAGIAIRE', NULL),
-('Test2', 'User2', 'test2@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
- 'STAGIAIRE', NULL),
-('Test3', 'User3', 'test3@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
- 'STAGIAIRE', NULL),
-('Test4', 'User4', 'test4@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
- 'STAGIAIRE', NULL),
-('Test5', 'User5', 'test5@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
- 'STAGIAIRE', NULL);
-
-
--- Étape 2 : insérer dans ADMIN (en réutilisant les IDs ci-dessus)
-INSERT INTO admin (id, type_admin, niveau_droit)
-VALUES (1, 'RESPONSABLE_ETABLISSEMENT', 'SUPER_ADMIN'),
-       (2, 'RESPONSABLE_FORMATION', 'ADMIN'),
-       (3, 'ASSISTANT_VIE_SCOLAIRE', 'MODERATEUR'),
-       (4, 'ASSISTANT_ADMINISTRATIF', 'BASIQUE');
-
+-- 2. Géographie
 
 INSERT INTO region (id_region, nom_region, nom_pays)
 VALUES ('ARA', 'Auvergne-Rhône-Alpes', 'France'),
@@ -124,37 +42,121 @@ VALUES (1, 'ARA', '69001', 'Lyon'),
        (13, 'PAC', '13000', 'Marseille');
 -- Provence-Alpes-Côte d'Azur
 
--- Insertion dans la table stagiaire en utilisant ville_id
-INSERT INTO stagiaire (id, premiere_connexion, date_naissance, phone_number, adresse, ville_id, photo_profil)
-VALUES (5, true, '1990-03-01', '0660606060', '12 rue des Rosses', 1, 'default-profile.png'),
-       (6, true, '1985-07-14', '0678451223', '8 avenue des Lilas', 2, null),
-       (7, true, '1992-11-22', '0654239876', '34 boulevard Victor Hugo', 3, null),
-       (8, true, '1980-06-30', '0612789543', '21 rue des Vignes', 4, null),
-       (9, true, '1978-04-19', '0634561287', '5 impasse des Fleurs', 5, null),
-       (10, true, '1991-01-08', '0645129384', '17 rue des Jardins', 6, null),
-       (11, true, '1983-09-12', '0625897412', '98 rue de la République', 7, null),
-       (12, true, '1994-10-02', '0678932154', '66 avenue des Champs', 8, null),
-       (13, true, '1987-05-06', '0612347895', '43 rue Jean Jaurès', 9, null),
-       (14, true, '1995-12-29', '0698123475', '7 place du Marché', 10, null),
-       (15, true, '1986-03-17', '0665432187', '28 rue des Cerisiers', 11, null),
-       (16, true, '1988-07-30', '0698342150', '55 avenue de Paris', 1, null),
-       (17, true, '1984-11-09', '0655012374', '72 rue des Prés', 2, null),
-       (18, true, '1996-04-04', '0689234578', '16 rue Pasteur', 3, null),
-       (19, true, '1999-01-01', '0678123999', '91 boulevard Saint-Michel', 4, null),
-       (20, true, '1989-12-12', '0634567890', '2 avenue du Général Leclerc', 5, null),
-       (21, true, '1992-05-03', '0708090103', '28, rue des Bleuets', 6, null),
-       (22, true, '1982-08-24', '0654891234', '13 allée des Marronniers', 7, null),
-       (23, true, '1993-02-11', '0689741235', '10 rue Voltaire', 8, null),
-       (24, true, '1981-06-05', '0623789120', '3 rue Lamartine', 9, null),
-       (25, true, '1990-09-23', '0678123490', '4 place de la Mairie', 10, null),
-       (26, true, '1993-06-15', '0611122233', '15 rue Lafayette', 11, null),
-       (27, true, '1995-01-20', '0666677788', '1 avenue des Champs', 12, null),-- Paris (IDF)
-       (28, true, '1987-03-11', '0655566677', '24 rue Paradis', 13, null),-- Marseille (PAC)
-       (29, true, '1990-11-30', '0644433322', '12 boulevard Haussmann', 12, null);
--- Paris (IDF)
+-- 3. Utilisateurs (table parent)
 
+# INSERT INTO `user` (last_name,
+#                     first_name,
+#                     email,
+#                     password,
+#                     enabled,
+#                     jeton_verification_email,
+#                     nom_role,
+#                     reset_password_token)
+# VALUES
+# -- 1. Administrateurs
+# ('Dupont', 'Alice', 'alice@example.com', '$2y$10$flLWd64/eosC6TAY0r2CgehFD.EJEYcSu7LqC5rWsKTa9S7PqUWja', TRUE,
+#  'token-verif-123', 'ADMIN', NULL),
+# ('Durand', 'Bruno', 'bruno@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
+#  'ADMIN', NULL),
+# ('Martin', 'Cécile', 'cecile@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
+#  'ADMIN', NULL),
+# ('Bernard', 'David', 'david@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
+#  'ADMIN', NULL),
+#
+# -- 2. Stagiaires
+# ('Dupont', 'Romain', 'romain_dupont@live.fr', '$2a$10$Dow1Kt9EdIVVQ8KQfBGoH.NkbZoCPoEdWkqITpCTBLuRFK5kZzCO2', TRUE,
+#  NULL, 'STAGIAIRE', NULL),
+# ('Martin', 'Julie', 'julie.martin@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
+#  NULL, 'STAGIAIRE', NULL),
+# ('Legrand', 'Paul', 'paul.legrand@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
+#  NULL, 'STAGIAIRE', NULL),
+# ('Durand', 'Sophie', 'sophie.durand@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
+#  NULL, 'STAGIAIRE', NULL),
+# ('Petit', 'Lucas', 'lucas.petit@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
+#  NULL, 'STAGIAIRE', NULL),
+# ('Moreau', 'Camille', 'camille.moreau@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG',
+#  TRUE, NULL, 'STAGIAIRE', NULL),
+# ('Fournier', 'Léo', 'leo.fournier@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
+#  NULL, 'STAGIAIRE', NULL),
+# ('Garnier', 'Emma', 'emma.garnier@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
+#  NULL, 'STAGIAIRE', NULL),
+# ('Henry', 'Maxime', 'maxime.henry@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
+#  NULL, 'STAGIAIRE', NULL),
+# ('Roux', 'Manon', 'manon.roux@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
+#  'STAGIAIRE', NULL),
+# ('Guerin', 'Tom', 'tom.guerin@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
+#  'STAGIAIRE', NULL),
+# ('Schmitt', 'Chloé', 'chloe.schmitt@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
+#  NULL, 'STAGIAIRE', NULL),
+# ('Robert', 'Nathan', 'nathan.robert@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
+#  NULL, 'STAGIAIRE', NULL),
+# ('Lemoine', 'Élise', 'elise.lemoine@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
+#  NULL, 'STAGIAIRE', NULL),
+# ('Blanc', 'Axel', 'axel.blanc@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
+#  'STAGIAIRE', NULL),
+# ('Chevalier', 'Laura', 'laura.chevalier@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG',
+#  TRUE, NULL, 'STAGIAIRE', NULL),
+# ('Faure', 'Noah', 'noah.faure@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
+#  'STAGIAIRE', NULL),
+# ('André', 'Sarah', 'sarah.andre@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
+#  NULL, 'STAGIAIRE', NULL),
+# ('Renaud', 'Julien', 'julien.renaud@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
+#  NULL, 'STAGIAIRE', NULL),
+# ('Collet', 'Anaïs', 'anais.collet@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE,
+#  NULL, 'STAGIAIRE', NULL),
+#
+# -- 3. Utilisateurs de test génériques
+# ('Test1', 'User1', 'test1@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
+#  'STAGIAIRE', NULL),
+# ('Test2', 'User2', 'test2@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
+#  'STAGIAIRE', NULL),
+# ('Test3', 'User3', 'test3@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
+#  'STAGIAIRE', NULL),
+# ('Test4', 'User4', 'test4@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
+#  'STAGIAIRE', NULL),
+# ('Test5', 'User5', 'test5@example.com', '$2y$10$Yec37M1taxQ3TvvKGraTh.8Y4ME1PjcTR1YGMefoUNBebj0RBoPTG', TRUE, NULL,
+#  'STAGIAIRE', NULL);
+#
+#
+# -- 4. Spécialisations utilisateurs (héritent de user)
+#
+# INSERT INTO admin (id, type_admin, niveau_droit)
+# VALUES (1, 'RESPONSABLE_ETABLISSEMENT', 'SUPER_ADMIN'),
+#        (2, 'RESPONSABLE_FORMATION', 'ADMIN'),
+#        (3, 'ASSISTANT_VIE_SCOLAIRE', 'MODERATEUR'),
+#        (4, 'ASSISTANT_ADMINISTRATIF', 'BASIQUE');
+#
+# INSERT INTO stagiaire (id, first_connection, date_naissance, phone_number, adresse, id_ville, profile_picture)
+# VALUES (5, true, '1990-03-01', '0660606060', '12 rue des Rosses', 1, 'default-profile.png'),
+#        (6, true, '1985-07-14', '0678451223', '8 avenue des Lilas', 2, null),
+#        (7, true, '1992-11-22', '0654239876', '34 boulevard Victor Hugo', 3, null),
+#        (8, true, '1980-06-30', '0612789543', '21 rue des Vignes', 4, null),
+#        (9, true, '1978-04-19', '0634561287', '5 impasse des Fleurs', 5, null),
+#        (10, true, '1991-01-08', '0645129384', '17 rue des Jardins', 6, null),
+#        (11, true, '1983-09-12', '0625897412', '98 rue de la République', 7, null),
+#        (12, true, '1994-10-02', '0678932154', '66 avenue des Champs', 8, null),
+#        (13, true, '1987-05-06', '0612347895', '43 rue Jean Jaurès', 9, null),
+#        (14, true, '1995-12-29', '0698123475', '7 place du Marché', 10, null),
+#        (15, true, '1986-03-17', '0665432187', '28 rue des Cerisiers', 11, null),
+#        (16, true, '1988-07-30', '0698342150', '55 avenue de Paris', 1, null),
+#        (17, true, '1984-11-09', '0655012374', '72 rue des Prés', 2, null),
+#        (18, true, '1996-04-04', '0689234578', '16 rue Pasteur', 3, null),
+#        (19, true, '1999-01-01', '0678123999', '91 boulevard Saint-Michel', 4, null),
+#        (20, true, '1989-12-12', '0634567890', '2 avenue du Général Leclerc', 5, null),
+#        (21, true, '1992-05-03', '0708090103', '28, rue des Bleuets', 6, null),
+#        (22, true, '1982-08-24', '0654891234', '13 allée des Marronniers', 7, null),
+#        (23, true, '1993-02-11', '0689741235', '10 rue Voltaire', 8, null),
+#        (24, true, '1981-06-05', '0623789120', '3 rue Lamartine', 9, null),
+#        (25, true, '1990-09-23', '0678123490', '4 place de la Mairie', 10, null),
+#        (26, true, '1993-06-15', '0611122233', '15 rue Lafayette', 11, null),
+#        (27, true, '1995-01-20', '0666677788', '1 avenue des Champs', 12, null),-- Paris (IDF)
+#        (28, true, '1987-03-11', '0655566677', '24 rue Paradis', 13, null),-- Marseille (PAC)
+#        (29, true, '1990-11-30', '0644433322', '12 boulevard Haussmann', 12, null);
+# -- Paris (IDF)
+#
 
--- 6. FORMATION
+-- 5. Formations
+
 INSERT INTO formation (id_formation, nom, niveau, description, date_debut, date_fin)
 VALUES (1, 'Développement Web Front-End', 'A', 'Apprendre HTML, CSS, JavaScript et React.', '2025-06-01', '2025-08-30'),
        (2, 'Développement Web Back-End', 'A', 'Apprentissage de Node.js, Express et bases de données.', '2025-07-01',
@@ -177,8 +179,72 @@ VALUES (1, 'Développement Web Front-End', 'A', 'Apprendre HTML, CSS, JavaScript
         '2025-06-05', '2025-08-05');
 
 
--- 10. DOSSIER
-INSERT INTO dossier (id_dossier, code_dossier, Id_statut_dossier, date_de_creation, derniere_mise_a_jour,
+-- 6. Documents obligatoires (dépend de formation)
+
+-- Formation 1 : Dév Web Front-End
+INSERT INTO liste_documents_obligatoires (id_listedocs, id_formation, type_document)
+VALUES (11, 1, 'CV'),
+       (12, 1, 'LETTRE_MOTIVATION'),
+       (13, 1, 'PORTFOLIO');
+
+-- Formation 2 : Dév Web Back-End
+INSERT INTO liste_documents_obligatoires (id_listedocs, id_formation, type_document)
+VALUES (14, 2, 'CV'),
+       (15, 2, 'DIPLOME_BAC'),
+       (16, 2, 'PIECE_IDENTITE');
+
+-- Formation 3 : Full Stack Web
+INSERT INTO liste_documents_obligatoires (id_listedocs, id_formation, type_document)
+VALUES (17, 3, 'CV'),
+       (18, 3, 'LETTRE_MOTIVATION'),
+       (19, 3, 'DIPLOME_BAC_2'),
+       (20, 3, 'PORTFOLIO');
+
+-- Formation 4 : Sécurité Réseaux
+INSERT INTO liste_documents_obligatoires (id_listedocs, id_formation, type_document)
+VALUES (21, 4, 'PIECE_IDENTITE'),
+       (22, 4, 'DIPLOME_BAC'),
+       (23, 4, 'ATTEST_RESP_CIVILE');
+
+-- Formation 5 : Pentesting
+INSERT INTO liste_documents_obligatoires (id_listedocs, id_formation, type_document)
+VALUES (24, 5, 'CV'),
+       (25, 5, 'JUSTIF_SITUATION'),
+       (26, 5, 'DIPLOME_BAC_3');
+
+-- Formation 6 : Java Spring
+INSERT INTO liste_documents_obligatoires (id_listedocs, id_formation, type_document)
+VALUES (27, 6, 'CV'),
+       (28, 6, 'DIPLOME_BAC_2'),
+       (29, 6, 'PORTFOLIO');
+
+-- Formation 7 : Cyberdéfense et SOC
+INSERT INTO liste_documents_obligatoires (id_listedocs, id_formation, type_document)
+VALUES (30, 7, 'PIECE_IDENTITE'),
+       (31, 7, 'CV'),
+       (32, 7, 'ATTEST_RESP_CIVILE');
+
+-- Formation 8 : PHP / Laravel
+INSERT INTO liste_documents_obligatoires (id_listedocs, id_formation, type_document)
+VALUES (33, 8, 'CV'),
+       (34, 8, 'LETTRE_MOTIVATION'),
+       (35, 8, 'PORTFOLIO');
+
+-- Formation 9 : Sécu Applis Web
+INSERT INTO liste_documents_obligatoires (id_listedocs, id_formation, type_document)
+VALUES (36, 9, 'CV'),
+       (37, 9, 'JUSTIFICATIF'),
+       (38, 9, 'ATTEST_RESP_CIVILE');
+
+-- Formation 10 : Initiation cybersécurité
+INSERT INTO liste_documents_obligatoires (id_listedocs, id_formation, type_document)
+VALUES (39, 10, 'CV'),
+       (40, 10, 'PIECE_IDENTITE');
+
+
+-- 7. Dossiers (dépend de stagiaire + formation + admin)
+
+INSERT INTO dossier (id_dossier, code_dossier, id_statut_dossier, date_de_creation, derniere_mise_a_jour,
                      date_modification,
                      id_stagiaire, id_formation, id_createur)
 VALUES (1, 'DSR001', 2, '2025-01-05 09:00:00', '2025-01-07 14:00:00', '2025-01-07 14:00:00', 5, 1, 1),   -- Java avancé
@@ -210,101 +276,34 @@ VALUES (1, 'DSR001', 2, '2025-01-05 09:00:00', '2025-01-07 14:00:00', '2025-01-0
 -- Développement Web
 
 
--- Données de test avec id_formation
-INSERT INTO document (nom_fichier, type_document, id_statut_document, id_dossier, id_stagiaire, evenement_id,
+-- 8. Documents (dépend de dossier + stagiaire + formation + statut)
+
+INSERT INTO document (id_document, nom_fichier, type_document, id_statut_document, id_dossier, id_stagiaire,
+                      evenement_id,
                       commentaire,
                       date_depot, url_fichier, id_formation)
-VALUES ('Justificatif de domicile', 'JUSTIFICATIF', 2, 1, 5, NULL, NULL, NOW(), NULL, 1),
-       ('CV Paul', 'CV', 1, 1, 6, NULL, NULL, NOW(), NULL, 1),
-       ('Lettre de motivation', 'LETTRE_MOTIVATION', 1, 2, 7, NULL, NULL, NOW(), NULL, 2),
-       ('Justificatif d’identité', 'JUSTIFICATIF', 2, 2, 8, NULL, NULL, NOW(), NULL, 2);
+VALUES (1, 'Justificatif de domicile', 'JUSTIFICATIF', 2, 1, 5, NULL, NULL, NOW(), NULL, 1),
+       (2, 'CV Paul', 'CV', 1, 1, 6, NULL, NULL, NOW(), NULL, 1),
+       (3, 'Lettre de motivation', 'LETTRE_MOTIVATION', 1, 2, 7, NULL, NULL, NOW(), NULL, 2),
+       (4, 'Justificatif d’identité', 'JUSTIFICATIF', 2, 2, 8, NULL, NULL, NOW(), NULL, 2);
 
 
--- 1) Inscription n°1 pour le stagiaire dont id = 3, sur la formation id = 5, en EN_ATTENTE,
---    pas encore de dossier (id_dossier = NULL), date_modification et date_validation NULL :
+-- 9. Inscriptions (dépend de stagiaire + formation + dossier)
 
--- Exemple inscription
 INSERT INTO inscription (id_inscription, date_inscription, date_modification, date_validation, statut_inscription,
                          id_stagiaire, id_formation, id_dossier)
 VALUES (1, CURDATE(), NULL, NULL, 'EN_ATTENTE', 5, 1, 1);
 
 
+-- 10. Événements (dépend de stagiaire + motif + document)
 
-INSERT INTO evenement (id_evenement, date_debut, date_fin, est_retard, id_stagiaire, motif_id, document_id)
+INSERT INTO evenement (id_evenement, date_debut, date_fin, est_retard, id_stagiaire, id_motif, document_id)
 VALUES (1, '2025-10-15', '2025-10-16', FALSE, 5, 1, NULL);
 
 
--- 7. DOCUMENTS OBLIGATOIRES - Complément cohérent pour chaque formation
-
--- Formation 1 : Dév Web Front-End
-INSERT INTO liste_documents_obligatoires (id, id_formation, type_document)
-VALUES (11, 1, 'CV'),
-       (12, 1, 'LETTRE_MOTIVATION'),
-       (13, 1, 'PORTFOLIO');
-
--- Formation 2 : Dév Web Back-End
-INSERT INTO liste_documents_obligatoires (id, id_formation, type_document)
-VALUES (14, 2, 'CV'),
-       (15, 2, 'DIPLOME_BAC'),
-       (16, 2, 'PIECE_IDENTITE');
-
--- Formation 3 : Full Stack Web
-INSERT INTO liste_documents_obligatoires (id, id_formation, type_document)
-VALUES (17, 3, 'CV'),
-       (18, 3, 'LETTRE_MOTIVATION'),
-       (19, 3, 'DIPLOME_BAC_2'),
-       (20, 3, 'PORTFOLIO');
-
--- Formation 4 : Sécurité Réseaux
-INSERT INTO liste_documents_obligatoires (id, id_formation, type_document)
-VALUES (21, 4, 'PIECE_IDENTITE'),
-       (22, 4, 'DIPLOME_BAC'),
-       (23, 4, 'ATTEST_RESP_CIVILE');
-
--- Formation 5 : Pentesting
-INSERT INTO liste_documents_obligatoires (id, id_formation, type_document)
-VALUES (24, 5, 'CV'),
-       (25, 5, 'JUSTIF_SITUATION'),
-       (26, 5, 'DIPLOME_BAC_3');
-
--- Formation 6 : Java Spring
-INSERT INTO liste_documents_obligatoires (id, id_formation, type_document)
-VALUES (27, 6, 'CV'),
-       (28, 6, 'DIPLOME_BAC_2'),
-       (29, 6, 'PORTFOLIO');
-
--- Formation 7 : Cyberdéfense et SOC
-INSERT INTO liste_documents_obligatoires (id, id_formation, type_document)
-VALUES (30, 7, 'PIECE_IDENTITE'),
-       (31, 7, 'CV'),
-       (32, 7, 'ATTEST_RESP_CIVILE');
-
--- Formation 8 : PHP / Laravel
-INSERT INTO liste_documents_obligatoires (id, id_formation, type_document)
-VALUES (33, 8, 'CV'),
-       (34, 8, 'LETTRE_MOTIVATION'),
-       (35, 8, 'PORTFOLIO');
-
--- Formation 9 : Sécu Applis Web
-INSERT INTO liste_documents_obligatoires (id, id_formation, type_document)
-VALUES (36, 9, 'CV'),
-       (37, 9, 'JUSTIFICATIF'),
-       (38, 9, 'ATTEST_RESP_CIVILE');
-
--- Formation 10 : Initiation cybersécurité
-INSERT INTO liste_documents_obligatoires (id, id_formation, type_document)
-VALUES (39, 10, 'CV'),
-       (40, 10, 'PIECE_IDENTITE');
-
-
--- Statuts documents
-INSERT INTO statut_document (nom)
-VALUES ('EN_ATTENTE'),
-       ('VALIDÉ'),
-       ('REJETÉ');
 
 -- Création des modèles de message
-# INSERT INTO notification_template (id, type, message)
+# INSERT INTO notification_template (id_notification_template, type, message)
 # VALUES (1, 'INFORMATION',
 #         'Un nouveau document a été envoyé par un stagiaire. Veuillez vérifier sa validité et sa lisibilité.'),
 #        (2, 'WARNING_ABSENCE',
@@ -315,7 +314,7 @@ VALUES ('EN_ATTENTE'),
 
 -- NOTIFICATIONS
 -- Admins : INFORMATION
-# INSERT INTO notification (id, template_id, destinataire_id)
+# INSERT INTO notification (id_notification, template_id, destinataire_id)
 # VALUES (1, 1, 101),
 #        (2, 1, 102),
 #        (3, 1, 103),
@@ -326,7 +325,7 @@ VALUES ('EN_ATTENTE'),
 #        (8, 1, 108);
 #
 # -- Stagiaires 1 à 10 : retards / absences
-# INSERT INTO notification (id, template_id, destinataire_id)
+# INSERT INTO notification (id_notification, template_id, destinataire_id)
 # VALUES (9, 2, 1),
 #        (10, 2, 2),
 #        (11, 2, 3),
@@ -339,7 +338,7 @@ VALUES ('EN_ATTENTE'),
 #        (18, 2, 10);
 #
 # -- Stagiaires 11 à 15 : documents refusés
-# INSERT INTO notification (id, template_id, destinataire_id)
+# INSERT INTO notification (id_notification, template_id, destinataire_id)
 # VALUES (19, 3, 11),
 #        (20, 3, 12),
 #        (21, 3, 13),
@@ -347,38 +346,12 @@ VALUES ('EN_ATTENTE'),
 #        (23, 3, 15);
 #
 # -- Stagiaires 16 à 20 : dossier incomplet
-# INSERT INTO notification (id, template_id, destinataire_id)
+# INSERT INTO notification (id_notification, template_id, destinataire_id)
 # VALUES (24, 4, 16),
 #        (25, 4, 17),
 #        (26, 4, 18),
 #        (27, 4, 19),
 #        (28, 4, 20);
-
-# SELECT email, enabled
-# FROM user;
-# # WHERE email = 'ton.email@test.com';
-#
-# SELECT *
-# FROM user
-# WHERE LOWER(email) = 'test1@example.com';
-
-
-# UPDATE user
-# SET password = '$2a$10$uDcN81kQoUSbZ6Inyga.dOoM5RI1Ihi.lSAJg54qlG3Z5sfI4ax/S'
-# WHERE email = 'alice@example.com';
-#
-# UPDATE user
-# SET enabled = true
-# WHERE email = 'bruno@example.com';
-#
-# SELECT *
-# FROM user
-# WHERE email = 'bruno@example.com';
-#
-# SELECT Id_Document, nom, statut, lien_fichier, Id_Dossier, Id_Liste_Document
-# FROM Document
-# ORDER BY Id_Document DESC
-# LIMIT 5;
 
 
 -- Stagiaire de test
@@ -393,15 +366,9 @@ VALUES ('EN_ATTENTE'),
 # INSERT INTO document (nom_fichier, type, id_statut_document, id_dossier, id_stagiaire, id_formation, date_depot)
 # VALUES ('CV Romain.pdf', 'CV', 1, 1, 1, 1, NOW());
 
--- Vérification rapide
-# SELECT Id_Document, nom_fichier, id_statut_document, id_dossier
-# FROM document
-# ORDER BY Id_Document DESC
-# LIMIT 5;
-
 
 -- Ajout d’un stagiaire
-# INSERT INTO stagiaire (id, premiere_connexion, date_naissance, phone_number, adresse, ville_id, photo_profil)
+# INSERT INTO stagiaire (id, first_connection, date_naissance, phone_number, adresse, id_ville, profile_picture)
 # VALUES (5, true, '1990-03-01', '0660606060', '12 rue des Rosses', 1, 'default-profile.png');
 
 -- Ajout d’une formation
@@ -409,7 +376,7 @@ VALUES ('EN_ATTENTE'),
 # VALUES (1, 'Développement Web Front-End', 'A');
 
 -- Création d’un dossier
-# INSERT INTO dossier (id_dossier, code_dossier, statut_id_dossier, date_de_creation, derniere_mise_a_jour,
+# INSERT INTO dossier (id_dossier, code_dossier, id_statut_dossier, date_de_creation, derniere_mise_a_jour,
 #                      date_modification, id_stagiaire, id_formation, id_createur)
 # VALUES (1, 'DSR001', 2, NOW(), NOW(), NOW(), 5, 1, 1);
 
@@ -425,7 +392,7 @@ VALUES ('EN_ATTENTE'),
 #        ('Martin', 'Julie', 'julie.martin@example.com', 'hash_mdp', TRUE, 'STAGIAIRE');
 
 -- Stagiaire rattaché à un utilisateur
-# INSERT INTO stagiaire (id, premiere_connexion, date_naissance, phone_number, adresse, ville_id, photo_profil)
+# INSERT INTO stagiaire (id, first_connection, date_naissance, phone_number, adresse, id_ville, profile_picture)
 # VALUES (3, TRUE, '1992-11-22', '0654239876', '34 boulevard Victor Hugo', 3, NULL);
 
 -- Formation
@@ -433,82 +400,47 @@ VALUES ('EN_ATTENTE'),
 # VALUES (1, 'Développement Web', 'A', 'HTML, CSS, JS, React', '2025-09-01', '2026-06-30');
 
 -- Dossier d’inscription
-# INSERT INTO dossier (code_dossier, statut_id_dossier, date_de_creation, id_stagiaire, id_formation, id_createur)
+# INSERT INTO dossier (code_dossier, id_statut_dossier, date_de_creation, id_stagiaire, id_formation, id_createur)
 # VALUES ('DSR001', 2, NOW(), 3, 1, 1);
 
 -- Document rattaché
 # INSERT INTO document (nom_fichier, type, id_statut_document, id_dossier, id_stagiaire, date_depot)
 # VALUES ('CV_Julie.pdf', 'CV', 1, 1, 3, NOW());
 
-SHOW CREATE TABLE stagiaire
 
-SELECT email, enabled, password FROM user WHERE email = 'romain_dupont@live.fr';
+-- Table user (tous les utilisateurs)
+INSERT INTO user (id,
+                  last_name, first_name,
+                  email, password,
+                  enabled,
+                  nom_role)
+VALUES (1, 'Dupont', 'Alice',
+        'alice@example.com', 'hash123',
+        true,
+        'ADMIN'),
+       (5, 'Dupont', 'Romain',
+        'romain@live.fr', 'hash456',
+        true,
+        'STAGIAIRE');
 
--- Créer un utilisateur avec mot de passe "test123"
-INSERT INTO user (last_name, first_name, email, password, enabled, nom_role)
-VALUES ('Test', 'User', 'test@example.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', true, 'STAGIAIRE');
-
-SELECT email, password, enabled, nom_role FROM user WHERE email = 'test@example.com';
-
--- Supprimer l'ancien utilisateur de test s'il existe
-DELETE FROM user WHERE email = 'testauth@example.com';
-
--- Créer un utilisateur avec le hash BCrypt pour "password"
-INSERT INTO user (last_name, first_name, email, password, enabled, nom_role)
-VALUES ('Test', 'Auth', 'testauth@example.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', true, 'STAGIAIRE');
-
--- Supprimer l'ancien
-DELETE FROM stagiaire WHERE id IN (SELECT id FROM user WHERE email = 'testauth@example.com');
-DELETE FROM user WHERE email = 'testauth@example.com';
-
--- Créer d'abord l'utilisateur
-INSERT INTO user (last_name, first_name, email, password, enabled, nom_role)
-VALUES ('Test', 'Auth', 'testauth@example.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', true, 'STAGIAIRE');
-
--- Récupérer l'ID et créer l'entrée stagiaire
-INSERT INTO stagiaire (id, premiere_connexion, date_naissance, phone_number, adresse, ville_id, photo_profil)
-VALUES (LAST_INSERT_ID(), true, '1990-01-01', '0123456789', '123 rue Test', 1, null);
-
-SELECT id_dossier, code_dossier, id_stagiaire FROM dossier LIMIT 5;
-
--- Vérifier les utilisateurs existants
-SELECT id, email FROM user WHERE id IN (5, 6, 7, 8, 9, 10);
-
--- Vérifier les formations existantes
-SELECT id_formation, nom FROM formation WHERE id_formation IN (1, 2, 3, 4, 5, 6);
-
--- Vérifier les statuts de dossier
-SELECT id, nom_statut FROM statut_dossier WHERE id IN (1, 2, 3);
-
--- D'abord, vérifiez l'ID de votre utilisateur test
-SELECT id FROM user WHERE email = 'testauth@example.com'; -- 32
-
--- Créer un dossier simple pour tester (remplacez XXX par l'ID trouvé)
-INSERT INTO dossier (code_dossier, Id_statut_dossier, date_de_creation, derniere_mise_a_jour, date_modification, id_stagiaire, id_formation, id_createur)
-VALUES ('TEST001', 1, NOW(), NOW(), NOW(), 32, 1, 1);
-
--- Récupérer l'ID du dossier créé
-SELECT id_dossier FROM dossier WHERE code_dossier = 'TEST001'; -- id_dossier(1)
-
--- Vérifier s'il y a des doublons pour votre dossier
-SELECT * FROM dossier WHERE id_dossier = 1;
-
--- Vérifier les statuts de documents
-SELECT * FROM statut_document WHERE nom = 'EN_ATTENTE';
-
--- Supprimer les doublons de statut_document
-DELETE s1 FROM statut_document s1
-                   INNER JOIN statut_document s2
-WHERE s1.id > s2.id AND s1.nom = s2.nom;
-
--- Vérifier qu'il ne reste qu'un seul "EN_ATTENTE"
-SELECT * FROM statut_document WHERE nom = 'EN_ATTENTE';
-
--- Créer un admin
-INSERT INTO user (last_name, first_name, email, password, enabled, nom_role)
-VALUES ('Admin', 'Test', 'admin@test.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', true, 'ADMIN');
-
+-- Table admin (même ID que user)
 INSERT INTO admin (id, type_admin, niveau_droit)
-VALUES (LAST_INSERT_ID(), 'RESPONSABLE_ETABLISSEMENT', 'SUPER_ADMIN');
+VALUES (1, 'RESPONSABLE_ETABLISSEMENT', 'SUPER_ADMIN');
 
-UPDATE document SET statut_document_id = (SELECT id FROM statut_document WHERE nom = 'EN_ATTENTE') WHERE id_document = 1; -- uniquement pour test
+-- Table stagiaire (même ID que user)
+INSERT INTO stagiaire (id,
+                       premiere_connexion,
+                       date_naissance, phone_number, adresse, ville_id,
+                       photo_profil)
+VALUES (5, true,
+        '1990-03-01', '0660606060',
+        '12 rue des Rosses', 1,
+        'default-profile.png');
+
+
+-- Table stagiaire (même ID que user)
+INSERT INTO stagiaire (id, first_connection, birth_date, phone_number, address, id_ville, profile_picture)
+VALUES (5, true, '1990-03-01', '0660606060', '12 rue des Rosses', 1, 'default-profile.png');
+
+
+

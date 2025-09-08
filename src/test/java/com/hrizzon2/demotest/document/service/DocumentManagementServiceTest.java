@@ -8,7 +8,6 @@ import com.hrizzon2.demotest.document.model.DocumentMongo;
 import com.hrizzon2.demotest.document.model.StatutDocument;
 import com.hrizzon2.demotest.document.model.enums.TypeDocument;
 import com.hrizzon2.demotest.document.util.TypeDocumentValidator;
-import com.hrizzon2.demotest.evenement.service.EvenementService;
 import com.hrizzon2.demotest.formation.model.Formation;
 import com.hrizzon2.demotest.inscription.service.DossierService;
 import com.hrizzon2.demotest.notification.service.NotificationService;
@@ -64,9 +63,11 @@ class DocumentManagementServiceTest {
     @Mock
     private DossierService dossierService;
     @Mock
-    private EvenementService evenementService;
-    @Mock
     private NotificationService notificationService;
+    @InjectMocks
+    private DocumentManagementService documentService;
+
+
     @Mock
     private StatutDocumentDao statutDocumentDao;
     @Mock
@@ -78,8 +79,6 @@ class DocumentManagementServiceTest {
     @Mock
     private DocumentMongoDao documentMongoDao;
 
-    @InjectMocks
-    private DocumentManagementService documentService;
 
     // ==========
     // HELPERS
@@ -139,7 +138,7 @@ class DocumentManagementServiceTest {
      */
     @Test
     void uploadDocument_success() throws Exception {
-        // GIVEN
+        // GIVEN - Setup des mocks
         Integer stagiaireId = 1;
         Formation formation = new Formation();
         formation.setId(7);
@@ -171,7 +170,7 @@ class DocumentManagementServiceTest {
         // WHEN
         Document saved = documentService.uploadDocument(stagiaireId, fichier, type, formation);
 
-        // THEN
+        // THEN - Vérifications métier complètes
         assertNotNull(saved);
         assertEquals(999, saved.getId());
         assertEquals("cv.pdf", saved.getNomFichier());
@@ -199,7 +198,8 @@ class DocumentManagementServiceTest {
         Integer stagiaireId = 404;
         when(stagiaireDao.findById(stagiaireId)).thenReturn(Optional.empty());
 
-        MockMultipartFile fichier = new MockMultipartFile("f", "cni.pdf", "application/pdf", new byte[]{});
+        MockMultipartFile fichier = new MockMultipartFile("f",
+                "cni.pdf", "application/pdf", new byte[]{});
         // WHEN + THEN
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
                 () -> documentService.uploadDocument(stagiaireId, fichier, TypeDocument.PIECE_IDENTITE, new Formation()));

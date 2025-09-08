@@ -7,10 +7,12 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
+@Table(name = "statut_dossier")
 public class StatutDossier {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_statut_dossier")
     protected Integer id;
 
     @Column(nullable = false)

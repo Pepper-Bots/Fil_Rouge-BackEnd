@@ -41,7 +41,9 @@ public class SecurityConfig {
     protected JwtFilter jwtFilter;
 
     @Autowired
-    public SecurityConfig(PasswordEncoder passwordEncoder, UserDetailsService userDetailsService, JwtFilter jwtFilter) {
+    public SecurityConfig(PasswordEncoder passwordEncoder,
+                          UserDetailsService userDetailsService,
+                          JwtFilter jwtFilter) {
         this.passwordEncoder = passwordEncoder;
         this.userDetailsService = userDetailsService;
         this.jwtFilter = jwtFilter;

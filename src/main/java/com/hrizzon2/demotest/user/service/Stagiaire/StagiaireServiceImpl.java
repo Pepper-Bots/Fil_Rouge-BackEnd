@@ -67,7 +67,7 @@ public class StagiaireServiceImpl implements StagiaireService {
     public Stagiaire save(Stagiaire stagiaire) { // La signature de la méthode doit correspondre à l'interface
 
         // 1. Initialisation éventuelle des champs
-        stagiaire.setPremiereConnexion(true); // ou false selon mon workflow
+        stagiaire.setFirstConnection(true); // ou false selon mon workflow
 
         // 2. Génération d'un token d'activation (exemple UUID)
         String activationToken = UUID.randomUUID().toString();
@@ -192,7 +192,7 @@ public class StagiaireServiceImpl implements StagiaireService {
                 .orElseThrow(() -> new IllegalArgumentException("Stagiaire introuvable avec l'id : " + id));
 
         // Mise à jour du champ photoProfil (supposé être un attribut String dans Stagiaire)
-        stagiaire.setPhotoProfil(nomImage);
+        stagiaire.setProfilePicture(nomImage);
 
         // Sauvegarde de l'entité modifiée
         stagiaireDao.save(stagiaire);
@@ -202,7 +202,7 @@ public class StagiaireServiceImpl implements StagiaireService {
     public Stagiaire creerStagiaireParAdmin(Stagiaire input, Integer formationId) {
         // 1) Initialisation sécurité & 1ère connexion
         input.setEnabled(false);                 // activation par email
-        input.setPremiereConnexion(true);        // forcera le changement de mdp
+        input.setFirstConnection(true);        // forcera le changement de mdp
         input.setPassword(passwordEncoder.encode(input.getPassword()));
 
         // 2) Jeton d’activation

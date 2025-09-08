@@ -31,7 +31,7 @@ public class Ville {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "Id_Ville")
+    @Column(name = "id_ville")
     private Integer idVille;
 
     /**

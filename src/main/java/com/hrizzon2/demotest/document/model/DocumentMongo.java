@@ -14,6 +14,7 @@ import java.util.List;
 @Setter
 @Document(collection = "documents")
 public class DocumentMongo {
+
     @Id
     private String id;
     private String nomFichier;

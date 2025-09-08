@@ -100,7 +100,7 @@ public class AuthController {
 
         // Initialisation des champs de sécurité et du cycle de vie du compte
         stagiaire.setEnabled(false);  // Activation après clic e-mail
-        stagiaire.setPremiereConnexion(true);  // Forcer le changement de mot de passe
+        stagiaire.setFirstConnection(true);  // Forcer le changement de mot de passe
         stagiaire.setPassword(passwordEncoder.encode(stagiaire.getPassword()));
 
         // Jeton de validation e-mail
@@ -178,7 +178,7 @@ public class AuthController {
         }
 
         System.out.println("Tentative d'authentification...");
-        
+
         try {
             AppUserDetails userDetails = (AppUserDetails) authenticationProvider
                     .authenticate(

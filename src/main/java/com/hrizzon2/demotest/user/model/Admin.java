@@ -24,9 +24,9 @@ import lombok.Setter;
  * @see TypeAdmin
  * @see NiveauDroit
  */
-@Entity
 @Getter
 @Setter
+@Entity
 @DiscriminatorValue("ADMIN")
 public class Admin extends User {
 
@@ -43,6 +43,4 @@ public class Admin extends User {
      */
     @Enumerated(EnumType.STRING)
     private NiveauDroit niveauDroit;
-
-
 }

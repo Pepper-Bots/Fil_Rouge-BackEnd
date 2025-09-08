@@ -22,12 +22,13 @@ public class SecurityUtils implements ISecurityUtils {
                 .orElse(null);
     }
 
+    // Extrait SecurityUtils - Génération token
     @Override
     public String generateToken(AppUserDetails userDetails) {
 
         // Dates calculées à chaque génération de token
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + 8 + 3600000); // 8h pour les tests
+        Date expiryDate = new Date(now.getTime() + 8 * 3600000); // 8h
 
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
@@ -37,6 +38,7 @@ public class SecurityUtils implements ISecurityUtils {
                 .compact();
     }
 
+    
     @Override
     public String getSubjectFromJwt(String jwt) {
         return Jwts.parser()

@@ -66,14 +66,14 @@ public class AppUserDetails implements UserDetails {
     // Gestion spécifique pour forcer le changement de mot de passe
     public boolean isPremiereConnexion() {
         if (this.user instanceof Stagiaire stagiaire) {
-            return stagiaire.isPremiereConnexion();
+            return stagiaire.isFirstConnection();
         }
         return false;
     }
 
     @Override
     public boolean isEnabled() {
-        return user.getEnabled(); // tu peux ajouter un champ dans User si besoin
+        return user.isEnabled(); // tu peux ajouter un champ dans User si besoin
     }
 
 
